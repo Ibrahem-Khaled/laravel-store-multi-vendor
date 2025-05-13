@@ -47,6 +47,17 @@ return new class extends Migration {
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+
+        DB::table('users')->insert([
+            'uuid' => (string) Str::uuid(),
+            'username' => 'admin',
+            'name' => 'Admin',
+            'email' => 'admin@admin.com',
+            'role' => 'admin',
+            'password' => Hash::make('123456'),
+            'status' => 1
+        ]);
     }
 
     /**
