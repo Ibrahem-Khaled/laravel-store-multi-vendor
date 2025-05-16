@@ -7,7 +7,7 @@
                         {{ $title }}
                     </div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                        {{ $count }}
+                        {{ $count ?? 0 }}
                     </div>
                 </div>
                 <div class="col-auto">

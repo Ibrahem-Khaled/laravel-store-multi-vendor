@@ -102,15 +102,15 @@
                                     </td>
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->subCategory->name }}</td>
-                                    <td>{{ $product->city }} - {{ $product->neighborhood }}</td>
+                                    <td>{{ $product->city->name }} - {{ $product->neighborhood->name }}</td>
                                     <td>
                                         @if ($product->discount_percent > 0)
                                             <span class="text-danger"><del>{{ number_format($product->price, 2) }}
-                                                    ر.س</del></span>
+                                                    </del></span>
                                             <br>
                                             <span
                                                 class="text-success">{{ number_format($product->price_after_discount, 2) }}
-                                                ر.س</span>
+                                                </span>
                                         @else
                                             {{ number_format($product->price, 2) }} ر.س
                                         @endif

@@ -12,6 +12,20 @@ class Product extends Model
     {
         return $this->belongsTo(SubCategory::class);
     }
+    public function brand()
+    {
+        return $this->belongsTo(Brand::class);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function neighborhood()
+    {
+        return $this->belongsTo(Neighborhood::class);
+    }
 
     public function images()
     {

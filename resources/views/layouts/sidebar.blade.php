@@ -38,6 +38,21 @@
             <span>التصنيفات الفرعية</span></a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="{{ route('brands.index') }}">
+            <i class="fas fa-fw fa-stamp"></i>
+            <span>العلامات التجارية</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('cities.index') }}">
+            <i class="fas fa-fw fa-city"></i>
+            <span>المدن</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('neighborhoods.index') }}">
+            <i class="fas fa-fw fa-home"></i>
+            <span>الاحياء</span></a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="{{ route('slide-shows.index') }}">
             <i class="fas fa-fw fa-images"></i>
             <span>

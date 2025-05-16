@@ -18,8 +18,6 @@ Route::post('/addExpoPushToken', [authController::class, 'addExpoPushToken']);
 Route::post('/delete-account', [authController::class, 'deleteAccount']);
 
 
-
-
 Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
 Route::get('/products', [mainApiController::class, 'Products']);

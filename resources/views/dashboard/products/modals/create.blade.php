@@ -12,22 +12,34 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="sub_category_id">القسم الفرعي *</label>
                                 <select class="form-control" id="sub_category_id" name="sub_category_id" required>
                                     <option value="">اختر القسم الفرعي</option>
                                     @foreach ($subCategories as $subCategory)
                                         <option value="{{ $subCategory->id }}">{{ $subCategory->name }}
-                                            ({{ $subCategory->category->name }})</option>
+                                            ({{ $subCategory->category->name }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <label for="name">اسم المنتج *</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="brand_id">البراند *</label>
+                                <select class="form-control" id="brand_id" name="brand_id">
+                                    <option value="">اختر البراند</option>
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -35,20 +47,29 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="city">المدينة *</label>
-                                <input type="text" class="form-control" id="city" name="city" required>
+                                <label for="city_id">المدينة *</label>
+                                <select class="form-control" id="city_id" name="city_id" required>
+                                    <option value="">اختر المدينة</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}">{{ $city->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="neighborhood">الحي *</label>
-                                <input type="text" class="form-control" id="neighborhood" name="neighborhood"
-                                    required>
+                                <label for="neighborhood_id">الحي *</label>
+                                <select class="form-control" id="neighborhood_id" name="neighborhood_id" required>
+                                    <option value="">اختر الحي</option>
+                                    @foreach ($neighborhoods as $neighborhood)
+                                        <option value="{{ $neighborhood->id }}">{{ $neighborhood->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="price">السعر (ر.س) *</label>
+                                <label for="price">السعر *</label>
                                 <input type="number" class="form-control" id="price" name="price" step="0.01"
                                     min="0" required>
                             </div>
@@ -59,13 +80,13 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="discount_percent">نسبة الخصم %</label>
-                                <input type="number" class="form-control" id="discount_percent" name="discount_percent"
-                                    min="0" max="100" value="0">
+                                <input readonly type="number" class="form-control" id="discount_percent"
+                                    name="discount_percent" min="0" max="100" value="0">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="price_after_discount">السعر بعد الخصم (ر.س)</label>
+                                <label for="price_after_discount">السعر بعد الخصم </label>
                                 <input type="text" class="form-control" id="price_after_discount" readonly>
                             </div>
                         </div>

@@ -40,7 +40,10 @@ class User extends Authenticatable implements JWTSubject
         });
     }
 
-
+    public function brands()
+    {
+        return $this->hasMany(Brand::class);
+    }
 
 
 

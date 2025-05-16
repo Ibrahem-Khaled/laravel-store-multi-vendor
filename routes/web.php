@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\dashboard\BrandController;
 use App\Http\Controllers\dashboard\CategoryController;
+use App\Http\Controllers\dashboard\CityController;
+use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\ProductController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
@@ -32,6 +35,12 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::resource('products', ProductController::class)->except(['show']);
     Route::delete('products/images/{image}', [ProductController::class, 'destroyImage'])->name('products.destroy-image');
     Route::get('products', [ProductController::class, 'index'])->name('products.index');
+
+    Route::resource('brands', BrandController::class)->except(['show']);
+    Route::post('brands/update-order', [BrandController::class, 'updateOrder'])->name('brands.update-order');
+
+    Route::resource('cities', CityController::class)->except(['show']);
+    Route::resource('neighborhoods', NeighborhoodController::class);
 });
 
 

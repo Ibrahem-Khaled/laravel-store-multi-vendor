@@ -68,12 +68,12 @@
                                                 المرور؟</a>
                                         </div>
 
-                                        <a href="{{ route('register') }}"
+                                        {{-- <a href="{{ route('register') }}"
                                             class="d-flex align-items-center justify-content-center pb-4">
                                             <button type="button" class="btn btn-outline-danger">إنشاء حساب
                                                 جديد</button>
                                             <p class="mb-0 me-2 ms-2">ليس لديك حساب؟</p>
-                                        </a>
+                                        </a> --}}
                                     </form>
                                 </div>
                             </div>

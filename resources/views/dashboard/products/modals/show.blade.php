@@ -51,17 +51,19 @@
                         <p class="text-muted">القسم: {{ $product->subCategory->name }}
                             ({{ $product->subCategory->category->name }})</p>
                         <hr>
+                        <h5>الماركة:</h5>
+                        <p>{{ $product->brand->name }}</p>
 
                         <div class="row">
                             <div class="col-md-6">
                                 <h5>السعر:</h5>
                                 @if ($product->discount_percent > 0)
-                                    <p class="text-danger"><del>{{ number_format($product->price, 2) }} ر.س</del></p>
+                                    <p class="text-danger"><del>{{ number_format($product->price, 2) }} </del></p>
                                     <p class="text-success h4">{{ number_format($product->price_after_discount, 2) }}
-                                        ر.س</p>
+                                        </p>
                                     <span class="badge badge-success">وفر {{ $product->discount_percent }}%</span>
                                 @else
-                                    <p class="text-primary h4">{{ number_format($product->price, 2) }} ر.س</p>
+                                    <p class="text-primary h4">{{ number_format($product->price, 2) }} </p>
                                 @endif
                             </div>
                             <div class="col-md-6">

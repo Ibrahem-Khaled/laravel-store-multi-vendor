@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\City;
 use App\Models\Images;
+use App\Models\Neighborhood;
 use App\Models\Product;
 use App\Models\SubCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -18,7 +22,9 @@ class ProductController extends Controller
         $productsWithDiscount = Product::where('discount_percent', '>', 0)->count();
         $productsWithVideo = Product::whereNotNull('video_url')->count();
         $subCategoriesCount = SubCategory::count();
-
+        $brands = Brand::all();
+        $cities = City::all();
+        $neighborhoods = Neighborhood::all();
         // البحث والتصفية
         $search = $request->input('search');
         $subCategoryId = $request->input('sub_category_id');
@@ -46,7 +52,10 @@ class ProductController extends Controller
             'subCategoriesCount',
             'subCategories',
             'search',
-            'subCategoryId'
+            'subCategoryId',
+            'brands',
+            'cities',
+            'neighborhoods'
         ));
     }
 
@@ -54,9 +63,10 @@ class ProductController extends Controller
     {
         $request->validate([
             'sub_category_id' => 'required|exists:sub_categories,id',
+            'brand_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'neighborhood' => 'required|string|max:100',
+            'city_id' => 'required|exists:cities,id',
+            'neighborhood_id' => 'required|exists:neighborhoods,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'discount_percent' => 'required|integer|min:0|max:100',
@@ -88,9 +98,10 @@ class ProductController extends Controller
     {
         $request->validate([
             'sub_category_id' => 'required|exists:sub_categories,id',
+            'brand_id' => 'required|exists:users,id',
             'name' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'neighborhood' => 'required|string|max:100',
+            'city_id' => 'required|exists:cities,id',
+            'neighborhood_id' => 'required|exists:neighborhoods,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'discount_percent' => 'required|integer|min:0|max:100',
