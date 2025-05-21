@@ -5,6 +5,7 @@ namespace App\Http\Controllers\dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\City;
+use App\Models\Feature;
 use App\Models\Images;
 use App\Models\Neighborhood;
 use App\Models\Product;
@@ -55,7 +56,7 @@ class ProductController extends Controller
             'subCategoryId',
             'brands',
             'cities',
-            'neighborhoods'
+            'neighborhoods',
         ));
     }
 
@@ -93,6 +94,15 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'تم إضافة المنتج بنجاح');
     }
+
+    public function showFeatures(Product $product)
+    {
+        $product->load('features');
+        $availableFeatures = Feature::whereNotIn('id', $product->features->pluck('id'))->get();
+
+        return view('dashboard.products.show_features', compact('product', 'availableFeatures'));
+    }
+
 
     public function update(Request $request, Product $product)
     {

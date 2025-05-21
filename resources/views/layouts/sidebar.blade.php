@@ -59,6 +59,11 @@
                 السلايدشو</span></a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="{{ route('features.index') }}">
+            <i class="fas fa-fw fa-gem"></i>
+            <span>الميزات الرئيسية للمنتجات</span></a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="{{ route('products.index') }}">
             <i class="fas fa-fw fa-boxes"></i>
             <span>المنتجات</span></a>

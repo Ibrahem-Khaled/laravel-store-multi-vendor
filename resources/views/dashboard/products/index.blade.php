@@ -106,13 +106,13 @@
                                     <td>
                                         @if ($product->discount_percent > 0)
                                             <span class="text-danger"><del>{{ number_format($product->price, 2) }}
-                                                    </del></span>
+                                                </del></span>
                                             <br>
                                             <span
                                                 class="text-success">{{ number_format($product->price_after_discount, 2) }}
-                                                </span>
+                                            </span>
                                         @else
-                                            {{ number_format($product->price, 2) }} ر.س
+                                            {{ number_format($product->price, 2) }}
                                         @endif
                                     </td>
                                     <td>
@@ -140,6 +140,10 @@
                                             data-target="#deleteProductModal{{ $product->id }}" title="حذف">
                                             <i class="fas fa-trash"></i>
                                         </button>
+                                        <a href="{{ route('products.features.show', $product->id) }}"
+                                            class="btn btn-sm btn-circle btn-warning" title="ميزات المنتج">
+                                            <i class="fas fa-list"></i>
+                                        </a>
 
                                         {{-- تضمين المودالات لكل منتج --}}
                                         @include('dashboard.products.modals.show', ['product' => $product])

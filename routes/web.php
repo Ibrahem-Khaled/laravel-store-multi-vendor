@@ -3,6 +3,7 @@
 use App\Http\Controllers\dashboard\BrandController;
 use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
+use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\ProductController;
 use App\Http\Controllers\dashboard\SlideShowController;
@@ -34,13 +35,21 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
     Route::resource('products', ProductController::class)->except(['show']);
     Route::delete('products/images/{image}', [ProductController::class, 'destroyImage'])->name('products.destroy-image');
-    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('products/{product}/features', [ProductController::class, 'showFeatures'])
+        ->name('products.features.show');
 
     Route::resource('brands', BrandController::class)->except(['show']);
     Route::post('brands/update-order', [BrandController::class, 'updateOrder'])->name('brands.update-order');
 
     Route::resource('cities', CityController::class)->except(['show']);
     Route::resource('neighborhoods', NeighborhoodController::class);
+
+    Route::resource('features', FeatureController::class);
+    Route::get('features/statistics', 'FeatureController@statistics')->name('features.statistics');
+    Route::post('features/add-to-product', [FeatureController::class, 'addFeatureToProduct'])
+        ->name('features.add-to-product');
+    Route::post('features/remove-from-product', [FeatureController::class, 'removeFeatureFromProduct'])
+        ->name('features.remove-from-product');
 });
 
 
