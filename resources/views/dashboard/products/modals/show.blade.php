@@ -68,12 +68,12 @@
                             </div>
                             <div class="col-md-6">
                                 <h5>الموقع:</h5>
-                                <p>{{ $product->city }} - {{ $product->neighborhood }}</p>
-                                @if ($product->latitude && $product->longitude)
+                                <p>{{ $product->city->name }} - {{ $product->neighborhood->name }}</p>
+                                {{-- @if ($product->latitude && $product->longitude)
                                     <div id="productMap{{ $product->id }}" style="height: 150px; width: 100%;"></div>
                                 @else
                                     <p class="text-muted">لا يوجد موقع محدد</p>
-                                @endif
+                                @endif --}}
                             </div>
                         </div>
 

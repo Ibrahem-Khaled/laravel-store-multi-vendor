@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
-            $table->foreignId('city_id')->constrained()->onDelete('cascade');
-            $table->foreignId('neighborhood_id')->constrained()->onDelete('cascade');
+            $table->foreignId('city_id')->constrained()->onDelete('set null');
+            $table->foreignId('neighborhood_id')->constrained()->onDelete('set null');
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
 class mainApiController extends Controller
@@ -16,6 +17,15 @@ class mainApiController extends Controller
             return response()->json(['message' => 'No categories found'], 404);
         }
         return response()->json($categories);
+    }
+
+    public function allSubCategories()
+    {
+        $subCategories = SubCategory::with('category')->get();
+        if ($subCategories->isEmpty()) {
+            return response()->json(['message' => 'No subcategories found'], 404);
+        }
+        return response()->json($subCategories);
     }
 
     public function SubCategories(Category $category)
@@ -75,5 +85,11 @@ class mainApiController extends Controller
 
         // 9. إعادة النتائج كـ JSON
         return response()->json($products);
+    }
+
+    public function Product(Product $product)
+    {
+        $product->load('features', 'images', 'subCategory', 'brand', 'city', 'neighborhood');
+        return response()->json($product);
     }
 }

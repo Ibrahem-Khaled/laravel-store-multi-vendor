@@ -111,7 +111,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="latitude">خط العرض (اختياري)</label>
@@ -128,7 +128,7 @@
                                         value="{{ $product->longitude }}">
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="form-group">
                             <label for="description">وصف المنتج (اختياري)</label>

@@ -74,6 +74,7 @@
                                 <th>#</th>
                                 <th>الصور</th>
                                 <th>الاسم</th>
+                                <th>العلامة التجارية</th>
                                 <th>القسم الفرعي</th>
                                 <th>المدينة</th>
                                 <th>السعر</th>
@@ -101,6 +102,7 @@
                                         @endif
                                     </td>
                                     <td>{{ $product->name }}</td>
+                                    <td>{{ $product->brand->name }}</td>
                                     <td>{{ $product->subCategory->name }}</td>
                                     <td>{{ $product->city->name }} - {{ $product->neighborhood->name }}</td>
                                     <td>
@@ -155,7 +157,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center">لا توجد منتجات</td>
+                                    <td colspan="9" class="text-center">لا توجد منتجات</td>
                                 </tr>
                             @endforelse
                         </tbody>

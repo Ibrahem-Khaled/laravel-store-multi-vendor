@@ -19,5 +19,7 @@ Route::post('/delete-account', [authController::class, 'deleteAccount']);
 
 
 Route::get('/categories', [mainApiController::class, 'Categories']);
+Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
 Route::get('/products', [mainApiController::class, 'Products']);
+Route::get('/products/{product}', [mainApiController::class, 'Product']);
