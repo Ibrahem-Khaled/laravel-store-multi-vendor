@@ -23,6 +23,10 @@ Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
 
+Route::get('/notifications', [mainApiController::class, 'Notifications']);
+Route::post('/notifications/{id}/mark-as-read', [mainApiController::class, 'markNotificationAsRead']);
+Route::delete('/notifications/{id}', [mainApiController::class, 'deleteNotification']);
+
 Route::get('/products', [productController::class, 'Products']);
 Route::get('/products/{product}', [productController::class, 'Product']);
 Route::get('/products/featured', [productController::class, 'featuredProducts']);

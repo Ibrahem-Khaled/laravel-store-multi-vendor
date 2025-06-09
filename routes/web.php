@@ -5,12 +5,14 @@ use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
 use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
+use App\Http\Controllers\dashboard\NotificationController;
 use App\Http\Controllers\dashboard\ProductController;
 use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
 use App\Http\Controllers\dashboard\UserController;
 use Illuminate\Support\Facades\Route;
+use Mockery\Matcher\Not;
 
 Route::get('/', function () {
     return view('welcome');
@@ -55,6 +57,11 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::resource('reviews', ReviewController::class);
     Route::post('reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
     Route::post('reviews/{review}/disapprove', [ReviewController::class, 'disapprove'])->name('reviews.disapprove');
+
+    Route::resource('notifications', NotificationController::class);
+    Route::post('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
+    Route::post('notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.mark-as-unread');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 });
 
 

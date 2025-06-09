@@ -73,6 +73,11 @@
             <i class="fas fa-fw fa-star"></i>
             <span>التقييمات</span></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('notifications.index') }}">
+            <i class="fas fa-fw fa-bell"></i>
+            <span>الاشعارات</span></a>
+    </li>
 
 
 
