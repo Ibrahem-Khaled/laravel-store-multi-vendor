@@ -6,6 +6,7 @@ use App\Http\Controllers\dashboard\CityController;
 use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\ProductController;
+use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
 use App\Http\Controllers\dashboard\UserController;
@@ -50,6 +51,10 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         ->name('features.add-to-product');
     Route::post('features/remove-from-product', [FeatureController::class, 'removeFeatureFromProduct'])
         ->name('features.remove-from-product');
+
+    Route::resource('reviews', ReviewController::class);
+    Route::post('reviews/{review}/approve', [ReviewController::class, 'approve'])->name('reviews.approve');
+    Route::post('reviews/{review}/disapprove', [ReviewController::class, 'disapprove'])->name('reviews.disapprove');
 });
 
 

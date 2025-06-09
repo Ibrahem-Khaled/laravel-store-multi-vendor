@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\authController;
 use App\Http\Controllers\api\mainApiController;
+use App\Http\Controllers\api\productController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,5 +22,12 @@ Route::post('/delete-account', [authController::class, 'deleteAccount']);
 Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
-Route::get('/products', [mainApiController::class, 'Products']);
-Route::get('/products/{product}', [mainApiController::class, 'Product']);
+
+Route::get('/products', [productController::class, 'Products']);
+Route::get('/products/{product}', [productController::class, 'Product']);
+Route::get('/products/featured', [productController::class, 'featuredProducts']);
+Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);
+Route::post('/products/{product}/reviews', [ProductController::class, 'addReview']);
+Route::delete('/products/{product}/reviews', [ProductController::class, 'deleteReview']);
+Route::get('/user/favorites', [ProductController::class, 'userFavorites']);
+Route::post('/products/{product}/favorites', [ProductController::class, 'addToFavorites']);

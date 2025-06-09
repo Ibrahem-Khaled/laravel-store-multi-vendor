@@ -68,10 +68,15 @@
             <i class="fas fa-fw fa-boxes"></i>
             <span>المنتجات</span></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('reviews.index') }}">
+            <i class="fas fa-fw fa-star"></i>
+            <span>التقييمات</span></a>
+    </li>
 
-   
-    
-    
+
+
+
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>

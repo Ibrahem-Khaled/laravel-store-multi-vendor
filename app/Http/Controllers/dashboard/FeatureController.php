@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Feature;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -11,48 +12,49 @@ class FeatureController extends Controller
 {
     public function index()
     {
-        $features = Feature::latest()->paginate(10);
-        $applicableTypes = ['residency' => 'السكن', 'hall' => 'القاعة'];
+        $categories = Category::all();
+        $features = Feature::with('category')
+            ->when(request('category_id'), function ($query) {
+                $query->where('category_id', request('category_id'));
+            })
+            ->when(request('search'), function ($query) {
+                $query->where('name', 'like', '%' . request('search') . '%');
+            })
+            ->latest()
+            ->paginate(10);
 
-        $selectedType = request('type', 'all');
-        if ($selectedType !== 'all') {
-            $features = Feature::where('applicable_to', $selectedType)->latest()->paginate(10);
-        }
-
-        return view('dashboard.features.index', compact('features', 'applicableTypes', 'selectedType'));
-    }
-
-    public function statistics()
-    {
         $totalFeatures = Feature::count();
-        $residencyFeatures = Feature::where('applicable_to', 'residency')->count();
-        $hallFeatures = Feature::where('applicable_to', 'hall')->count();
-
-        return response()->json([
-            'totalFeatures' => $totalFeatures,
-            'residencyFeatures' => $residencyFeatures,
-            'hallFeatures' => $hallFeatures,
-        ]);
+        $featuresWithoutCategory = Feature::whereNull('category_id')->count();
+        $categoriesCount = $categories->count();
+        $featuresThisMonth = Feature::whereMonth('created_at', now()->month)->count();
+        return view('dashboard.features.index', compact(
+            'features',
+            'categories',
+            'totalFeatures',
+            'featuresWithoutCategory',
+            'categoriesCount',
+            'featuresThisMonth'
+        ));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:features',
-            'applicable_to' => 'required|in:residency,hall',
+            'name' => 'required|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         Feature::create($request->all());
 
         return redirect()->route('features.index')
-            ->with('success', 'تمت إضافة الميزة بنجاح');
+            ->with('success', 'تم إضافة الميزة بنجاح');
     }
 
     public function update(Request $request, Feature $feature)
     {
         $request->validate([
-            'name' => 'required|string|max:255|unique:features,name,' . $feature->id,
-            'applicable_to' => 'required|in:residency,hall',
+            'name' => 'required|string|max:255',
+            'category_id' => 'nullable|exists:categories,id',
         ]);
 
         $feature->update($request->all());
@@ -67,6 +69,19 @@ class FeatureController extends Controller
 
         return redirect()->route('features.index')
             ->with('success', 'تم حذف الميزة بنجاح');
+    }
+
+    public function statistics()
+    {
+        $totalFeatures = Feature::count();
+        $residencyFeatures = Feature::where('applicable_to', 'residency')->count();
+        $hallFeatures = Feature::where('applicable_to', 'hall')->count();
+
+        return response()->json([
+            'totalFeatures' => $totalFeatures,
+            'residencyFeatures' => $residencyFeatures,
+            'hallFeatures' => $hallFeatures,
+        ]);
     }
 
     public function addFeatureToProduct(Request $request)

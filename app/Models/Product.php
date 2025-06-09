@@ -36,4 +36,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Feature::class, 'feature_products', 'product_id', 'feature_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

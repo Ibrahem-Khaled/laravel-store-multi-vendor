@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
-            $table->foreignId('city_id')->constrained()->onDelete('set null');
-            $table->foreignId('neighborhood_id')->constrained()->onDelete('set null');
+            $table->unsignedBigInteger('city_id')->nullable();
+            $table->unsignedBigInteger('neighborhood_id')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
@@ -24,7 +24,13 @@ return new class extends Migration
             $table->string('video_url')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
+
+            $table->foreign('city_id')->references('id')->on('cities')->onDelete('set null');
+            $table->foreign('neighborhood_id')->references('id')->on('neighborhoods')->onDelete('set null');
         });
     }
 

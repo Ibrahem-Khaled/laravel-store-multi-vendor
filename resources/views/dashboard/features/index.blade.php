@@ -20,14 +20,15 @@
         @include('components.alerts')
 
         {{-- إحصائيات الميزات --}}
-        <div class="row mb-4" id="features-statistics">
+        <div class="row mb-4">
             {{-- إجمالي الميزات --}}
-            <x-stat-card icon="fas fa-star" title="إجمالي الميزات" value="0" color="primary" id="total-features" />
-            {{-- ميزات السكن --}}
-            <x-stat-card icon="fas fa-home" title="ميزات السكن" value="0" color="success" id="residency-features" />
-            {{-- ميزات القاعات --}}
-            <x-stat-card icon="fas fa-building" title="ميزات القاعات" value="0" color="info" id="hall-features" />
-
+            <x-stat-card icon="fas fa-star" title="إجمالي الميزات" :value="$totalFeatures" color="primary" />
+            {{-- الميزات بدون تصنيف --}}
+            <x-stat-card icon="fas fa-question-circle" title="بدون تصنيف" :value="$featuresWithoutCategory" color="warning" />
+            {{-- عدد التصنيفات --}}
+            <x-stat-card icon="fas fa-tags" title="عدد التصنيفات" :value="$categoriesCount" color="success" />
+            {{-- الميزات المضافة هذا الشهر --}}
+            <x-stat-card icon="fas fa-calendar" title="المضاف حديثاً" :value="$featuresThisMonth" color="info" />
         </div>
 
         {{-- بطاقة قائمة الميزات --}}
@@ -39,17 +40,17 @@
                 </button>
             </div>
             <div class="card-body">
-                {{-- تبويب أنواع الميزات --}}
+                {{-- تبويب التصنيفات --}}
                 <ul class="nav nav-tabs mb-4">
                     <li class="nav-item">
-                        <a class="nav-link {{ $selectedType === 'all' ? 'active' : '' }}"
+                        <a class="nav-link {{ !request('category_id') ? 'active' : '' }}"
                             href="{{ route('features.index') }}">الكل</a>
                     </li>
-                    @foreach ($applicableTypes as $type => $typeName)
+                    @foreach ($categories as $category)
                         <li class="nav-item">
-                            <a class="nav-link {{ $selectedType === $type ? 'active' : '' }}"
-                                href="{{ route('features.index', ['type' => $type]) }}">
-                                {{ $typeName }}
+                            <a class="nav-link {{ request('category_id') == $category->id ? 'active' : '' }}"
+                                href="{{ route('features.index', ['category_id' => $category->id]) }}">
+                                {{ $category->name }}
                             </a>
                         </li>
                     @endforeach
@@ -75,8 +76,9 @@
                             <tr>
                                 <th>#</th>
                                 <th>اسم الميزة</th>
-                                <th>النوع</th>
+                                <th>التصنيف</th>
                                 <th>تاريخ الإضافة</th>
+                                <th>تاريخ التعديل</th>
                                 <th>الإجراءات</th>
                             </tr>
                         </thead>
@@ -86,13 +88,21 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $feature->name }}</td>
                                     <td>
-                                        <span
-                                            class="badge badge-{{ $feature->applicable_to === 'residency' ? 'success' : 'info' }}">
-                                            {{ $applicableTypes[$feature->applicable_to] }}
-                                        </span>
+                                        @if ($feature->category)
+                                            <span class="badge badge-primary">{{ $feature->category->name }}</span>
+                                        @else
+                                            <span class="badge badge-secondary">بدون تصنيف</span>
+                                        @endif
                                     </td>
                                     <td>{{ $feature->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ $feature->updated_at->format('Y-m-d') }}</td>
                                     <td>
+                                        {{-- زر عرض --}}
+                                        <button type="button" class="btn btn-sm btn-circle btn-info" data-toggle="modal"
+                                            data-target="#showFeatureModal{{ $feature->id }}" title="عرض">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+
                                         {{-- زر تعديل --}}
                                         <button type="button" class="btn btn-sm btn-circle btn-primary" data-toggle="modal"
                                             data-target="#editFeatureModal{{ $feature->id }}" title="تعديل">
@@ -106,6 +116,7 @@
                                         </button>
 
                                         {{-- تضمين المودالات لكل ميزة --}}
+                                        @include('dashboard.features.modals.show', ['feature' => $feature])
                                         @include('dashboard.features.modals.edit', ['feature' => $feature])
                                         @include('dashboard.features.modals.delete', [
                                             'feature' => $feature,
@@ -114,7 +125,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="text-center">لا توجد ميزات مسجلة</td>
+                                    <td colspan="6" class="text-center">لا يوجد ميزات</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -135,26 +146,7 @@
 
 @push('scripts')
     <script>
-        $(document).ready(function() {
-            // جلب الإحصائيات عند تحميل الصفحة
-            fetchStatistics();
-
-            // تحديث الإحصائيات كل 30 ثانية
-            setInterval(fetchStatistics, 30000);
-
-            function fetchStatistics() {
-                $.get('{{ route('features.statistics') }}', function(data) {
-                    $('#total-features .stats-value').text(data.totalFeatures);
-                    $('#residency-features .stats-value').text(data.residencyFeatures);
-                    $('#hall-features .stats-value').text(data.hallFeatures);
-
-                    // تأثيرات عند تحديث الأرقام
-                    $('.stats-card').addClass('animate__animated animate__pulse');
-                    setTimeout(function() {
-                        $('.stats-card').removeClass('animate__animated animate__pulse');
-                    }, 1000);
-                });
-            }
-        });
+        // تفعيل التولتيب الافتراضي
+        $('[data-toggle="tooltip"]').tooltip();
     </script>
 @endpush
