@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('title'); // عنوان الإشعار
             $table->text('body');    // نص الإشعار
             $table->boolean('is_read')->default(false); // حالة قراءة الإشعار
+            $table->unsignedBigInteger('related_id')->nullable();
+            $table->string('related_type')->nullable();
             $table->timestamps();
 
             // علاقات مفتاحية (اختياري)

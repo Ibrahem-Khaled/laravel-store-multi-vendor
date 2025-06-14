@@ -35,15 +35,39 @@ class mainApiController extends Controller
         return response()->json($subCategories);
     }
 
-    public function Notifications()
+    public function Notifications($type = 'all')
     {
         $user = auth()->guard('api')->user();
-        $notifications = Notification::where('user_id', $user->id)
-            ->orWhere('user_id', null)
-            ->orderBy('created_at', 'desc')
-            ->get();
+
+        $query = Notification::where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+                ->orWhereNull('user_id');
+        });
+
+        // إذا لم يكن النوع "all"، نفلتر فقط الإشعارات غير المقروءة
+        if ($type !== 'all') {
+            $query->where('is_read', false);
+        }
+
+        $notifications = $query->orderBy('created_at', 'desc')->paginate(10);
+
         return response()->json($notifications);
     }
+
+    public function unreadCount()
+    {
+        $user = auth()->guard('api')->user();
+
+        $count = Notification::where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+                ->orWhereNull('user_id');
+        })
+            ->where('is_read', false)
+            ->count();
+
+        return response()->json(['unread_count' => $count]);
+    }
+
     // تحديث حالة الإشعار كمقروء
     public function markNotificationAsRead($id)
     {

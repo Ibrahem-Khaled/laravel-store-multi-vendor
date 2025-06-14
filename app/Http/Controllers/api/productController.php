@@ -56,7 +56,7 @@ class productController extends Controller
         }
 
         // 8. تنفيذ الاستعلام وجلب النتائج
-        $products = $query->get();
+        $products = $query->paginate(10);
 
         // 9. إعادة النتائج كـ JSON
         return response()->json($products);
@@ -121,7 +121,7 @@ class productController extends Controller
     public function userFavorites()
     {
         $user = auth()->guard('api')->user();
-        $products = $user->productsFavorites()->get();
+        $products = $user->productsFavorites()->paginate(10);
         return response()->json($products);
     }
 

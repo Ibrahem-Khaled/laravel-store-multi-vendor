@@ -23,7 +23,8 @@ Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
 
-Route::get('/notifications', [mainApiController::class, 'Notifications']);
+Route::get('/notifications/{type?}', [mainApiController::class, 'Notifications']);
+Route::get('/notifications/unread-count', [mainApiController::class, 'unreadCountNotifications']);
 Route::post('/notifications/{id}/mark-as-read', [mainApiController::class, 'markNotificationAsRead']);
 Route::delete('/notifications/{id}', [mainApiController::class, 'deleteNotification']);
 
