@@ -32,6 +32,11 @@ class Product extends Model
         return $this->hasMany(Images::class);
     }
 
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
     public function features()
     {
         return $this->belongsToMany(Feature::class, 'feature_products', 'product_id', 'feature_id');

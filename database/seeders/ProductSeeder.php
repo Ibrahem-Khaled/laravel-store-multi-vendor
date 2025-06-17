@@ -10,6 +10,7 @@ use App\Models\Brand;
 use App\Models\City;
 use App\Models\Neighborhood;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class ProductSeeder extends Seeder
 {

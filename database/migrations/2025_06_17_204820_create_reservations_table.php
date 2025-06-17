@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unit_types', function (Blueprint $table) {
+        Schema::create('reservations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->string('name'); // مثال: 'single','double_one_bed','double_two_beds'
-            $table->unsignedTinyInteger('bedrooms')->nullable(); // للشقق: 1،2،3 غرف
-            $table->integer('capacity');
-            $table->decimal('price', 10, 2);
+            $table->enum('type', ['daily', 'hourly']);
+            $table->dateTime('start_time');
+            $table->dateTime('end_time');
+            $table->enum('status', ['active', 'returned', 'partial_refund'])->default('active');
+            $table->decimal('total_price', 10, 2);
             $table->timestamps();
         });
     }
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('unit_types');
+        Schema::dropIfExists('reservations');
     }
 };

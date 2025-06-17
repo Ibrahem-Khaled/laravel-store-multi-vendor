@@ -7,19 +7,16 @@ use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\NotificationController;
 use App\Http\Controllers\dashboard\ProductController;
+use App\Http\Controllers\dashboard\ReservationController;
 use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
 use App\Http\Controllers\dashboard\UserController;
 use Illuminate\Support\Facades\Route;
-use Mockery\Matcher\Not;
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-
-
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::get('/', function () {
@@ -62,6 +59,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::post('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.mark-as-unread');
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+
+    Route::resource('reservations', ReservationController::class);
 });
 
 
