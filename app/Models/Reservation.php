@@ -10,15 +10,13 @@ class Reservation extends Model
         'user_id',
         'product_id',
         'type',
-        'start_time',
-        'end_time',
+        'reservation_date',
         'status',
         'total_price',
     ];
 
     protected $casts = [
-        'start_time' => 'datetime',
-        'end_time' => 'datetime',
+        'reservation_date' => 'date',
     ];
 
     // العَلاقات

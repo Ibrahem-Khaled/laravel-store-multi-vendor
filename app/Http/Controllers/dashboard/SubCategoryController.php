@@ -38,13 +38,6 @@ class SubCategoryController extends Controller
             'categories'
         ));
     }
-
-    public function create()
-    {
-        $categories = Category::all();
-        return view('dashboard.sub-categories.create', compact('categories'));
-    }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -52,6 +45,7 @@ class SubCategoryController extends Controller
             'name' => 'required|string|max:255|unique:sub_categories',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'type' => 'required|in:daily,periods',
         ]);
 
         $subCategoryData = $request->except('image');
@@ -65,12 +59,6 @@ class SubCategoryController extends Controller
         return redirect()->route('sub-categories.index')->with('success', 'تم إنشاء القسم الفرعي بنجاح');
     }
 
-    public function edit(SubCategory $subCategory)
-    {
-        $categories = Category::all();
-        return view('dashboard.sub-categories.edit', compact('subCategory', 'categories'));
-    }
-
     public function update(Request $request, SubCategory $subCategory)
     {
         $request->validate([
@@ -78,6 +66,7 @@ class SubCategoryController extends Controller
             'name' => 'required|string|max:255|unique:sub_categories,name,' . $subCategory->id,
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'type' => 'required|in:daily,periods',
         ]);
 
         $subCategoryData = $request->except('image');

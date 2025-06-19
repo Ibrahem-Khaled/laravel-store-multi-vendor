@@ -112,7 +112,7 @@ class productController extends Controller
             // الحجوزات المستقبلية فقط
             'reservations' => function ($query) {
                 $query->where('status', 'active')
-                    ->where('start_time', '>=', now());
+                    ->where('reservation_date', '>=', now()->toDateString());
             }
         ]);
 

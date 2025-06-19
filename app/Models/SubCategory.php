@@ -11,6 +11,7 @@ class SubCategory extends Model
         'name',
         'description',
         'image',
+        'type',
     ];
 
     public function category()

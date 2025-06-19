@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $guarded = ['id'];
+    protected $appends = ['reservation_type'];
 
     public function subCategory()
     {
@@ -45,5 +46,11 @@ class Product extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+
+    public function getReservationTypeAttribute()
+    {
+        return $this->subCategory->type;
     }
 }

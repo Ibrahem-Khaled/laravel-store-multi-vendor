@@ -59,6 +59,7 @@
                                 <th>الاسم</th>
                                 <th>القسم الرئيسي</th>
                                 <th>الوصف</th>
+                                <th>نوع الحجز </th>
                                 <th>تاريخ الإنشاء</th>
                                 <th>الإجراءات</th>
                             </tr>
@@ -83,6 +84,7 @@
                                     <td>{{ $subCategory->category->name }}</td>
                                     <td>{{ $subCategory->description ? Str::limit($subCategory->description, 50) : 'لا يوجد وصف' }}
                                     </td>
+                                    <td>{{ $subCategory->type == 'daily' ? 'باليوم' : 'بالفترات' }}</td>
                                     <td>{{ $subCategory->created_at->format('Y-m-d') }}</td>
                                     <td>
                                         {{-- زر عرض --}}

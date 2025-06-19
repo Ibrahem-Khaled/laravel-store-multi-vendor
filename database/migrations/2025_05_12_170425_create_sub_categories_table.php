@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->string('image')->nullable();
+            $table->enum('type', ['daily', 'periods'])->default('daily');
             $table->timestamps();
         });
     }

@@ -42,6 +42,13 @@
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <label for="type">نوع الحجز</label>
+                        <select class="form-control" id="type" name="type">
+                            <option value="daily">يومي</option>
+                            <option value="periods">مدة</option>
+                        </select>
+                    </div>
 
                     <div class="form-group">
                         <label for="description">الوصف</label>

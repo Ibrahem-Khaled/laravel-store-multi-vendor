@@ -55,6 +55,15 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="type">نوع الحجز</label>
+                        <select class="form-control" id="type" name="type">
+                            <option value="daily" {{ $subCategory->type == 'daily' ? 'selected' : '' }}>يومي</option>
+                            <option value="periods" {{ $subCategory->type == 'periods' ? 'selected' : '' }}>مدة
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="description">الوصف</label>
                         <textarea class="form-control" id="description" name="description" rows="3">{{ $subCategory->description }}</textarea>
                     </div>

@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
-            $table->enum('type', ['daily', 'hourly']);
-            $table->dateTime('start_time');
-            $table->dateTime('end_time');
+            $table->enum('type', ['daily', 'morning', 'evening']);
+            $table->date('reservation_date');
             $table->enum('status', ['active', 'returned', 'partial_refund'])->default('active');
             $table->decimal('total_price', 10, 2);
             $table->timestamps();
