@@ -37,7 +37,7 @@ Route::group([], function () {
     Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);
     Route::post('/products/{product}/reviews', [ProductController::class, 'addReview']);
     Route::delete('/products/{product}/reviews', [ProductController::class, 'deleteReview']);
-    Route::get('/user/favorites', [ProductController::class, 'userFavorites']);
+    Route::get('/user/favorites/products', [ProductController::class, 'userFavorites']);
     Route::post('/favorites/products/{product}', [ProductController::class, 'addToFavorites']);
 
     Route::get('/reservations', [ReservationController::class, 'index']);
