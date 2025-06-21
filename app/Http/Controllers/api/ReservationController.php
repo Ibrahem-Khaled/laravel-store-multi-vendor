@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class ReservationController extends Controller
 {
@@ -21,10 +23,12 @@ class ReservationController extends Controller
     {
         $user = auth()->guard('api')->user();
 
+        // ✅ التحقق من صحة البيانات
         $validated = Validator::make($request->all(), [
             'product_id' => 'required|exists:products,id',
             'type' => 'required|in:daily,morning,evening',
-            'reservation_date' => 'required|date|after_or_equal:today',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date' => 'required|date|after_or_equal:start_date',
             'total_price' => 'required|numeric|min:0',
         ]);
 
@@ -32,36 +36,46 @@ class ReservationController extends Controller
             return response()->json(['errors' => $validated->errors()], 422);
         }
 
-        // التحقق من التداخل مع حجوزات أخرى
-        $overlap = Reservation::where('product_id', $request->product_id)
-            ->where('reservation_date', $request->reservation_date)
-            ->where('status', 'active')
-            ->where(function ($query) use ($request) {
-                if ($request->type === 'daily') {
-                    // لا يمكن وجود أي حجز في نفس اليوم
-                    $query->whereIn('type', ['daily', 'morning', 'evening']);
-                } else {
-                    // لا يمكن وجود حجز يوم كامل أو نفس الفترة
-                    $query->whereIn('type', ['daily', $request->type]);
-                }
-            })
-            ->exists();
+        // ✅ إنشاء الفترة الزمنية من تاريخ البدء إلى تاريخ الانتهاء
+        $period = CarbonPeriod::create($request->start_date, $request->end_date);
 
-        if ($overlap) {
-            return response()->json(['message' => 'المنتج محجوز بالفعل في هذا التاريخ أو الفترة.'], 409);
+        // ✅ التحقق من التداخل مع أي حجوزات أخرى خلال كل يوم في الفترة
+        foreach ($period as $date) {
+            $overlap = Reservation::where('product_id', $request->product_id)
+                ->where('reservation_date', $date->toDateString())
+                ->where('status', 'active')
+                ->where(function ($query) use ($request) {
+                    if ($request->type === 'daily') {
+                        $query->whereIn('type', ['daily', 'morning', 'evening']);
+                    } else {
+                        $query->whereIn('type', ['daily', $request->type]);
+                    }
+                })
+                ->exists();
+
+            if ($overlap) {
+                return response()->json([
+                    'message' => 'المنتج محجوز بالفعل في التاريخ: ' . $date->format('Y-m-d')
+                ], 409);
+            }
         }
 
-        $reservation = Reservation::create([
-            'user_id' => $user->id,
-            'product_id' => $request->product_id,
-            'type' => $request->type,
-            'reservation_date' => $request->reservation_date,
-            'total_price' => $request->total_price,
-        ]);
+        // ✅ إنشاء الحجز لكل يوم في الفترة
+        $reservations = [];
+        foreach ($period as $date) {
+            $reservations[] = Reservation::create([
+                'user_id' => $user->id,
+                'product_id' => $request->product_id,
+                'type' => $request->type,
+                'reservation_date' => $date->toDateString(),
+            ]);
+        }
 
-        return response()->json(['message' => 'تم إنشاء الحجز بنجاح', 'reservation' => $reservation], 201);
+        return response()->json([
+            'message' => 'تم إنشاء الحجوزات بنجاح',
+            'reservations' => $reservations,
+        ], 201);
     }
-
     // ✅ تعديل حجز
     public function update(Request $request, $id)
     {

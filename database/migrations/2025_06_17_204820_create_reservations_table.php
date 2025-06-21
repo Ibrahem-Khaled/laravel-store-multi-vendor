@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('type', ['daily', 'morning', 'evening']);
             $table->date('reservation_date');
             $table->enum('status', ['active', 'returned', 'partial_refund'])->default('active');
-            $table->decimal('total_price', 10, 2);
+            $table->decimal('total_price', 10, 2)->default(0);
             $table->timestamps();
         });
     }
