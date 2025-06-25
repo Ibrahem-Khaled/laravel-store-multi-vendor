@@ -22,6 +22,7 @@ Route::group([], function () {
     Route::post('/delete-account', [authController::class, 'deleteAccount']);
 
 
+    Route::get('/cities', [mainApiController::class, 'cities']);
     Route::get('/categories', [mainApiController::class, 'Categories']);
     Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
     Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
@@ -39,6 +40,8 @@ Route::group([], function () {
     Route::delete('/products/{product}/reviews', [ProductController::class, 'deleteReview']);
     Route::get('/user/favorites/products', [ProductController::class, 'userFavorites']);
     Route::post('/favorites/products/{product}', [ProductController::class, 'addToFavorites']);
+    Route::delete('/favorites/products/{product}', [ProductController::class, 'removeFromFavorites']);
+
 
     Route::get('/reservations', [ReservationController::class, 'index']);
     Route::post('/reservations', [ReservationController::class, 'store']);

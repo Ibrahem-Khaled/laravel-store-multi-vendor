@@ -110,7 +110,7 @@ endpoints:
         name: gender
         description: ''
         required: false
-        example: female
+        example: male
         type: string
         enumValues:
           - male
@@ -144,7 +144,7 @@ endpoints:
       name: vmqeopfuudtdsufvyvddq
       email: kunde.eloisa@example.com
       phone: consequatur
-      gender: female
+      gender: male
       role: user
       password: '[2UZ5ij-e/dl4'
     fileParameters: []
@@ -262,7 +262,7 @@ endpoints:
         name: birth_date
         description: 'Must be a valid date.'
         required: false
-        example: '2025-06-24T04:43:24'
+        example: '2025-06-25T08:07:15'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -274,7 +274,7 @@ endpoints:
       bio: amniihfqcoynlazghdtqt
       address: qxbajwbpilpmufinllwlo
       country: auydlsmsjuryvojcybzvr
-      birth_date: '2025-06-24T04:43:24'
+      birth_date: '2025-06-25T08:07:15'
     fileParameters:
       avatar: null
     responses: []
@@ -502,6 +502,45 @@ endpoints:
   -
     httpMethods:
       - GET
+    uri: api/cities
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: '[{"id":1,"name":"\u0637\u0631\u0627\u0628\u0644\u0633","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":1,"name":"\u0627\u0644\u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0642\u062f\u064a\u0645\u0629","city_id":1,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":2,"name":"\u0633\u0648\u0642 \u0627\u0644\u062c\u0645\u0639\u0629","city_id":1,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":3,"name":"\u0628\u0627\u0628 \u0628\u0646 \u063a\u0634\u064a\u0631","city_id":1,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":2,"name":"\u0628\u0646\u063a\u0627\u0632\u064a","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":4,"name":"\u0627\u0644\u0644\u064a\u062b\u064a","city_id":2,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":5,"name":"\u0627\u0644\u0633\u0644\u0645\u0627\u0646\u064a","city_id":2,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":6,"name":"\u0627\u0644\u0628\u0631\u0643\u0629","city_id":2,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":3,"name":"\u0645\u0635\u0631\u0627\u062a\u0629","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":7,"name":"\u0632\u0627\u0648\u064a\u0629 \u0627\u0644\u0645\u062d\u062c\u0648\u0628","city_id":3,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":8,"name":"\u0627\u0644\u063a\u064a\u0631\u0627\u0646","city_id":3,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":9,"name":"\u0627\u0644\u062f\u0627\u0641\u0646\u064a\u0629","city_id":3,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":4,"name":"\u0633\u0628\u0647\u0627","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":10,"name":"\u0627\u0644\u0645\u0646\u0634\u064a\u0629","city_id":4,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":11,"name":"\u0627\u0644\u062c\u062f\u064a\u062f","city_id":4,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":12,"name":"\u0639\u0628\u062f \u0627\u0644\u0643\u0627\u0641\u064a","city_id":4,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":5,"name":"\u0627\u0644\u0628\u064a\u0636\u0627\u0621","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":13,"name":"\u0634\u062d\u0627\u062a","city_id":5,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":14,"name":"\u0633\u064a\u062f\u064a \u0631\u0627\u0641\u0639","city_id":5,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":15,"name":"\u0627\u0644\u0632\u0647\u0648\u0631","city_id":5,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":6,"name":"\u062f\u0631\u0646\u0629","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":16,"name":"\u0627\u0644\u062c\u0628\u064a\u0644\u0629","city_id":6,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":17,"name":"\u0627\u0644\u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0642\u062f\u064a\u0645\u0629","city_id":6,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":18,"name":"\u0627\u0644\u0633\u0627\u062d\u0644 \u0627\u0644\u0634\u0631\u0642\u064a","city_id":6,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":7,"name":"\u0627\u0644\u0632\u0627\u0648\u064a\u0629","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":19,"name":"\u0627\u0644\u062d\u0631\u0634\u0629","city_id":7,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":20,"name":"\u0628\u0626\u0631 \u0627\u0644\u063a\u0646\u0645","city_id":7,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":21,"name":"\u062c\u0645\u064a\u0644\u0629","city_id":7,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":8,"name":"\u0632\u0644\u064a\u062a\u0646","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":22,"name":"\u0645\u0627\u062c\u0631","city_id":8,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":23,"name":"\u0627\u0644\u0645\u062f\u0646\u064a\u0629","city_id":8,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":24,"name":"\u0627\u0644\u062f\u0627\u0641\u0646\u064a\u0629","city_id":8,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":9,"name":"\u0627\u0644\u062e\u0645\u0633","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":25,"name":"\u062d\u064a \u0627\u0644\u062c\u0647\u0627\u062f","city_id":9,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":26,"name":"\u0627\u0644\u0645\u062f\u064a\u0646\u0629 \u0627\u0644\u0642\u062f\u064a\u0645\u0629","city_id":9,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":27,"name":"\u0627\u0644\u0628\u064a\u0641\u064a","city_id":9,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]},{"id":10,"name":"\u0637\u0628\u0631\u0642","created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z","neighborhoods":[{"id":28,"name":"\u0628\u0627\u0628 \u062f\u0631\u0646\u0629","city_id":10,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":29,"name":"\u0627\u0644\u062d\u064a \u0627\u0644\u0635\u0646\u0627\u0639\u064a","city_id":10,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"},{"id":30,"name":"\u0627\u0644\u0645\u0631\u0642\u0628","city_id":10,"active":1,"created_at":"2025-06-19T17:42:27.000000Z","updated_at":"2025-06-19T17:42:27.000000Z"}]}]'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
     uri: api/categories
     metadata:
       groupName: Endpoints
@@ -656,6 +695,48 @@ endpoints:
         custom: []
     cleanUrlParameters:
       type: consequatur
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 500
+        content: |-
+          {
+              "message": "Server Error"
+          }
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/notifications/unread-count
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -1140,6 +1221,47 @@ endpoints:
     custom: []
   -
     httpMethods:
+      - DELETE
+    uri: 'api/favorites/products/{product_id}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      product_id:
+        name: product_id
+        description: 'The ID of the product.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      product_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
       - GET
     uri: api/reservations
     metadata:
@@ -1228,7 +1350,7 @@ endpoints:
         name: start_date
         description: 'Must be a valid date. Must be a date after or equal to <code>today</code>.'
         required: true
-        example: '2106-07-23'
+        example: '2106-07-24'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1238,7 +1360,7 @@ endpoints:
         name: end_date
         description: 'Must be a valid date. Must be a date after or equal to <code>start_date</code>.'
         required: true
-        example: '2106-07-23'
+        example: '2106-07-24'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1257,8 +1379,8 @@ endpoints:
     cleanBodyParameters:
       product_id: consequatur
       type: daily
-      start_date: '2106-07-23'
-      end_date: '2106-07-23'
+      start_date: '2106-07-24'
+      end_date: '2106-07-24'
       total_price: 45
     fileParameters: []
     responses: []
@@ -1304,7 +1426,7 @@ endpoints:
         name: type
         description: ''
         required: false
-        example: morning
+        example: evening
         type: string
         enumValues:
           - daily
@@ -1317,7 +1439,7 @@ endpoints:
         name: reservation_date
         description: 'Must be a valid date. Must be a date after or equal to <code>today</code>.'
         required: false
-        example: '2106-07-23'
+        example: '2106-07-24'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1327,7 +1449,7 @@ endpoints:
         name: status
         description: ''
         required: false
-        example: partial_refund
+        example: returned
         type: string
         enumValues:
           - active
@@ -1347,9 +1469,9 @@ endpoints:
         nullable: false
         custom: []
     cleanBodyParameters:
-      type: morning
-      reservation_date: '2106-07-23'
-      status: partial_refund
+      type: evening
+      reservation_date: '2106-07-24'
+      status: returned
       total_price: 45
     fileParameters: []
     responses: []

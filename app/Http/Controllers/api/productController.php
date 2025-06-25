@@ -15,7 +15,16 @@ class productController extends Controller
         // 1. بناء الاستعلام الأساسي
         $query = Product::query();
 
-        // 2. فلترة على فئة فرعية مفردة أو مصفوفة فئات
+        // 2. البحث بالاسم والوصف
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
+        }
+
+        // 3. فلترة على فئة فرعية مفردة أو مصفوفة فئات
         if ($request->filled('sub_category_id')) {
             $subs = $request->input('sub_category_id');
             if (is_array($subs)) {
@@ -25,17 +34,17 @@ class productController extends Controller
             }
         }
 
-        // 3. فلترة حسب المدينة
+        // 4. فلترة حسب المدينة
         if ($request->filled('city')) {
             $query->where('city', $request->input('city'));
         }
 
-        // 4. فلترة حسب الحي
+        // 5. فلترة حسب الحي
         if ($request->filled('neighborhood')) {
             $query->where('neighborhood', $request->input('neighborhood'));
         }
 
-        // 5. فلترة ضمن نطاق السعر
+        // 6. فلترة ضمن نطاق السعر
         if ($request->filled('price_min')) {
             $query->where('price', '>=', $request->input('price_min'));
         }
@@ -43,12 +52,12 @@ class productController extends Controller
             $query->where('price', '<=', $request->input('price_max'));
         }
 
-        // 6. فلترة حسب الحد الأدنى لنسبة الخصم
+        // 7. فلترة حسب الحد الأدنى لنسبة الخصم
         if ($request->filled('discount_percent')) {
             $query->where('discount_percent', '>=', $request->input('discount_percent'));
         }
 
-        // 7. فلترة حسب توفر المنتج في يوم معين
+        // 8. فلترة حسب توفر المنتج في يوم معين
         if ($request->filled('day')) {
             $day = Carbon::parse($request->input('day'))->format('Y-m-d');
 
@@ -59,7 +68,7 @@ class productController extends Controller
             });
         }
 
-        // 8. فلترة حسب توفر المنتج في فترة زمنية معينة (تاريخ ووقت)
+        // 9. فلترة حسب توفر المنتج في فترة زمنية معينة (تاريخ ووقت)
         if ($request->filled('start_time') && $request->filled('end_time')) {
             $start = Carbon::parse($request->input('start_time'));
             $end = Carbon::parse($request->input('end_time'));
@@ -76,16 +85,21 @@ class productController extends Controller
             });
         }
 
-        // 9. ترتيب حسب عمود معين (مثلاً: sort_by=name.asc)
+        // 10. ترتيب حسب عمود معين (مثلاً: sort_by=name.asc)
         if ($request->filled('sort_by')) {
-            [$column, $direction] = explode('.', $request->input('sort_by'));
-            $query->orderBy($column, $direction);
+            // تأكد من أن الإدخال يحتوي على نقطة قبل تقسيمه لتجنب الأخطاء
+            if (strpos($request->input('sort_by'), '.') !== false) {
+                list($column, $direction) = explode('.', $request->input('sort_by'));
+                if (in_array(strtolower($direction), ['asc', 'desc'])) {
+                    $query->orderBy($column, $direction);
+                }
+            }
         }
 
-        // 10. تنفيذ الاستعلام وجلب النتائج
+        // 11. تنفيذ الاستعلام وجلب النتائج
         $products = $query->paginate(10);
 
-        // 11. إعادة النتائج كـ JSON
+        // 12. إعادة النتائج كـ JSON
         return response()->json($products);
     }
 
@@ -175,5 +189,12 @@ class productController extends Controller
             return response()->json(['message' => 'Product already added to favorites']);
         }
         return response()->json(['message' => 'Product added to favorites successfully']);
+    }
+
+    public function removeFromFavorites(Product $product)
+    {
+        $user = auth()->guard('api')->user();
+        $user->productsFavorites()->detach($product);
+        return response()->json(['message' => 'Product removed from favorites successfully']);
     }
 }

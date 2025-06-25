@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Models\SubCategory;
@@ -11,6 +12,17 @@ use Illuminate\Http\Request;
 
 class mainApiController extends Controller
 {
+
+    public function cities()
+    {
+        $cities = City::with('neighborhoods')->get();
+        if (!$cities) {
+            return response()->json(['message' => 'No cities found'], 404);
+        }
+        return response()->json($cities);
+    }
+
+
     public function Categories()
     {
         $categories = Category::all();
@@ -54,7 +66,7 @@ class mainApiController extends Controller
         return response()->json($notifications);
     }
 
-    public function unreadCount()
+    public function unreadCountNotifications()
     {
         $user = auth()->guard('api')->user();
 

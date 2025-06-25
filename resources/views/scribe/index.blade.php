@@ -95,6 +95,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-delete-account">
                                 <a href="#endpoints-POSTapi-delete-account">POST api/delete-account</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-cities">
+                                <a href="#endpoints-GETapi-cities">GET api/cities</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-categories">
                                 <a href="#endpoints-GETapi-categories">GET api/categories</a>
                             </li>
@@ -106,6 +109,9 @@
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-notifications--type--">
                                 <a href="#endpoints-GETapi-notifications--type--">GET api/notifications/{type?}</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-notifications-unread-count">
+                                <a href="#endpoints-GETapi-notifications-unread-count">GET api/notifications/unread-count</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-notifications--id--mark-as-read">
                                 <a href="#endpoints-POSTapi-notifications--id--mark-as-read">POST api/notifications/{id}/mark-as-read</a>
@@ -137,6 +143,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-favorites-products--product_id-">
                                 <a href="#endpoints-POSTapi-favorites-products--product_id-">POST api/favorites/products/{product_id}</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-DELETEapi-favorites-products--product_id-">
+                                <a href="#endpoints-DELETEapi-favorites-products--product_id-">DELETE api/favorites/products/{product_id}</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-reservations">
                                 <a href="#endpoints-GETapi-reservations">GET api/reservations</a>
                             </li>
@@ -160,7 +169,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: June 24, 2025</li>
+        <li>Last updated: June 25, 2025</li>
     </ul>
 </div>
 
@@ -345,7 +354,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"name\": \"vmqeopfuudtdsufvyvddq\",
     \"email\": \"kunde.eloisa@example.com\",
     \"phone\": \"consequatur\",
-    \"gender\": \"female\",
+    \"gender\": \"male\",
     \"role\": \"user\",
     \"password\": \"[2UZ5ij-e\\/dl4\"
 }"
@@ -366,7 +375,7 @@ let body = {
     "name": "vmqeopfuudtdsufvyvddq",
     "email": "kunde.eloisa@example.com",
     "phone": "consequatur",
-    "gender": "female",
+    "gender": "male",
     "role": "user",
     "password": "[2UZ5ij-e\/dl4"
 };
@@ -490,10 +499,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="gender"                data-endpoint="POSTapi-register"
-               value="female"
+               value="male"
                data-component="body">
     <br>
-<p>Example: <code>female</code></p>
+<p>Example: <code>male</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>male</code></li> <li><code>female</code></li></ul>
         </div>
@@ -544,8 +553,8 @@ Must be one of:
     --form "bio=amniihfqcoynlazghdtqt"\
     --form "address=qxbajwbpilpmufinllwlo"\
     --form "country=auydlsmsjuryvojcybzvr"\
-    --form "birth_date=2025-06-24T04:43:24"\
-    --form "avatar=@C:\Users\10\AppData\Local\Temp\php82F3.tmp" </code></pre></div>
+    --form "birth_date=2025-06-25T08:07:15"\
+    --form "avatar=@C:\Users\10\AppData\Local\Temp\php8183.tmp" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -564,7 +573,7 @@ body.append('gender', 'male');
 body.append('bio', 'amniihfqcoynlazghdtqt');
 body.append('address', 'qxbajwbpilpmufinllwlo');
 body.append('country', 'auydlsmsjuryvojcybzvr');
-body.append('birth_date', '2025-06-24T04:43:24');
+body.append('birth_date', '2025-06-25T08:07:15');
 body.append('avatar', document.querySelector('input[name="avatar"]').files[0]);
 
 fetch(url, {
@@ -702,7 +711,7 @@ Must be one of:
                value=""
                data-component="body">
     <br>
-<p>Must be an image. Must not be greater than 2048 kilobytes. Example: <code>C:\Users\10\AppData\Local\Temp\php82F3.tmp</code></p>
+<p>Must be an image. Must not be greater than 2048 kilobytes. Example: <code>C:\Users\10\AppData\Local\Temp\php8183.tmp</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>bio</code></b>&nbsp;&nbsp;
@@ -743,10 +752,10 @@ Must be one of:
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="birth_date"                data-endpoint="POSTapi-update-profile"
-               value="2025-06-24T04:43:24"
+               value="2025-06-25T08:07:15"
                data-component="body">
     <br>
-<p>Must be a valid date. Example: <code>2025-06-24T04:43:24</code></p>
+<p>Must be a valid date. Example: <code>2025-06-25T08:07:15</code></p>
         </div>
         </form>
 
@@ -1374,6 +1383,449 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="Accept"                data-endpoint="POSTapi-delete-account"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
+
+                    <h2 id="endpoints-GETapi-cities">GET api/cities</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-cities">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/cities" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/cities"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-cities">
+            <blockquote>
+            <p>Example response (200):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">[
+    {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;طرابلس&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 1,
+                &quot;name&quot;: &quot;المدينة القديمة&quot;,
+                &quot;city_id&quot;: 1,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 2,
+                &quot;name&quot;: &quot;سوق الجمعة&quot;,
+                &quot;city_id&quot;: 1,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 3,
+                &quot;name&quot;: &quot;باب بن غشير&quot;,
+                &quot;city_id&quot;: 1,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 2,
+        &quot;name&quot;: &quot;بنغازي&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 4,
+                &quot;name&quot;: &quot;الليثي&quot;,
+                &quot;city_id&quot;: 2,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 5,
+                &quot;name&quot;: &quot;السلماني&quot;,
+                &quot;city_id&quot;: 2,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 6,
+                &quot;name&quot;: &quot;البركة&quot;,
+                &quot;city_id&quot;: 2,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 3,
+        &quot;name&quot;: &quot;مصراتة&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 7,
+                &quot;name&quot;: &quot;زاوية المحجوب&quot;,
+                &quot;city_id&quot;: 3,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 8,
+                &quot;name&quot;: &quot;الغيران&quot;,
+                &quot;city_id&quot;: 3,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 9,
+                &quot;name&quot;: &quot;الدافنية&quot;,
+                &quot;city_id&quot;: 3,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 4,
+        &quot;name&quot;: &quot;سبها&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 10,
+                &quot;name&quot;: &quot;المنشية&quot;,
+                &quot;city_id&quot;: 4,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 11,
+                &quot;name&quot;: &quot;الجديد&quot;,
+                &quot;city_id&quot;: 4,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 12,
+                &quot;name&quot;: &quot;عبد الكافي&quot;,
+                &quot;city_id&quot;: 4,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 5,
+        &quot;name&quot;: &quot;البيضاء&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 13,
+                &quot;name&quot;: &quot;شحات&quot;,
+                &quot;city_id&quot;: 5,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 14,
+                &quot;name&quot;: &quot;سيدي رافع&quot;,
+                &quot;city_id&quot;: 5,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 15,
+                &quot;name&quot;: &quot;الزهور&quot;,
+                &quot;city_id&quot;: 5,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 6,
+        &quot;name&quot;: &quot;درنة&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 16,
+                &quot;name&quot;: &quot;الجبيلة&quot;,
+                &quot;city_id&quot;: 6,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 17,
+                &quot;name&quot;: &quot;المدينة القديمة&quot;,
+                &quot;city_id&quot;: 6,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 18,
+                &quot;name&quot;: &quot;الساحل الشرقي&quot;,
+                &quot;city_id&quot;: 6,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 7,
+        &quot;name&quot;: &quot;الزاوية&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 19,
+                &quot;name&quot;: &quot;الحرشة&quot;,
+                &quot;city_id&quot;: 7,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 20,
+                &quot;name&quot;: &quot;بئر الغنم&quot;,
+                &quot;city_id&quot;: 7,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 21,
+                &quot;name&quot;: &quot;جميلة&quot;,
+                &quot;city_id&quot;: 7,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 8,
+        &quot;name&quot;: &quot;زليتن&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 22,
+                &quot;name&quot;: &quot;ماجر&quot;,
+                &quot;city_id&quot;: 8,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 23,
+                &quot;name&quot;: &quot;المدنية&quot;,
+                &quot;city_id&quot;: 8,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 24,
+                &quot;name&quot;: &quot;الدافنية&quot;,
+                &quot;city_id&quot;: 8,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 9,
+        &quot;name&quot;: &quot;الخمس&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 25,
+                &quot;name&quot;: &quot;حي الجهاد&quot;,
+                &quot;city_id&quot;: 9,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 26,
+                &quot;name&quot;: &quot;المدينة القديمة&quot;,
+                &quot;city_id&quot;: 9,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 27,
+                &quot;name&quot;: &quot;البيفي&quot;,
+                &quot;city_id&quot;: 9,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    },
+    {
+        &quot;id&quot;: 10,
+        &quot;name&quot;: &quot;طبرق&quot;,
+        &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+        &quot;neighborhoods&quot;: [
+            {
+                &quot;id&quot;: 28,
+                &quot;name&quot;: &quot;باب درنة&quot;,
+                &quot;city_id&quot;: 10,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 29,
+                &quot;name&quot;: &quot;الحي الصناعي&quot;,
+                &quot;city_id&quot;: 10,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            },
+            {
+                &quot;id&quot;: 30,
+                &quot;name&quot;: &quot;المرقب&quot;,
+                &quot;city_id&quot;: 10,
+                &quot;active&quot;: 1,
+                &quot;created_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;,
+                &quot;updated_at&quot;: &quot;2025-06-19T17:42:27.000000Z&quot;
+            }
+        ]
+    }
+]</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-cities" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-cities"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-cities"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-cities" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-cities">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-cities" data-method="GET"
+      data-path="api/cities"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-cities', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-cities"
+                    onclick="tryItOut('GETapi-cities');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-cities"
+                    onclick="cancelTryOut('GETapi-cities');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-cities"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/cities</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-cities"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-cities"
                value="application/json"
                data-component="header">
     <br>
@@ -2265,6 +2717,130 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Example: <code>consequatur</code></p>
             </div>
                     </form>
+
+                    <h2 id="endpoints-GETapi-notifications-unread-count">GET api/notifications/unread-count</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-notifications-unread-count">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://localhost/api/notifications/unread-count" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/notifications/unread-count"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-notifications-unread-count">
+            <blockquote>
+            <p>Example response (500):</p>
+        </blockquote>
+                <details class="annotation">
+            <summary style="cursor: pointer;">
+                <small onclick="textContent = parentElement.parentElement.open ? 'Show headers' : 'Hide headers'">Show headers</small>
+            </summary>
+            <pre><code class="language-http">cache-control: no-cache, private
+content-type: application/json
+access-control-allow-origin: *
+ </code></pre></details>         <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;Server Error&quot;
+}</code>
+ </pre>
+    </span>
+<span id="execution-results-GETapi-notifications-unread-count" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-notifications-unread-count"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-notifications-unread-count"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-notifications-unread-count" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-notifications-unread-count">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-notifications-unread-count" data-method="GET"
+      data-path="api/notifications/unread-count"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-notifications-unread-count', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-notifications-unread-count"
+                    onclick="tryItOut('GETapi-notifications-unread-count');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-notifications-unread-count"
+                    onclick="cancelTryOut('GETapi-notifications-unread-count');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-notifications-unread-count"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/notifications/unread-count</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-notifications-unread-count"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-notifications-unread-count"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        </form>
 
                     <h2 id="endpoints-POSTapi-notifications--id--mark-as-read">POST api/notifications/{id}/mark-as-read</h2>
 
@@ -4022,6 +4598,126 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
+                    <h2 id="endpoints-DELETEapi-favorites-products--product_id-">DELETE api/favorites/products/{product_id}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-DELETEapi-favorites-products--product_id-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request DELETE \
+    "http://localhost/api/favorites/products/1" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://localhost/api/favorites/products/1"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+};
+
+fetch(url, {
+    method: "DELETE",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-DELETEapi-favorites-products--product_id-">
+</span>
+<span id="execution-results-DELETEapi-favorites-products--product_id-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-DELETEapi-favorites-products--product_id-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-DELETEapi-favorites-products--product_id-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-DELETEapi-favorites-products--product_id-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-DELETEapi-favorites-products--product_id-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-DELETEapi-favorites-products--product_id-" data-method="DELETE"
+      data-path="api/favorites/products/{product_id}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('DELETEapi-favorites-products--product_id-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-DELETEapi-favorites-products--product_id-"
+                    onclick="tryItOut('DELETEapi-favorites-products--product_id-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-DELETEapi-favorites-products--product_id-"
+                    onclick="cancelTryOut('DELETEapi-favorites-products--product_id-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-DELETEapi-favorites-products--product_id-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-red">DELETE</small>
+            <b><code>api/favorites/products/{product_id}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="DELETEapi-favorites-products--product_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="DELETEapi-favorites-products--product_id-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>product_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="product_id"                data-endpoint="DELETEapi-favorites-products--product_id-"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the product. Example: <code>1</code></p>
+            </div>
+                    </form>
+
                     <h2 id="endpoints-GETapi-reservations">GET api/reservations</h2>
 
 <p>
@@ -4165,8 +4861,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"product_id\": \"consequatur\",
     \"type\": \"daily\",
-    \"start_date\": \"2106-07-23\",
-    \"end_date\": \"2106-07-23\",
+    \"start_date\": \"2106-07-24\",
+    \"end_date\": \"2106-07-24\",
     \"total_price\": 45
 }"
 </code></pre></div>
@@ -4185,8 +4881,8 @@ const headers = {
 let body = {
     "product_id": "consequatur",
     "type": "daily",
-    "start_date": "2106-07-23",
-    "end_date": "2106-07-23",
+    "start_date": "2106-07-24",
+    "end_date": "2106-07-24",
     "total_price": 45
 };
 
@@ -4300,10 +4996,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="start_date"                data-endpoint="POSTapi-reservations"
-               value="2106-07-23"
+               value="2106-07-24"
                data-component="body">
     <br>
-<p>Must be a valid date. Must be a date after or equal to <code>today</code>. Example: <code>2106-07-23</code></p>
+<p>Must be a valid date. Must be a date after or equal to <code>today</code>. Example: <code>2106-07-24</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>end_date</code></b>&nbsp;&nbsp;
@@ -4311,10 +5007,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="end_date"                data-endpoint="POSTapi-reservations"
-               value="2106-07-23"
+               value="2106-07-24"
                data-component="body">
     <br>
-<p>Must be a valid date. Must be a date after or equal to <code>start_date</code>. Example: <code>2106-07-23</code></p>
+<p>Must be a valid date. Must be a date after or equal to <code>start_date</code>. Example: <code>2106-07-24</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>total_price</code></b>&nbsp;&nbsp;
@@ -4346,9 +5042,9 @@ Must be one of:
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"type\": \"morning\",
-    \"reservation_date\": \"2106-07-23\",
-    \"status\": \"partial_refund\",
+    \"type\": \"evening\",
+    \"reservation_date\": \"2106-07-24\",
+    \"status\": \"returned\",
     \"total_price\": 45
 }"
 </code></pre></div>
@@ -4365,9 +5061,9 @@ const headers = {
 };
 
 let body = {
-    "type": "morning",
-    "reservation_date": "2106-07-23",
-    "status": "partial_refund",
+    "type": "evening",
+    "reservation_date": "2106-07-24",
+    "status": "returned",
     "total_price": 45
 };
 
@@ -4469,10 +5165,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="PUTapi-reservations--id-"
-               value="morning"
+               value="evening"
                data-component="body">
     <br>
-<p>Example: <code>morning</code></p>
+<p>Example: <code>evening</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>daily</code></li> <li><code>morning</code></li> <li><code>evening</code></li></ul>
         </div>
@@ -4482,10 +5178,10 @@ Must be one of:
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="reservation_date"                data-endpoint="PUTapi-reservations--id-"
-               value="2106-07-23"
+               value="2106-07-24"
                data-component="body">
     <br>
-<p>Must be a valid date. Must be a date after or equal to <code>today</code>. Example: <code>2106-07-23</code></p>
+<p>Must be a valid date. Must be a date after or equal to <code>today</code>. Example: <code>2106-07-24</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -4493,10 +5189,10 @@ Must be one of:
 <i>optional</i> &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PUTapi-reservations--id-"
-               value="partial_refund"
+               value="returned"
                data-component="body">
     <br>
-<p>Example: <code>partial_refund</code></p>
+<p>Example: <code>returned</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>active</code></li> <li><code>returned</code></li> <li><code>partial_refund</code></li></ul>
         </div>
