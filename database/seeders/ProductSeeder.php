@@ -37,6 +37,7 @@ class ProductSeeder extends Seeder
                 'price' => rand(100, 1000),
                 'discount_percent' => rand(0, 50),
                 'video_url' => 'https://www.youtube.com/watch?v=' . Str::random(11),
+                'is_featured' => rand(0, 1) == 1,
                 'latitude' => fake()->latitude(30.0, 33.0),
                 'longitude' => fake()->longitude(10.0, 14.0),
             ]);

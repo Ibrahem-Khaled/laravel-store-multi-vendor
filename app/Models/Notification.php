@@ -11,8 +11,18 @@ class Notification extends Model
         'title',
         'body',
         'is_read',
+        'related_id',
+        'related_type',
+    ];
+    protected $casts = [
+        'is_read' => 'boolean',
     ];
 
+    // علاقة مع الكائن المرتبط (مثل المنتج أو الخدمة)
+    public function related()
+    {
+        return $this->morphTo();
+    }
     // علاقة مع المستخدم
     public function user()
     {

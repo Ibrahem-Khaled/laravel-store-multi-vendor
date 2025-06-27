@@ -49,9 +49,13 @@ class mainApiController extends Controller
 
     public function Notifications($type = 'all')
     {
+        // الحصول على المستخدم المصادق عليه
         $user = auth()->guard('api')->user();
 
-        $query = Notification::where(function ($q) use ($user) {
+        // بدء بناء الاستعلام للإشعارات
+        // يتم تحميل العلاقة المورفيكية 'related' بشكل مسبق
+        $query = Notification::with('related')->where(function ($q) use ($user) {
+            // جلب الإشعارات الخاصة بالمستخدم أو الإشعارات العامة (حيث user_id يكون NULL)
             $q->where('user_id', $user->id)
                 ->orWhereNull('user_id');
         });
@@ -61,8 +65,10 @@ class mainApiController extends Controller
             $query->where('is_read', false);
         }
 
+        // ترتيب الإشعارات حسب تاريخ الإنشاء تنازليًا وتقسيمها على صفحات
         $notifications = $query->orderBy('created_at', 'desc')->paginate(10);
 
+        // إرجاع الإشعارات كاستجابة JSON
         return response()->json($notifications);
     }
 
