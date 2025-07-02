@@ -8,6 +8,7 @@ class Product extends Model
 {
     protected $guarded = ['id'];
     protected $appends = ['reservation_type'];
+    protected $with = ['images']; // <--- أضف هذا السطر
 
     public function subCategory()
     {
