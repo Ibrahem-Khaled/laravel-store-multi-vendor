@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $guarded = ['id'];
-    protected $appends = ['reservation_type'];
+    protected $appends = ['reservation_type', 'cover'];
     protected $with = ['images']; // <--- أضف هذا السطر
 
     public function subCategory()
@@ -53,5 +53,18 @@ class Product extends Model
     public function getReservationTypeAttribute()
     {
         return $this->subCategory->type;
+    }
+
+    public function getCoverAttribute()
+    {
+        // أولاً، تحقق مما إذا كانت مجموعة الصور (العلاقة) ليست فارغة
+        if ($this->images->isNotEmpty()) {
+
+            // إذا كانت هناك صور، اختر واحدة عشوائياً وأرجع مسارها (path)
+            return $this->images->random()->path; // غيّر 'path' إلى اسم حقل الصورة لديك
+        }
+
+        // في حال لم يكن للمنتج أي صور، أرجع صورة افتراضية
+        return url('assets/img/logo-ct.png'); // ضع هنا مسار صورتك الافتراضية
     }
 }
