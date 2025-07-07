@@ -3,7 +3,6 @@
 use App\Http\Controllers\api\authController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
-use App\Http\Controllers\api\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,9 +41,4 @@ Route::group([], function () {
     Route::post('/favorites/products/{product}', [ProductController::class, 'addToFavorites']);
     Route::delete('/favorites/products/{product}', [ProductController::class, 'removeFromFavorites']);
 
-
-    Route::get('/reservations', [ReservationController::class, 'index']);
-    Route::post('/reservations', [ReservationController::class, 'store']);
-    Route::put('/reservations/{id}', [ReservationController::class, 'update']);
-    Route::delete('/reservations/{id}', [ReservationController::class, 'destroy']);
 });

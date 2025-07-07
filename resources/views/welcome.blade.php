@@ -4,75 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>احجزلي - احجز قاعة أحلامك بضغطة زر</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>منصة التجارة الذكية - عرض وطلب</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
-
         * {
-            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .gradient-bg {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+            color: white;
         }
 
-        .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .container {
+            min-height: 100vh;
+            position: relative;
         }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
         }
 
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-
-            0%,
-            100% {
-                transform: translateY(0px);
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
             }
 
             50% {
-                transform: translateY(-20px);
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
             }
         }
 
-        .fade-in {
-            animation: fadeIn 1s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-
-        .glow {
-            box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
 
         .particle {
@@ -81,387 +67,526 @@
             height: 4px;
             background: rgba(255, 255, 255, 0.6);
             border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+            animation: float 20s infinite linear;
         }
 
         @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0px) translateX(0px);
+            0% {
+                transform: translateY(100vh) rotate(0deg);
                 opacity: 0;
             }
 
-            50% {
-                transform: translateY(-100px) translateX(50px);
+            10% {
                 opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #f093fb;
+            transform: translateY(-2px);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #f093fb;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #fff, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(240, 147, 251, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(240, 147, 251, 0.8));
+            }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* 3D Cards Section */
+        .features {
+            padding: 100px 50px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 3rem;
+            margin-bottom: 60px;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(10deg);
+        }
+
+        .feature-card:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+        }
+
+        .stats-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.3);
+            text-align: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #f093fb;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .features h2 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            header {
+                padding: 20px;
             }
         }
     </style>
 </head>
 
-<body class="bg-gray-50 overflow-x-hidden">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 glass-effect">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4 space-x-reverse">
-                    <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center glow">
-                        <i class="fas fa-crown text-white text-xl"></i>
-                    </div>
-                    <h1 class="text-2xl font-bold gradient-text">احجزلي</h1>
+<body>
+    <div class="bg-animation"></div>
+    <div class="particles"></div>
+
+    <header>
+        <nav>
+            <a href="#" class="logo">🛍️ منصة التجارة الذكية</a>
+            <ul class="nav-links">
+                @if (Auth::check())
+                    <li><a href="{{ route('dashboard') }}">لوحة التحكم</a></li>
+                    <li><a href="{{ route('logout') }}">تسجيل الخروج</a></li>
+                @else
+                    <li><a href="{{ route('login') }}">تسجيل الدخول</a></li>
+                    <li><a href="{{ route('register') }}">إنشاء حساب</a></li>
+                @endif
+                <li><a href="#home">الرئيسية</a></li>
+                <li><a href="#features">المميزات</a></li>
+                <li><a href="#about">من نحن</a></li>
+                <li><a href="#contact">تواصل معنا</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1>مستقبل التجارة الإلكترونية</h1>
+                <p>منصة متطورة تجمع بين البائعين والمشترين في تجربة تسوق استثنائية مع تقنيات ذكية وواجهة عصرية</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary">ابدأ البيع الآن</a>
+                    <a href="#" class="btn btn-secondary">اكتشف المنتجات</a>
                 </div>
-                <div class="hidden md:flex space-x-8 space-x-reverse">
-                    <a href="#features" class="text-gray-700 hover:text-purple-600 transition-colors">المميزات</a>
-                    <a href="#services" class="text-gray-700 hover:text-purple-600 transition-colors">الخدمات</a>
-                    <a href="#contact" class="text-gray-700 hover:text-purple-600 transition-colors">تواصل معنا</a>
-                </div>
-                <button class="gradient-bg text-white px-6 py-2 rounded-full hover:shadow-lg transition-all glow">
-                    حمل التطبيق
-                </button>
             </div>
-        </div>
-    </nav>
+        </section>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center gradient-bg overflow-hidden">
-        <!-- Animated Particles -->
-        <div class="absolute inset-0">
-            <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-            <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
-            <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
-            <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
-            <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
-            <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
-            <div class="particle" style="left: 70%; animation-delay: 0.5s;"></div>
-            <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
-            <div class="particle" style="left: 90%; animation-delay: 2.5s;"></div>
-        </div>
-
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="grid lg:grid-cols-2 items-center gap-12">
-                <div class="text-white fade-in">
-                    <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                        احجز قاعة
-                        <span class="text-yellow-300">أحلامك</span>
-                        بضغطة زر
-                    </h1>
-                    <p class="text-xl md:text-2xl mb-8 text-gray-200">
-                        أول تطبيق في المنطقة لحجز قاعات الأفراح والفنادق الفاخرة بأسعار منافسة وخدمة استثنائية
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <button
-                            class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold text-lg hover:bg-yellow-300 transition-all hover-scale glow">
-                            <i class="fab fa-apple mr-2"></i>
-                            حمل للآيفون
-                        </button>
-                        <button
-                            class="bg-white text-purple-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition-all hover-scale">
-                            <i class="fab fa-google-play mr-2"></i>
-                            حمل للأندرويد
-                        </button>
+        <section class="features" id="features">
+            <div class="features-container">
+                <h2>لماذا تختار منصتنا؟</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>عمليات سريعة</h3>
+                        <p>تجربة مستخدم سلسة وسريعة مع معالجة فورية للطلبات والمدفوعات الآمنة</p>
                     </div>
-                </div>
-                <div class="relative floating">
-                    <div class="w-80 h-96 mx-auto relative">
-                        <div class="absolute inset-0 bg-white rounded-3xl shadow-2xl transform rotate-6 opacity-20">
-                        </div>
-                        <div class="absolute inset-0 bg-white rounded-3xl shadow-2xl transform -rotate-6 opacity-40">
-                        </div>
-                        <div class="relative bg-white rounded-3xl shadow-2xl p-6 glow">
-                            <div class="text-center">
-                                <div
-                                    class="w-16 h-16 gradient-bg rounded-full mx-auto mb-4 flex items-center justify-center">
-                                    <i class="fas fa-crown text-white text-2xl"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold gradient-text mb-2">احجزلي</h3>
-                                <p class="text-gray-600 mb-6">احجز قاعتك المثالية</p>
-
-                                <div class="space-y-4">
-                                    <div class="bg-gradient-to-r from-purple-100 to-blue-100 p-4 rounded-xl">
-                                        <div class="flex items-center justify-between">
-                                            <div class="text-right">
-                                                <p class="font-bold text-gray-800">قاعة الأميرة</p>
-                                                <p class="text-sm text-gray-600">500 ضيف</p>
-                                            </div>
-                                            <div class="w-12 h-12 bg-purple-500 rounded-full"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="bg-gradient-to-r from-yellow-100 to-orange-100 p-4 rounded-xl">
-                                        <div class="flex items-center justify-between">
-                                            <div class="text-right">
-                                                <p class="font-bold text-gray-800">قصر الذهب</p>
-                                                <p class="text-sm text-gray-600">800 ضيف</p>
-                                            </div>
-                                            <div class="w-12 h-12 bg-yellow-500 rounded-full"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>أمان متقدم</h3>
+                        <p>حماية شاملة للبيانات والمعاملات المالية بأعلى معايير الأمان العالمية</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>متوافق مع الجوال</h3>
+                        <p>تصميم متجاوب يعمل بسلاسة على جميع الأجهزة والمنصات</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💎</div>
+                        <h3>جودة عالية</h3>
+                        <p>منتجات مختارة بعناية من بائعين موثوقين مع ضمان الجودة</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3>توصيات ذكية</h3>
+                        <p>خوارزميات ذكية لاقتراح المنتجات المناسبة لكل مستخدم</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌟</div>
+                        <h3>دعم 24/7</h3>
+                        <p>فريق دعم متخصص متاح على مدار الساعة لمساعدتك</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Features Section -->
-    <section id="features" class="py-20 bg-white">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-6">لماذا احجزلي؟</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    نوفر لك تجربة حجز استثنائية مع أفضل القاعات والفنادق في منطقتك
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-blue-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-search text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">بحث ذكي</h3>
-                    <p class="text-gray-600">ابحث عن القاعة المثالية حسب الموقع، السعة، والميزانية مع فلاتر متقدمة</p>
+        <section class="stats">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">مستخدم نشط</div>
                 </div>
-
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-yellow-50 to-orange-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-credit-card text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">دفع آمن</h3>
-                    <p class="text-gray-600">ادفع بأمان عبر جميع وسائل الدفع المحلية والعالمية مع ضمان كامل</p>
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">منتج متوفر</div>
                 </div>
-
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-green-50 to-teal-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-headset text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">دعم 24/7</h3>
-                    <p class="text-gray-600">فريق دعم متخصص متاح على مدار الساعة لمساعدتك في كل خطوة</p>
+                <div class="stat-item">
+                    <div class="stat-number">5K+</div>
+                    <div class="stat-label">بائع موثوق</div>
                 </div>
-
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-pink-50 to-rose-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-star text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">تقييمات حقيقية</h3>
-                    <p class="text-gray-600">اطلع على تقييمات وآراء العملاء السابقين لتختار بثقة</p>
-                </div>
-
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-gift text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">عروض حصرية</h3>
-                    <p class="text-gray-600">احصل على خصومات وعروض خاصة للحجوزات المبكرة والعملاء المميزين</p>
-                </div>
-
-                <div class="text-center p-8 rounded-2xl bg-gradient-to-br from-cyan-50 to-blue-50 hover-scale">
-                    <div class="w-20 h-20 gradient-bg rounded-full mx-auto mb-6 flex items-center justify-center glow">
-                        <i class="fas fa-calendar-check text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 text-gray-800">إدارة الحجوزات</h3>
-                    <p class="text-gray-600">تتبع وأدر حجوزاتك بسهولة مع إمكانية التعديل والإلغاء</p>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">نسبة الرضا</div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 
-    <!-- Services Section -->
-    <section id="services" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-6">خدماتنا المتميزة</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    نقدم باقة شاملة من الخدمات لجعل مناسبتك لا تُنسى
-                </p>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">الشروط والأحكام</a>
+                <a href="#">سياسة الخصوصية</a>
+                <a href="#">المساعدة</a>
+                <a href="#">من نحن</a>
+                <a href="#">تواصل معنا</a>
             </div>
-
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-8">
-                    <div
-                        class="flex items-start space-x-4 space-x-reverse p-6 bg-white rounded-2xl shadow-lg hover-scale">
-                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-hotel text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-2 text-gray-800">قاعات الأفراح الفاخرة</h3>
-                            <p class="text-gray-600">مجموعة واسعة من قاعات الأفراح المجهزة بأحدث التقنيات والديكورات
-                                الفاخرة</p>
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex items-start space-x-4 space-x-reverse p-6 bg-white rounded-2xl shadow-lg hover-scale">
-                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-bed text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-2 text-gray-800">حجز الفنادق</h3>
-                            <p class="text-gray-600">احجز غرف فندقية فاخرة للضيوف والعائلة بأفضل الأسعار</p>
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex items-start space-x-4 space-x-reverse p-6 bg-white rounded-2xl shadow-lg hover-scale">
-                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-utensils text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-2 text-gray-800">خدمات الطعام</h3>
-                            <p class="text-gray-600">تنسيق وجبات فاخرة من أفضل الطهاة والمطاعم المحلية</p>
-                        </div>
-                    </div>
-
-                    <div
-                        class="flex items-start space-x-4 space-x-reverse p-6 bg-white rounded-2xl shadow-lg hover-scale">
-                        <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-camera text-white text-xl"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold mb-2 text-gray-800">خدمات التصوير</h3>
-                            <p class="text-gray-600">احجز أفضل المصورين لتوثيق أجمل اللحظات في مناسبتك الخاصة</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-4">
-                            <div class="h-32 bg-gradient-to-br from-purple-400 to-pink-400 rounded-2xl glow"></div>
-                            <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-2xl glow"></div>
-                        </div>
-                        <div class="space-y-4 mt-8">
-                            <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-2xl glow"></div>
-                            <div class="h-32 bg-gradient-to-br from-green-400 to-teal-400 rounded-2xl glow"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-20 gradient-bg">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-8 text-center text-white">
-                <div class="fade-in">
-                    <div class="text-5xl font-bold mb-2">10,000+</div>
-                    <p class="text-xl text-gray-200">عميل سعيد</p>
-                </div>
-                <div class="fade-in">
-                    <div class="text-5xl font-bold mb-2">500+</div>
-                    <p class="text-xl text-gray-200">قاعة وفندق</p>
-                </div>
-                <div class="fade-in">
-                    <div class="text-5xl font-bold mb-2">15</div>
-                    <p class="text-xl text-gray-200">مدينة مختلفة</p>
-                </div>
-                <div class="fade-in">
-                    <div class="text-5xl font-bold mb-2">99%</div>
-                    <p class="text-xl text-gray-200">رضا العملاء</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="py-20 bg-white">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl md:text-5xl font-bold gradient-text mb-6">جاهز لتحويل حلمك إلى حقيقة؟</h2>
-            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                حمل تطبيق احجزلي الآن واستمتع بتجربة حجز لا تُنسى مع عروض حصرية للمستخدمين الجدد
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button
-                    class="gradient-bg text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-lg transition-all hover-scale glow">
-                    <i class="fab fa-apple mr-2"></i>
-                    متاح على App Store
-                </button>
-                <button
-                    class="bg-gray-800 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-700 transition-all hover-scale">
-                    <i class="fab fa-google-play mr-2"></i>
-                    متاح على Google Play
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact" class="bg-gray-900 text-white py-16">
-        <div class="container mx-auto px-6">
-            <div class="grid md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-4 space-x-reverse mb-6">
-                        <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center">
-                            <i class="fas fa-crown text-white text-xl"></i>
-                        </div>
-                        <h3 class="text-2xl font-bold">احجزلي</h3>
-                    </div>
-                    <p class="text-gray-400 mb-6">احجز قاعة أحلامك بضغطة زر مع أفضل الأسعار والخدمات</p>
-                    <div class="flex space-x-4 space-x-reverse">
-                        <a href="#"
-                            class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-500 transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#"
-                            class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-300 transition-colors">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="text-xl font-bold mb-4">خدماتنا</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors">حجز قاعات الأفراح</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">حجز الفنادق</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">خدمات الطعام</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">التصوير والتوثيق</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-xl font-bold mb-4">الدعم</h4>
-                    <ul class="space-y-2 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors">مركز المساعدة</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">الأسئلة الشائعة</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">تواصل معنا</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">سياسة الخصوصية</a></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h4 class="text-xl font-bold mb-4">تواصل معنا</h4>
-                    <div class="space-y-4 text-gray-400">
-                        <div class="flex items-center space-x-3 space-x-reverse">
-                            <i class="fas fa-phone"></i>
-                            <span>+20 123 456 7890</span>
-                        </div>
-                        <div class="flex items-center space-x-3 space-x-reverse">
-                            <i class="fas fa-envelope"></i>
-                            <span>info@ehgezly.com</span>
-                        </div>
-                        <div class="flex items-center space-x-3 space-x-reverse">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>القاهرة، مصر</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 احجزلي. جميع الحقوق محفوظة.</p>
-            </div>
+            <p>&copy; 2025 منصة التجارة الذكية. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
 
     <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.querySelector('.particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Animate stats on scroll
+        function animateStats() {
+            const stats = document.querySelectorAll('.stat-number');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const finalValue = target.textContent;
+                        const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+                        const isPercentage = finalValue.includes('%');
+                        const suffix = finalValue.includes('+') ? '+' : (isPercentage ? '%' : '');
+
+                        let current = 0;
+                        const increment = numericValue / 100;
+                        const timer = setInterval(() => {
+                            current += increment;
+                            if (current >= numericValue) {
+                                current = numericValue;
+                                clearInterval(timer);
+                            }
+                            target.textContent = Math.floor(current) + suffix;
+                        }, 20);
+                    }
+                });
+            });
+
+            stats.forEach(stat => observer.observe(stat));
+        }
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -476,34 +601,33 @@
             });
         });
 
-        // Add scroll effect to navigation
-        window.addEventListener('scroll', function() {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                nav.classList.add('bg-white', 'shadow-lg');
-                nav.classList.remove('glass-effect');
+        // Header scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(0, 0, 0, 0.3)';
+                header.style.backdropFilter = 'blur(20px)';
             } else {
-                nav.classList.remove('bg-white', 'shadow-lg');
-                nav.classList.add('glass-effect');
+                header.style.background = 'rgba(255, 255, 255, 0.1)';
+                header.style.backdropFilter = 'blur(10px)';
             }
         });
 
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            animateStats();
+        });
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                }
+        // Add hover effects to cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) translateY(-10px) scale(1.02)';
             });
-        }, observerOptions);
 
-        document.querySelectorAll('.hover-scale').forEach(el => {
-            observer.observe(el);
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(10deg) translateY(0) scale(1)';
+            });
         });
     </script>
 </body>

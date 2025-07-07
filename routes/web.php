@@ -3,11 +3,11 @@
 use App\Http\Controllers\dashboard\BrandController;
 use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
+use App\Http\Controllers\dashboard\DashboardController;
 use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\NotificationController;
 use App\Http\Controllers\dashboard\ProductController;
-use App\Http\Controllers\dashboard\ReservationController;
 use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
@@ -19,9 +19,7 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
-    Route::get('/', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 
     Route::resource('users', UserController::class);
@@ -59,8 +57,6 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::post('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.mark-as-unread');
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
-
-    Route::resource('reservations', ReservationController::class);
 });
 
 

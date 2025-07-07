@@ -74,11 +74,6 @@
             <span>التقييمات</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{ route('reservations.index') }}">
-            <i class="fas fa-fw fa-calendar"></i>
-            <span>الحجوزات</span></a>
-    </li>
-    <li class="nav-item">
         <a class="nav-link" href="{{ route('notifications.index') }}">
             <i class="fas fa-fw fa-bell"></i>
             <span>الاشعارات</span></a>
