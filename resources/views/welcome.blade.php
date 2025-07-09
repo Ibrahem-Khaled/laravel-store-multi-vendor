@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التجارة الذكية - عرض وطلب</title>
+    <title>منصتي - عرض وطلب</title>
     <style>
         * {
             margin: 0;
@@ -440,7 +440,7 @@
 
     <header>
         <nav>
-            <a href="#" class="logo">🛍️ منصة التجارة الذكية</a>
+            <a href="#" class="logo">🛍️ منصتي</a>
             <ul class="nav-links">
                 @if (Auth::check())
                     <li><a href="{{ route('dashboard') }}">لوحة التحكم</a></li>
@@ -538,7 +538,7 @@
                 <a href="#">من نحن</a>
                 <a href="#">تواصل معنا</a>
             </div>
-            <p>&copy; 2025 منصة التجارة الذكية. جميع الحقوق محفوظة.</p>
+            <p>&copy; 2025 منصتي. جميع الحقوق محفوظة.</p>
         </div>
     </footer>
 
@@ -546,6 +546,7 @@
         // Create floating particles
         function createParticles() {
             const particlesContainer = document.querySelector('.particles');
+            if (!particlesContainer) return;
             const particleCount = 50;
 
             for (let i = 0; i < particleCount; i++) {
@@ -561,12 +562,18 @@
         // Animate stats on scroll
         function animateStats() {
             const stats = document.querySelectorAll('.stat-number');
+            if (stats.length === 0) return;
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const target = entry.target;
+                        // Prevent re-animating
+                        if(target.dataset.animated) return;
+                        target.dataset.animated = "true";
+
                         const finalValue = target.textContent;
-                        const numericValue = parseInt(finalValue.replace(/[^\d]/g, ''));
+                        const numericValue = parseFloat(finalValue.replace(/[^\d.]/g, ''));
                         const isPercentage = finalValue.includes('%');
                         const suffix = finalValue.includes('+') ? '+' : (isPercentage ? '%' : '');
 
@@ -578,11 +585,17 @@
                                 current = numericValue;
                                 clearInterval(timer);
                             }
-                            target.textContent = Math.floor(current) + suffix;
+                            if (isPercentage) {
+                                target.textContent = current.toFixed(1) + suffix;
+                            } else {
+                                target.textContent = Math.floor(current) + suffix;
+                            }
                         }, 20);
+                        // We can unobserve after animation to save resources
+                        observer.unobserve(target);
                     }
                 });
-            });
+            }, { threshold: 0.5 }); // Trigger when 50% of the element is visible
 
             stats.forEach(stat => observer.observe(stat));
         }
@@ -591,7 +604,8 @@
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const targetId = this.getAttribute('href');
+                const target = document.querySelector(targetId);
                 if (target) {
                     target.scrollIntoView({
                         behavior: 'smooth',
@@ -604,6 +618,7 @@
         // Header scroll effect
         window.addEventListener('scroll', () => {
             const header = document.querySelector('header');
+            if (!header) return;
             if (window.scrollY > 50) {
                 header.style.background = 'rgba(0, 0, 0, 0.3)';
                 header.style.backdropFilter = 'blur(20px)';
@@ -613,21 +628,13 @@
             }
         });
 
+        // Add hover effects to cards using CSS for better performance
+        // The JS part for this is removed as it's better handled by CSS :hover pseudo-class which is already present.
+
         // Initialize animations
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             animateStats();
-        });
-
-        // Add hover effects to cards
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0deg) translateY(-10px) scale(1.02)';
-            });
-
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(10deg) translateY(0) scale(1)';
-            });
         });
     </script>
 </body>
