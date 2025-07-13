@@ -105,7 +105,7 @@
                                                     ({{ $product->brand->name ?? 'N/A' }})
                                                 </small></span>
                                             <span
-                                                class="badge bg-primary rounded-pill">{{ $product->created_at->diffForHumans() }}</span>
+                                                class="badge bg-primary rounded-pill">{{ $product?->created_at?->diffForHumans() }}</span>
                                         </li>
                                     @empty
                                         <li class="list-group-item">لا توجد منتجات بعد.</li>
@@ -126,7 +126,7 @@
                                                     ({{ $user->role }})
                                                 </small></span>
                                             <span
-                                                class="badge bg-secondary rounded-pill">{{ $user->created_at->diffForHumans() }}</span>
+                                                class="badge bg-secondary rounded-pill">{{ $user?->created_at?->diffForHumans() }}</span>
                                         </li>
                                     @empty
                                         <li class="list-group-item">لا يوجد مستخدمون جدد.</li>
@@ -214,7 +214,7 @@
                                                 <span
                                                     class="badge {{ $product->is_approved ? 'bg-success' : 'bg-warning' }}">{{ $product->is_approved ? 'مقبول' : 'قيد المراجعة' }}</span>
                                                 <span
-                                                    class="badge bg-primary rounded-pill">{{ $product->created_at->diffForHumans() }}</span>
+                                                    class="badge bg-primary rounded-pill">{{ $product?->created_at?->diffForHumans() }}</span>
                                             </div>
                                         </li>
                                     @empty
