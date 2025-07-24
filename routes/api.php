@@ -22,6 +22,7 @@ Route::group([], function () {
 
 
     Route::get('/cities', [mainApiController::class, 'cities']);
+    Route::get('/slider', [mainApiController::class, 'getSlider']);
     Route::get('/categories', [mainApiController::class, 'Categories']);
     Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
     Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);

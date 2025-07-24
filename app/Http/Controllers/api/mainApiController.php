@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\City;
 use App\Models\Notification;
 use App\Models\Product;
+use App\Models\SlideShow;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
@@ -102,5 +103,15 @@ class mainApiController extends Controller
         $notification->delete();
 
         return response()->json(['message' => 'تم حذف الإشعار']);
+    }
+
+
+    public function getSlider()
+    {
+        $slider = SlideShow::all();
+        if (!$slider) {
+            return response()->json(['message' => 'No slider found'], 404);
+        }
+        return response()->json($slider);
     }
 }
