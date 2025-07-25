@@ -40,12 +40,15 @@ class SlideShowController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
             'link' => 'nullable|url',
-            // 'is_active' => 'boolean',
             'order' => 'integer'
         ]);
 
         $slideData = $request->except('image');
-        $slideData['is_active'] = $request->input('is_active', true);
+
+        // --- ✨ السطر المُعدّل ---
+        // إذا كان حقل is_active موجوداً (checkbox محدد)، تكون القيمة 1، وإلا تكون 0.
+        $slideData['is_active'] = $request->has('is_active') ? 1 : 0;
+
         // تحميل الصورة
         if ($request->hasFile('image')) {
             $slideData['image'] = $request->file('image')->store('slide-shows', 'public');
@@ -63,12 +66,15 @@ class SlideShowController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'link' => 'nullable|url',
-            // 'is_active' => 'boolean',
             'order' => 'integer'
         ]);
 
         $slideData = $request->except('image');
-        $slideData['is_active'] = $request->input('is_active', true);
+
+        // --- ✨ السطر المُعدّل ---
+        // نفس المنطق: إذا كان الحقل موجوداً، تكون القيمة 1، وإلا تكون 0.
+        $slideData['is_active'] = $request->has('is_active') ? 1 : 0;
+
         // تحديث الصورة إذا تم تحميل جديدة
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة إذا كانت موجودة
