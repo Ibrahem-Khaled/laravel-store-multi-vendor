@@ -40,7 +40,7 @@ class SlideShowController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
             'link' => 'nullable|url',
-            'is_active' => 'boolean',
+            // 'is_active' => 'boolean',
             'order' => 'integer'
         ]);
 
@@ -63,7 +63,7 @@ class SlideShowController extends Controller
             'description' => 'nullable|string|max:500',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
             'link' => 'nullable|url',
-            'is_active' => 'boolean',
+            // 'is_active' => 'boolean',
             'order' => 'integer'
         ]);
 
