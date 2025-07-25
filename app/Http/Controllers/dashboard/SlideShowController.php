@@ -68,7 +68,7 @@ class SlideShowController extends Controller
         ]);
 
         $slideData = $request->except('image');
-
+        $slideData['is_active'] = $request->input('is_active', true);
         // تحديث الصورة إذا تم تحميل جديدة
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة إذا كانت موجودة
