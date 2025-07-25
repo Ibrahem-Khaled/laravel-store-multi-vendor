@@ -45,7 +45,7 @@ class SlideShowController extends Controller
         ]);
 
         $slideData = $request->except('image');
-
+        $slideData['is_active'] = $request->input('is_active', true);
         // تحميل الصورة
         if ($request->hasFile('image')) {
             $slideData['image'] = $request->file('image')->store('slide-shows', 'public');
