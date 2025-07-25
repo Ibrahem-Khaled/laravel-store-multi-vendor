@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     protected $guarded = ['id'];
-    protected $appends = ['reservation_type', 'cover'];
+    protected $appends = ['reservation_type', 'cover', 'is_from_favorite'];
     protected $with = ['images']; // <--- أضف هذا السطر
 
     public function subCategory()
@@ -34,11 +34,6 @@ class Product extends Model
         return $this->hasMany(Images::class);
     }
 
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class);
-    }
-
     public function features()
     {
         return $this->belongsToMany(Feature::class, 'feature_products', 'product_id', 'feature_id');
@@ -49,6 +44,10 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany(Product::class, 'product_favorites', 'product_id', 'user_id');
+    }
 
     public function getReservationTypeAttribute()
     {
@@ -66,5 +65,14 @@ class Product extends Model
 
         // في حال لم يكن للمنتج أي صور، أرجع صورة افتراضية
         return url('assets/img/logo-ct.png'); // ضع هنا مسار صورتك الافتراضية
+    }
+
+    public function getIsFromFavoriteAttribute()
+    {
+        $user = auth()->guard('api')->user();
+        if ($user) {
+            return $user->productsFavorites()->where('product_id', $this->id)->exists();
+        }
+        return false;
     }
 }
