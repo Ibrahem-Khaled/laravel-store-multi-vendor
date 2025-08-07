@@ -8,7 +8,24 @@ class Product extends Model
 {
     protected $guarded = ['id'];
     protected $appends = ['reservation_type', 'cover', 'is_from_favorite'];
-    protected $with = ['images']; // <--- أضف هذا السطر
+    protected $with = ['images', 'vendor']; // <--- أضف هذا السطر
+
+
+    /**
+     * Get the vendor (user) that owns the product through the brand.
+     */
+    public function vendor()
+    {
+        return $this->hasOneThrough(
+            User::class,     // الموديل النهائي الذي نريد الوصول إليه (User)
+            Brand::class,    // الموديل الوسيط (Brand)
+            'id',            // المفتاح الأجنبي في الموديل الوسيط (brand_id في جدول products)
+            'id',            // المفتاح الأجنبي في الموديل النهائي (user_id في جدول brands)
+            'brand_id',      // المفتاح المحلي في الموديل الحالي (products)
+            'user_id'        // المفتاح المحلي في الموديل الوسيط (brands)
+        );
+    }
+
 
     public function subCategory()
     {
