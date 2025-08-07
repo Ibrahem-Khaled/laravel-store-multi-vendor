@@ -6,13 +6,40 @@ use App\Http\Controllers\api\productController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-
+/*
+|--------------------------------------------------------------------------
+| Public Routes (لا تحتاج إلى تسجيل دخول)
+|--------------------------------------------------------------------------
+*/
+// --- Auth ---
 Route::post('/login', [authController::class, 'login']);
 Route::post('/register', [authController::class, 'register']);
 
-Route::group([], function () {
+// --- Main Data ---
+Route::get('/cities', [mainApiController::class, 'cities']);
+Route::get('/slider', [mainApiController::class, 'getSlider']);
+Route::get('/categories', [mainApiController::class, 'Categories']);
+Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
+Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
 
+// --- Products ---
+Route::get('/products', [productController::class, 'Products']);
+Route::get('/products/{product}', [productController::class, 'Product']);
+Route::get('/featured/products', [productController::class, 'featuredProducts']);
+Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);
+
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (تحتاج إلى تسجيل دخول ومصادقة)
+|--------------------------------------------------------------------------
+|
+| كل المسارات هنا محمية بواسطة الميدل وير 'api.auth'
+|
+*/
+Route::middleware('api.auth')->group(function () {
+
+    // --- User Profile & Account ---
     Route::post('/update-profile', [authController::class, 'update']);
     Route::post('/change-password', [authController::class, 'changePassword']);
     Route::get('me', [authController::class, 'user']);
@@ -20,22 +47,13 @@ Route::group([], function () {
     Route::post('/addExpoPushToken', [authController::class, 'addExpoPushToken']);
     Route::post('/delete-account', [authController::class, 'deleteAccount']);
 
-
-    Route::get('/cities', [mainApiController::class, 'cities']);
-    Route::get('/slider', [mainApiController::class, 'getSlider']);
-    Route::get('/categories', [mainApiController::class, 'Categories']);
-    Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);
-    Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
-
+    // --- Notifications ---
     Route::get('/notifications/{type?}', [mainApiController::class, 'Notifications']);
     Route::get('/notifications/unread-count', [mainApiController::class, 'unreadCountNotifications']);
     Route::post('/notifications/{id}/mark-as-read', [mainApiController::class, 'markNotificationAsRead']);
     Route::delete('/notifications/{id}', [mainApiController::class, 'deleteNotification']);
 
-    Route::get('/products', [productController::class, 'Products']);
-    Route::get('/products/{product}', [productController::class, 'Product']);
-    Route::get('/featured/products', [productController::class, 'featuredProducts']);
-    Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);
+    // --- Product Interactions (Reviews, Favorites) ---
     Route::post('/products/{product}/reviews', [ProductController::class, 'addReview']);
     Route::delete('/products/{product}/reviews', [ProductController::class, 'deleteReview']);
     Route::get('/user/favorites/products', [ProductController::class, 'userFavorites']);
