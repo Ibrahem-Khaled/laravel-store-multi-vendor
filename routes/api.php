@@ -27,6 +27,7 @@ Route::get('/products', [productController::class, 'Products']);
 Route::get('/products/{product}', [productController::class, 'Product']);
 Route::get('/featured/products', [productController::class, 'featuredProducts']);
 Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);
+Route::get('user/{user}', [authController::class, 'getUser']);
 
 
 /*
@@ -43,7 +44,6 @@ Route::middleware('api.auth')->group(function () {
     Route::post('/update-profile', [authController::class, 'update']);
     Route::post('/change-password', [authController::class, 'changePassword']);
     Route::get('me', [authController::class, 'user']);
-    Route::get('user/{user}', [authController::class, 'getUser']);
     Route::post('/addExpoPushToken', [authController::class, 'addExpoPushToken']);
     Route::post('/delete-account', [authController::class, 'deleteAccount']);
 
@@ -59,5 +59,4 @@ Route::middleware('api.auth')->group(function () {
     Route::get('/user/favorites/products', [ProductController::class, 'userFavorites']);
     Route::post('/favorites/products/{product}', [ProductController::class, 'addToFavorites']);
     Route::delete('/favorites/products/{product}', [ProductController::class, 'removeFromFavorites']);
-
 });

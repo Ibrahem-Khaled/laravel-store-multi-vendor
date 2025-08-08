@@ -15,10 +15,13 @@ class User extends Authenticatable implements JWTSubject
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     protected $guarded = ['id'];
-
+    protected $appends = [
+        'avatar_url'
+    ];
     protected $hidden = [
         'password',
         'remember_token',
+        'avatar'
     ];
 
     protected function casts(): array
@@ -79,5 +82,12 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+
+
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar ? asset('storage/' . $this->avatar) : 'https://cdn-icons-png.flaticon.com/128/2202/2202112.png';
     }
 }
