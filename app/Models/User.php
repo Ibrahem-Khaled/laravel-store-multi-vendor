@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -45,12 +46,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Brand::class);
     }
 
-    public function products()
+    public function products(): HasManyThrough
     {
-        return $this->hasOneThrough(
-            Product::class,
-            Brand::class,    // الموديل الوسيط (Brand)
-        );
+        return $this->hasManyThrough(Product::class, Brand::class);
     }
 
     public function reviews()
