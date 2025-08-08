@@ -45,6 +45,14 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Brand::class);
     }
 
+    public function products()
+    {
+        return $this->hasOneThrough(
+            Product::class,
+            Brand::class,    // الموديل الوسيط (Brand)
+        );
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -53,11 +61,6 @@ class User extends Authenticatable implements JWTSubject
     public function productsFavorites()
     {
         return $this->belongsToMany(Product::class, 'product_favorites', 'user_id', 'product_id');
-    }
-
-    public function reservations()
-    {
-        return $this->hasMany(Reservation::class);
     }
 
     public function userNotifications()

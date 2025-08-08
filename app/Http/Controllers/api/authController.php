@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -170,22 +170,18 @@ class authController extends Controller
         ], 200);
     }
 
-    public function getUser(User $user)
+    public function getUser(User $user): JsonResponse
     {
-        $currentUser = auth()->guard('api')->user();
+        // تحميل العلاقات (Lazy Eager Loading)
+        $user->load('products', 'brands');
 
-        // التحقق مما إذا كان المستخدم الحالي قد حظر المستخدم المطلوب
-        if ($currentUser->blockedUsers()->where('blocked_user_id', $user->id)->exists()) {
-            return response()->json(['error' => 'هذا المستخدم محظور'], 403);
-        }
-
-        $posts = $user->posts()->with('user', 'message')->get();
+        // إرجاع استجابة JSON منظمة
         return response()->json([
-            'user' => $user,
-            'posts' => $posts
+            'status' => true,
+            'message' => 'User data retrieved successfully.',
+            'data' => $user
         ]);
     }
-
     public function addExpoPushToken(Request $request)
     {
         $user = JWTAuth::parseToken()->authenticate();
@@ -200,5 +196,4 @@ class authController extends Controller
         $user->delete();
         return response()->json('success deleted account');
     }
-
 }
