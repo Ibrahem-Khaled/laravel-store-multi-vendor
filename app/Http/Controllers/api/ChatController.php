@@ -75,10 +75,16 @@ class ChatController extends Controller
     {
         Gate::authorize('view-conversation', $conversation);
 
-        $validated = Validator::make($request->all(), [
+        // 3. التحقق من صحة البيانات المدخلة
+        $validator = Validator::make($request->all(), [
             'body' => 'nullable|string|max:5000',
             'attachment' => 'nullable|file|mimes:jpg,png,jpeg,mp3,ogg,m4a,wav,mp4,mov,webm|max:10240',
-        ])->validate();
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
 
         $attachmentUrl = null;
         $messageType = 'text';
