@@ -12,11 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('conversation_user', function (Blueprint $table) {
-            $table->id();
+            // Define the foreign keys first
             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->primary(['conversation_id', 'user_id']); // مفتاح أساسي مركب
-            $table->timestamps();
+
+            // Define the composite primary key
+            $table->primary(['conversation_id', 'user_id']);
         });
     }
 
