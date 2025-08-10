@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,5 +24,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        Gate::define('view-conversation', function (User $user, Conversation $conversation) {
+            // سيتحقق إذا كان معرف المستخدم موجوداً في جدول المشاركين لهذه المحادثة
+            return $conversation->participants->contains($user);
+        });
     }
 }

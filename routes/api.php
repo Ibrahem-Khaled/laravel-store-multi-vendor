@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\authController;
+use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
 use Illuminate\Http\Request;
@@ -59,4 +60,12 @@ Route::middleware('api.auth')->group(function () {
     Route::get('/user/favorites/products', [ProductController::class, 'userFavorites']);
     Route::post('/favorites/products/{product}', [ProductController::class, 'addToFavorites']);
     Route::delete('/favorites/products/{product}', [ProductController::class, 'removeFromFavorites']);
+
+
+    Route::post('/conversations', [ChatController::class, 'startConversation']);
+    Route::get('/conversations', [ChatController::class, 'getConversations']);
+    Route::get('/conversations/{conversation}/messages', [ChatController::class, 'getMessages']);
+    Route::get('/conversations/{conversation}/new-messages', [ChatController::class, 'getNewMessages']);
+    Route::post('/conversations/{conversation}/messages', [ChatController::class, 'sendMessage']);
+
 });
