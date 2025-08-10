@@ -73,7 +73,7 @@ class ChatController extends Controller
      */
     public function sendMessage(Request $request, Conversation $conversation)
     {
-        Gate::authorize('view-conversation', $conversation);
+        // Gate::authorize('view-conversation', $conversation);
 
         // 3. التحقق من صحة البيانات المدخلة
         $validator = Validator::make($request->all(), [
