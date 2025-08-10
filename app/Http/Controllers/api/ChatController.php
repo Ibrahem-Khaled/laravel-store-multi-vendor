@@ -99,10 +99,6 @@ class ChatController extends Controller
             elseif (str_starts_with($mime, 'video/')) $messageType = 'video';
         }
 
-        if (empty($validated['body']) && !$attachmentUrl) {
-            return response()->json(['message' => 'Cannot send an empty message.'], 422);
-        }
-
         $message = $conversation->messages()->create([
             'user_id' => auth()->guard('api')->user()->id,
             'body' => $validated['body'] ?? null,
