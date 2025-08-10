@@ -77,7 +77,7 @@ class ChatController extends Controller
 
         // 3. التحقق من صحة البيانات المدخلة
         $validator = Validator::make($request->all(), [
-            'body' => 'nullable|string|max:5000',
+            'body' => 'required|string|max:5000',
             'attachment' => 'nullable|file|mimes:jpg,png,jpeg,mp3,ogg,m4a,wav,mp4,mov,webm|max:10240',
         ]);
 
