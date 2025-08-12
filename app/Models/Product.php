@@ -38,12 +38,16 @@ class Product extends Model
 
     public function city()
     {
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class)->withDefault([
+            'name' => 'غير محدد'
+        ])->select(['id', 'name']);
     }
 
     public function neighborhood()
     {
-        return $this->belongsTo(Neighborhood::class);
+        return $this->belongsTo(Neighborhood::class)->withDefault([
+            'name' => 'غير محدد'
+        ])->select(['id', 'name']);
     }
 
     public function images()
