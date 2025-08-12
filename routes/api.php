@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\authController;
 use App\Http\Controllers\api\ChatController;
+use App\Http\Controllers\api\CreateProductController;
 use App\Http\Controllers\api\FollowController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
@@ -75,4 +76,7 @@ Route::middleware('api.auth')->group(function () {
     Route::delete('/unfollow/{user}', [FollowController::class, 'unfollow']);
     Route::get('users/{user}/following', [FollowController::class, 'following']);
     Route::get('users/{user}/followers', [FollowController::class, 'followers']);
+
+
+    Route::post('/create/products', [CreateProductController::class, 'store']);
 });
