@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 class FollowController extends Controller
 {
 
-    public function follow(Request $request, User $user)
+    public function follow(User $user)
     {
-        $follower = $request->user();
+        $follower = auth()->guard('api')->user();
 
         if ($follower->id === $user->id) {
             return response()->json(['message' => 'You cannot follow yourself.'], 422);
@@ -30,9 +30,9 @@ class FollowController extends Controller
     /**
      * Unfollow a user.
      */
-    public function unfollow(Request $request, User $user)
+    public function unfollow(User $user)
     {
-        $follower = $request->user();
+        $follower = auth()->guard('api')->user();
 
         // Detach the relationship
         $follower->following()->detach($user->id);
