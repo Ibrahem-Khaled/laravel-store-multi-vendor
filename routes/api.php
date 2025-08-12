@@ -27,6 +27,7 @@ Route::get('/categories/{category}/sub-categories', [mainApiController::class, '
 
 // --- Products ---
 Route::get('/products', [productController::class, 'Products']);
+Route::get('/brands', [productController::class, 'brands']);
 Route::get('/products/{product}', [productController::class, 'Product']);
 Route::get('/featured/products', [productController::class, 'featuredProducts']);
 Route::get('/products/{product}/similars', [ProductController::class, 'similarsProducts']);

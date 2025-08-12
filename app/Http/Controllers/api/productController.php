@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -131,6 +132,13 @@ class productController extends Controller
         ]);
 
         return response()->json($product);
+    }
+
+    public function brands()
+    {
+        $user = auth()->guard('api')->user();
+        $brands = Brand::where('user_id', $user->id)->get();
+        return response()->json($brands);
     }
 
     public function featuredProducts()
