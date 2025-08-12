@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\authController;
 use App\Http\Controllers\api\ChatController;
+use App\Http\Controllers\api\FollowController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
 use Illuminate\Http\Request;
@@ -68,4 +69,10 @@ Route::middleware('api.auth')->group(function () {
     Route::get('/conversations/{conversation}/new-messages', [ChatController::class, 'getNewMessages']);
     Route::post('/conversations/{conversation}/messages', [ChatController::class, 'sendMessage']);
 
+
+    // POST /api/users/{user}/follow
+    Route::post('/follow', [FollowController::class, 'follow']);
+    Route::delete('/unfollow', [FollowController::class, 'unfollow']);
+    Route::get('users/{user}/following', [FollowController::class, 'following']);
+    Route::get('users/{user}/followers', [FollowController::class, 'followers']);
 });
