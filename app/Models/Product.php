@@ -8,8 +8,8 @@ class Product extends Model
 {
     protected $guarded = ['id'];
     protected $appends = ['reservation_type', 'cover', 'is_from_favorite'];
-    protected $with = ['images', 'vendor']; // <--- أضف هذا السطر
-
+    protected $with = ['images', 'vendor', 'city', 'neighborhood']; // <--- أضف هذا السطر
+    protected $hidden = ['neighborhood_id', 'city_id', 'brand_id', 'sub_category_id'];
 
     /**
      * Get the vendor (user) that owns the product through the brand.
