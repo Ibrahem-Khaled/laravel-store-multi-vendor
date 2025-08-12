@@ -16,7 +16,10 @@ class User extends Authenticatable implements JWTSubject
     use HasFactory, Notifiable;
     protected $guarded = ['id'];
     protected $appends = [
-        'avatar_url'
+        'avatar_url',
+        'is_followed',
+        'followers_count',
+        'following_count'
     ];
     protected $hidden = [
         'password',
@@ -111,5 +114,37 @@ class User extends Authenticatable implements JWTSubject
     public function getAvatarUrlAttribute(): string
     {
         return $this->avatar ? asset('storage/' . $this->avatar) : 'https://cdn-icons-png.flaticon.com/128/2202/2202112.png';
+    }
+
+    public function getIsFollowedAttribute(): bool
+    {
+        // 1. Get the authenticated user
+        $authedUser = auth()->guard('api')->user();
+
+        // 2. If there is no authenticated user (guest), return false
+        if (!$authedUser) {
+            return false;
+        }
+
+        // 3. Check if the authenticated user's ID exists in this user's followers list
+        return $this->followers()->where('follower_id', $authedUser->id)->exists();
+    }
+
+    public function getFollowersCountAttribute(): int
+    {
+        // This will return the count of users who follow this user.
+        // It's efficient because it uses the relationship's count query.
+        return $this->followers()->count();
+    }
+
+    /**
+     * Accessor for the number of users this user is following.
+     *
+     * @return int
+     */
+    public function getFollowingCountAttribute(): int
+    {
+        // This will return the count of users this user is following.
+        return $this->following()->count();
     }
 }
