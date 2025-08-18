@@ -25,7 +25,7 @@ class CreateProductController extends Controller
     {
         $user = auth()->guard('api')->user();
 
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -44,13 +44,14 @@ class CreateProductController extends Controller
             'features.*' => 'distinct',
         ]);
 
-        if ($validated->fails()) {
-            return response()->json(['errors' => $validated->errors()], 422);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         if (!$user->brands()->where('id', $request->brand_id)->exists()) {
             return response()->json(['error' => 'هذا البراند لا يتبعك'], 403);
         }
+        $validated = $validator->validated(); // هنا ترجع Array جاهزة
 
 
         $product = DB::transaction(function () use ($request, $validated, $user) {
