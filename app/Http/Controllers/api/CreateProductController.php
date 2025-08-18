@@ -48,7 +48,7 @@ class CreateProductController extends Controller
             return response()->json(['errors' => $validated->errors()], 422);
         }
 
-        if($validated['brand_id'] !== $user->id){
+        if($request->brand_id !== $user->id){
             return response()->json(['message' => 'You are not authorized to create a product for this brand.'], 403);
         }
 
