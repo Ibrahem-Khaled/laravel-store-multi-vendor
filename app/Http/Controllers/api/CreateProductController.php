@@ -174,7 +174,7 @@ class CreateProductController extends Controller
     public function destroy(Product $product)
     {
         $user = auth()->guard('api')->user();
-        if ($product->user_id !== $user->id) {
+        if ($product->vendor->id !== $user->id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to delete this product',
