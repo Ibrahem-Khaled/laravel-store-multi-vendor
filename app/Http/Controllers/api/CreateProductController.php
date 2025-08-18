@@ -11,6 +11,7 @@ use App\Models\Product;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class CreateProductController extends Controller
@@ -168,5 +169,26 @@ class CreateProductController extends Controller
         ]);
 
         return $subCategory->id;
+    }
+
+    public function destroy(Product $product)
+    {
+        $user = auth()->guard('api')->user();
+        if ($product->user_id !== $user->id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to delete this product',
+            ], 403);
+        }
+        // حذف الصور المرتبطة
+        foreach ($product->images as $image) {
+            Storage::disk('public')->delete($image->path);
+            $image->delete();
+        }
+        $product->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'تم حذف المنتج بنجاح',
+        ], 200);
     }
 }
