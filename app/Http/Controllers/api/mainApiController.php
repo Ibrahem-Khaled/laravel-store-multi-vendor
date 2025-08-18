@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\City;
+use App\Models\Feature;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Models\SlideShow;
@@ -42,6 +43,11 @@ class mainApiController extends Controller
         return response()->json($subCategories);
     }
 
+    public function getFeatures()
+    {
+        $features = Feature::all();
+        return response()->json($features);
+    }
 
     public function searchProducts(Request $request)
     {
