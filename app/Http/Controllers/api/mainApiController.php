@@ -53,7 +53,7 @@ class mainApiController extends Controller
     }
 
 
-      public function searchProducts(Request $request)
+    public function searchProducts(Request $request)
     {
         // الآن، الحقل الوحيد المطلوب هو 'query'
         $validated = $request->validate([
@@ -71,7 +71,7 @@ class mainApiController extends Controller
         $query->where(function (Builder $q) use ($searchQuery) {
             // 1. ابحث في الاسم والوصف
             $q->where('name', 'LIKE', "%{$searchQuery}%")
-              ->orWhere('description', 'LIKE', "%{$searchQuery}%");
+                ->orWhere('description', 'LIKE', "%{$searchQuery}%");
 
             // 2. إذا كان النص المدخل رقماً، ابحث في السعر أيضاً
             if (is_numeric($searchQuery)) {
@@ -83,7 +83,7 @@ class mainApiController extends Controller
         // الترتيب الافتراضي حسب الأحدث
         $products = $query->with(['brand', 'images'])->latest()->paginate(15);
 
-        return ProductResource::collection($products);
+        return response()->json($products);
     }
 
     public function Notifications($type = 'all')
