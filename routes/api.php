@@ -24,6 +24,7 @@ Route::get('/search', [mainApiController::class, 'searchProducts']);
 Route::get('/slider', [mainApiController::class, 'getSlider']);
 Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
+Route::get('/features', [mainApiController::class, 'getFeatures']);
 
 // --- Products ---
 Route::get('/products', [productController::class, 'Products']);
