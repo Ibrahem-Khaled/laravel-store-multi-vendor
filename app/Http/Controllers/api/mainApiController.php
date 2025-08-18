@@ -12,8 +12,7 @@ use App\Models\SlideShow;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
-
-
+use Illuminate\Support\Facades\Validator;
 
 class mainApiController extends Controller
 {
@@ -56,12 +55,15 @@ class mainApiController extends Controller
     public function searchProducts(Request $request)
     {
         // الآن، الحقل الوحيد المطلوب هو 'query'
-        $validated = $request->validate([
-            'query' => 'required|string|min:2',
+        $validated = Validator::make($request->all(), [
+            'query' => 'required|string|max:255|min:2',
         ]);
 
+        if ($validated->fails()) {
+            return response()->json($validated->errors(), 422);
+        }
+
         $searchQuery = $validated['query'];
-        return response()->json($searchQuery);
 
         // ابدأ ببناء الاستعلام الأساسي
         $query = Product::query()
