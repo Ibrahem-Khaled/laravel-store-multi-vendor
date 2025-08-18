@@ -24,8 +24,7 @@ class CreateProductController extends Controller
     {
         $user = auth()->guard('api')->user();
 
-        $validated = $request->validate([
-            // --- Validation for product ---
+        $validated = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
@@ -43,6 +42,10 @@ class CreateProductController extends Controller
             'features' => 'nullable|array',
             'features.*' => 'distinct',
         ]);
+
+        if ($validated->fails()) {
+            return response()->json(['errors' => $validated->errors()], 422);
+        }
 
         $product = DB::transaction(function () use ($request, $validated, $user) {
 
