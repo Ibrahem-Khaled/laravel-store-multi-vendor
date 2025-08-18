@@ -101,7 +101,7 @@ class ChatController extends Controller
 
         $message = $conversation->messages()->create([
             'user_id' => auth()->guard('api')->user()->id,
-            'body' => $validated['body'] ?? null,
+            'body' => $request->body,
             'attachment_url' => $attachmentUrl,
             'type' => $messageType,
         ]);
