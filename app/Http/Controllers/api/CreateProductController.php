@@ -11,6 +11,7 @@ use App\Models\Feature;
 use App\Models\SubCategory; // افترض أن لديك موديل للفئات الفرعية
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class CreateProductController extends Controller
 {
