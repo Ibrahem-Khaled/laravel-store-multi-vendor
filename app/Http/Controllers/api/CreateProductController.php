@@ -32,7 +32,7 @@ class CreateProductController extends Controller
             'discount_percent' => 'nullable|integer|min:0|max:100',
 
             // --- Validation for brand ---
-            'brand_id' => 'required|exists:users,id',
+            'brand_id' => 'required|integer|exists:brands,id',
             'brand_image' => 'required_if:brand_id,is_string|image|mimes:jpg,png,jpeg|max:2048',
             'sub_category_id' => 'required',
             'category_id' => 'required_if:sub_category_id,is_string|integer|exists:categories,id',
@@ -48,9 +48,10 @@ class CreateProductController extends Controller
             return response()->json(['errors' => $validated->errors()], 422);
         }
 
-        if($request->brand_id !== $user->id){
-            return response()->json(['message' => 'You are not authorized to create a product for this brand.'], 403);
+        if (!$user->brands()->where('id', $request->brand_id)->exists()) {
+            return response()->json(['error' => 'هذا البراند لا يتبعك'], 403);
         }
+
 
         $product = DB::transaction(function () use ($request, $validated, $user) {
 
