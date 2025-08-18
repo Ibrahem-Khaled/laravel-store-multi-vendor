@@ -34,12 +34,12 @@ class ChatController extends Controller
     /**
      * Get messages for a specific conversation (for initial load).
      */
-    public function getMessages(Request $request, Conversation $conversation)
+    public function getMessages(Conversation $conversation)
     {
         Gate::authorize('view-conversation', $conversation);
 
         $messages = $conversation->messages()
-            ->with('user:id,name')
+            ->with('user')
             ->latest()
             ->paginate(25);
 
@@ -56,7 +56,7 @@ class ChatController extends Controller
 
         $request->validate(['last_message_id' => 'sometimes|integer|exists:messages,id']);
 
-        $query = $conversation->messages()->with('user:id,name');
+        $query = $conversation->messages()->with('user');
 
         if ($request->filled('last_message_id')) {
             $query->where('id', '>', $request->last_message_id);
@@ -107,7 +107,7 @@ class ChatController extends Controller
         ]);
 
         $conversation->touch();
-        $message->load('user:id,name');
+        $message->load('user');
 
         // لا يوجد بث هنا، فقط نرجع الرسالة التي تم إنشاؤها
         return new MessageResource($message);
