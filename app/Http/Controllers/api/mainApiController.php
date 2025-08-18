@@ -61,6 +61,7 @@ class mainApiController extends Controller
         ]);
 
         $searchQuery = $validated['query'];
+        return response()->json($searchQuery);
 
         // ابدأ ببناء الاستعلام الأساسي
         $query = Product::query()
