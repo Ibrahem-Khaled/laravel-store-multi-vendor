@@ -20,6 +20,7 @@ Route::post('/register', [authController::class, 'register']);
 
 // --- Main Data ---
 Route::get('/cities', [mainApiController::class, 'cities']);
+Route::get('/search', [mainApiController::class, 'searchProducts']);
 Route::get('/slider', [mainApiController::class, 'getSlider']);
 Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/sub-categories', [mainApiController::class, 'allSubCategories']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Notification;
@@ -10,6 +11,9 @@ use App\Models\Product;
 use App\Models\SlideShow;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+
+
 
 class mainApiController extends Controller
 {
@@ -46,6 +50,40 @@ class mainApiController extends Controller
     {
         $subCategories = $category->subCategories;
         return response()->json($subCategories);
+    }
+
+
+      public function searchProducts(Request $request)
+    {
+        // الآن، الحقل الوحيد المطلوب هو 'query'
+        $validated = $request->validate([
+            'query' => 'required|string|min:2',
+        ]);
+
+        $searchQuery = $validated['query'];
+
+        // ابدأ ببناء الاستعلام الأساسي
+        $query = Product::query()
+            ->where('is_active', true)
+            ->where('is_approved', true);
+
+        // --- البحث الذكي في الاسم والوصف والسعر ---
+        $query->where(function (Builder $q) use ($searchQuery) {
+            // 1. ابحث في الاسم والوصف
+            $q->where('name', 'LIKE', "%{$searchQuery}%")
+              ->orWhere('description', 'LIKE', "%{$searchQuery}%");
+
+            // 2. إذا كان النص المدخل رقماً، ابحث في السعر أيضاً
+            if (is_numeric($searchQuery)) {
+                $q->orWhere('price', '=', (float)$searchQuery);
+            }
+        });
+
+        // --- جلب النتائج مع العلاقات الأساسية وتقسيمها ---
+        // الترتيب الافتراضي حسب الأحدث
+        $products = $query->with(['brand', 'images'])->latest()->paginate(15);
+
+        return ProductResource::collection($products);
     }
 
     public function Notifications($type = 'all')
