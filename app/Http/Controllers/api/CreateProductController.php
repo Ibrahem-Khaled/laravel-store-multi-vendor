@@ -10,7 +10,6 @@ use App\Models\Feature;
 use App\Models\Product;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -28,7 +27,7 @@ class CreateProductController extends Controller
             'discount_percent' => 'nullable|integer|min:0|max:100',
 
             // --- Validation for brand ---
-            'brand_id'     => 'required|integer|exists:brands,id',
+            'brand_id'     => 'required',
             'brand_image'  => 'required_if:brand_id,is_string|image|mimes:jpg,png,jpeg|max:2048',
 
             // --- Validation for category ---
@@ -57,7 +56,7 @@ class CreateProductController extends Controller
 
         try {
             // ✅ التحقق من ملكية البراند
-            if (!$user->brands()->where('id', $request->brand_id)->exists()) {
+            if (!$user->brands()->where('id', $request->brand_id)->exists() && is_numeric($request->brand_id)) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'هذا البراند لا يتبعك',
@@ -71,6 +70,9 @@ class CreateProductController extends Controller
 
                 // Step 2: Resolve or create the sub-category
                 $subCategoryId = $this->resolveSubCategory($request);
+
+                $subCategory = SubCategory::with('category')->findOrFail($subCategoryId);
+                $categoryId = $subCategory->category_id;
 
                 // Step 3: Create the product
                 $product = Product::create([
@@ -92,12 +94,18 @@ class CreateProductController extends Controller
                 if ($request->filled('features')) {
                     foreach ($request->features as $feature) {
                         if (is_numeric($feature)) {
-                            $exists = Feature::find($feature);
-                            if ($exists) {
-                                $product->features()->attach($exists->id);
+                            $exists = Feature::where('id', $feature)
+                                ->where('category_id', $categoryId)
+                                ->first();
+
+                            if (!$exists) {
+                                throw new \Exception("الميزة برقم {$feature} غير مرتبطة بنفس الفئة الأساسية.");
                             }
+                            $product->features()->attach($exists->id);
                         } else {
-                            $newFeature = Feature::firstOrCreate(['name' => $feature]);
+                            $newFeature = Feature::firstOrCreate(
+                                ['name' => $feature, 'category_id' => $categoryId]
+                            );
                             $product->features()->attach($newFeature->id);
                         }
                     }
@@ -113,20 +121,16 @@ class CreateProductController extends Controller
                     $product->load('brand', 'subCategory.category', 'images', 'features')
                 )
             ], 201);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'حدث خطأ غير متوقع أثناء إنشاء المنتج',
+                'message' => 'حدث خطأ أثناء إنشاء المنتج',
                 'error_details' => $e->getMessage(),
-                'solution' => 'تأكد من صحة البيانات أو راجع المسؤول.'
+                'solution' => 'تأكد من أن جميع المميزات مرتبطة بالفئة الصحيحة.'
             ], 500);
         }
     }
 
-    /**
-     * ✅ دالة التحقق أو إنشاء البراند
-     */
     private function resolveBrand(Request $request, $user)
     {
         if (is_numeric($request->brand_id)) {
@@ -142,15 +146,12 @@ class CreateProductController extends Controller
         $brand = Brand::create([
             'name'   => $request->brand_id,
             'image'  => $path,
-            'user_id'=> $user->id,
+            'user_id' => $user->id,
         ]);
 
         return $brand->id;
     }
 
-    /**
-     * ✅ دالة التحقق أو إنشاء الـ SubCategory
-     */
     private function resolveSubCategory(Request $request)
     {
         if (is_numeric($request->sub_category_id)) {
