@@ -80,4 +80,5 @@ Route::middleware('api.auth')->group(function () {
 
 
     Route::post('/create/products', [CreateProductController::class, 'store']);
+    Route::delete('products/{product}', [CreateProductController::class, 'destroy']);
 });
