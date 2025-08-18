@@ -36,15 +36,6 @@ class mainApiController extends Controller
         return response()->json($categories);
     }
 
-    public function allSubCategories()
-    {
-        $subCategories = SubCategory::with('category')->get();
-        if ($subCategories->isEmpty()) {
-            return response()->json(['message' => 'No subcategories found'], 404);
-        }
-        return response()->json($subCategories);
-    }
-
     public function SubCategories(Category $category)
     {
         $subCategories = $category->subCategories;
@@ -66,8 +57,8 @@ class mainApiController extends Controller
         $searchQuery = $validated['query'];
 
         $query = Product::query();
-            // ->where('is_active', true)
-            // ->where('is_approved', true);
+        // ->where('is_active', true)
+        // ->where('is_approved', true);
 
         $query->where(function (Builder $q) use ($searchQuery) {
             $q->where('name', 'LIKE', "%{$searchQuery}%")

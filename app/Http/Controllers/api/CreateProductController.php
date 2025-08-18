@@ -7,12 +7,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\ProductResource; // لتنسيق الاستجابة
 use App\Models\Brand;
+use App\Models\Feature;
 use App\Models\SubCategory; // افترض أن لديك موديل للفئات الفرعية
 use App\Models\Product;
 use App\Models\User;
 
 class CreateProductController extends Controller
 {
+    /**
+     * Store a newly created product in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \App\Http\Resources\ProductResource
+     */
     public function store(Request $request)
     {
         $user = auth()->guard('api')->user();
@@ -21,25 +28,27 @@ class CreateProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'brand_id' => 'required', // سيتم التحقق منه يدوياً
-            'brand_image' => 'required_if:brand_id,is_string|image|mimes:jpg,png,jpeg|max:2048', // مطلوب فقط عند إنشاء براند جديد
+            'brand_id' => 'required',
+            'brand_image' => 'required_if:brand_id,is_string|image|mimes:jpg,png,jpeg|max:2048',
             'sub_category_id' => 'required',
             'category_id' => 'required_if:sub_category_id,is_string|integer|exists:categories,id',
             'images' => 'required|array|min:1',
             'images.*' => 'image|mimes:jpg,png,jpeg|max:2048',
             'video_url' => 'nullable|url',
+            // --- Validation for features ---
+            'features' => 'nullable|array',
+            'features.*' => 'distinct',
         ]);
 
-        // استخدام Transaction لضمان سلامة البيانات
         $product = DB::transaction(function () use ($request, $validated, $user) {
 
-            // الخطوة 1: تحديد أو إنشاء البراند
+            // Step 1: Resolve or create the brand
             $brandId = $this->resolveBrand($request, $user);
 
-            // الخطوة 2: تحديد أو إنشاء الفئة الفرعية
+            // Step 2: Resolve or create the sub-category
             $subCategoryId = $this->resolveSubCategory($request);
 
-            // الخطوة 3: إنشاء المنتج
+            // Step 3: Create the product
             $product = Product::create([
                 'name' => $validated['name'],
                 'description' => $validated['description'] ?? null,
@@ -48,16 +57,42 @@ class CreateProductController extends Controller
                 'sub_category_id' => $subCategoryId,
             ]);
 
-            // الخطوة 4: رفع وتخزين صور المنتج
+            // Step 4: Upload and store product images
             foreach ($validated['images'] as $image) {
                 $path = $image->store('products', 'public');
                 $product->images()->create(['path' => $path]);
             }
 
+            // Step 5 (New): Resolve and attach features
+            $this->resolveAndAttachFeatures($request, $product);
+
             return $product;
         });
 
-        return new ProductResource($product->load('brand', 'subCategory.category', 'images'));
+        // Load all relationships for the final response
+        return new ProductResource($product->load('brand', 'subCategory.category', 'images', 'features'));
+    }
+
+    /**
+     * Remove the specified product from storage.
+     *
+     * @param  \App\Models\Product  $product
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(Product $product)
+    {
+        // Step 1: Authorize the action (user must own the product's brand)
+        $user = auth()->guard('api')->user();
+        if ($product->brand->user_id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized. You do not own this product.'], 403);
+        }
+
+        // Step 2: Delete the product
+        // Thanks to `onDelete('cascade')` in migrations, related images and feature_products will be deleted automatically.
+        $product->delete();
+
+        // Step 3: Return a success response
+        return response()->json(['message' => 'Product deleted successfully.']);
     }
 
     /**
@@ -68,7 +103,6 @@ class CreateProductController extends Controller
         $brandInput = $request->input('brand_id');
 
         if (is_numeric($brandInput)) {
-            // تأكد من أن البراند موجود ويخص المستخدم الحالي
             if (Brand::where('id', $brandInput)->where('user_id', $user->id)->exists()) {
                 return (int) $brandInput;
             }
@@ -77,10 +111,9 @@ class CreateProductController extends Controller
 
         if (is_string($brandInput)) {
             $brandImage = $request->file('brand_image')->store('brands', 'public');
-
             $brand = Brand::firstOrCreate(
                 ['name' => $brandInput, 'user_id' => $user->id],
-                ['image' => $brandImage] // سيتم ملء حقل الصورة فقط عند الإنشاء لأول مرة
+                ['image' => $brandImage]
             );
             return $brand->id;
         }
@@ -96,7 +129,10 @@ class CreateProductController extends Controller
         $subCategoryInput = $request->input('sub_category_id');
 
         if (is_numeric($subCategoryInput)) {
-            return (int) $subCategoryInput;
+            if (SubCategory::where('id', $subCategoryInput)->exists()) {
+                return (int) $subCategoryInput;
+            }
+            abort(422, 'Sub-category with the given ID does not exist.');
         }
 
         if (is_string($subCategoryInput)) {
@@ -107,5 +143,45 @@ class CreateProductController extends Controller
         }
 
         abort(422, 'Invalid sub_category_id format.');
+    }
+
+    /**
+     * Helper method to resolve (find or create) and attach features to a product.
+     * Features will be linked to the product's main category.
+     */
+    private function resolveAndAttachFeatures(Request $request, Product $product)
+    {
+        $featuresInput = $request->input('features', []);
+        if (empty($featuresInput)) {
+            return;
+        }
+
+        // Find the main category ID from the product's sub-category
+        $mainCategoryId = $product->subCategory->category_id;
+        if (!$mainCategoryId) {
+            // This should not happen if data is consistent, but it's a good safeguard
+            return;
+        }
+
+        $featureIds = [];
+        foreach ($featuresInput as $featureItem) {
+            if (is_numeric($featureItem)) {
+                $featureIds[] = (int) $featureItem;
+            } elseif (is_string($featureItem) && !empty($featureItem)) {
+                // Create the new feature and link it to the MAIN category
+                $newFeature = Feature::firstOrCreate(
+                    [
+                        'name' => trim($featureItem),
+                        'category_id' => $mainCategoryId,
+                    ]
+                );
+                $featureIds[] = $newFeature->id;
+            }
+        }
+
+        // Use sync to attach all features to the product
+        if (!empty($featureIds)) {
+            $product->features()->sync($featureIds);
+        }
     }
 }
