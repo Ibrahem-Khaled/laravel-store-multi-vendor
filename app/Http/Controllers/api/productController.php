@@ -58,32 +58,11 @@ class productController extends Controller
             $query->where('discount_percent', '>=', $request->input('discount_percent'));
         }
 
-        // 8. فلترة حسب توفر المنتج في يوم معين
-        if ($request->filled('day')) {
-            $day = Carbon::parse($request->input('day'))->format('Y-m-d');
-
-            $query->whereDoesntHave('reservations', function ($q) use ($day) {
-                $q->whereDate('start_time', '<=', $day)
-                    ->whereDate('end_time', '>=', $day)
-                    ->where('status', 'active');
-            });
-        }
-
         // 9. فلترة حسب توفر المنتج في فترة زمنية معينة (تاريخ ووقت)
         if ($request->filled('start_time') && $request->filled('end_time')) {
             $start = Carbon::parse($request->input('start_time'));
             $end = Carbon::parse($request->input('end_time'));
 
-            $query->whereDoesntHave('reservations', function ($q) use ($start, $end) {
-                $q->where(function ($q2) use ($start, $end) {
-                    $q2->whereBetween('start_time', [$start, $end])
-                        ->orWhereBetween('end_time', [$start, $end])
-                        ->orWhere(function ($q3) use ($start, $end) {
-                            $q3->where('start_time', '<=', $start)
-                                ->where('end_time', '>=', $end);
-                        });
-                })->where('status', 'active');
-            });
         }
 
         // 10. ترتيب حسب عمود معين (مثلاً: sort_by=name.asc)
@@ -125,10 +104,6 @@ class productController extends Controller
             'neighborhood',
             'reviews',
             // الحجوزات المستقبلية فقط
-            'reservations' => function ($query) {
-                $query->where('status', 'active')
-                    ->where('reservation_date', '>=', now()->toDateString());
-            }
         ]);
 
         return response()->json($product);
