@@ -54,36 +54,30 @@ class mainApiController extends Controller
 
     public function searchProducts(Request $request)
     {
-        // الآن، الحقل الوحيد المطلوب هو 'query'
-        $validated = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'query' => 'required|string|max:255|min:2',
         ]);
 
-        if ($validated->fails()) {
-            return response()->json($validated->errors(), 422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
+        $validated = $validator->validated();
         $searchQuery = $validated['query'];
 
-        // ابدأ ببناء الاستعلام الأساسي
-        $query = Product::query()
-            ->where('is_active', true)
-            ->where('is_approved', true);
+        $query = Product::query();
+            // ->where('is_active', true)
+            // ->where('is_approved', true);
 
-        // --- البحث الذكي في الاسم والوصف والسعر ---
         $query->where(function (Builder $q) use ($searchQuery) {
-            // 1. ابحث في الاسم والوصف
             $q->where('name', 'LIKE', "%{$searchQuery}%")
                 ->orWhere('description', 'LIKE', "%{$searchQuery}%");
 
-            // 2. إذا كان النص المدخل رقماً، ابحث في السعر أيضاً
             if (is_numeric($searchQuery)) {
                 $q->orWhere('price', '=', (float)$searchQuery);
             }
         });
 
-        // --- جلب النتائج مع العلاقات الأساسية وتقسيمها ---
-        // الترتيب الافتراضي حسب الأحدث
         $products = $query->with(['brand', 'images'])->latest()->paginate(15);
 
         return response()->json($products);
