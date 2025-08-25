@@ -26,7 +26,7 @@ class CreateProductController extends Controller
             'description'      => 'nullable|string',
             'price'            => 'required|numeric|min:0',
             'discount_percent' => 'nullable|integer|min:0|max:100',
-
+            'quantity'         => 'nullable|integer|min:0',
             // --- Validation for brand ---
             'brand_id'     => 'required',
             'brand_image'  => 'required_if:brand_id,is_string|image|mimes:jpg,png,jpeg|max:2048',

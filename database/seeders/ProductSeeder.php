@@ -33,6 +33,7 @@ class ProductSeeder extends Seeder
                 'city_id' => $city->id,
                 'neighborhood_id' => $neighborhood->id,
                 'name' => 'منتج رقم ' . $i,
+                'quantity' => rand(1, 100),
                 'description' => 'هذا وصف لمنتج رقم ' . $i . ' ويحتوي على تفاصيل وهمية.',
                 'price' => rand(100, 1000),
                 'discount_percent' => rand(0, 50),

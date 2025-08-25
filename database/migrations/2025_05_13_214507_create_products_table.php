@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
+            $table->bigInteger('quantity')->default(0);
             $table->unsignedTinyInteger('discount_percent')->default(0);
             $table->string('video_url')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();

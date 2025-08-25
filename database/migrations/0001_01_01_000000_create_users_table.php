@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
@@ -22,7 +23,7 @@ return new class extends Migration {
             $table->string('address')->nullable();
             $table->string('country')->nullable();
             $table->boolean('is_verified')->default(false);
-            $table->enum('status', ['active', 'inactive', 'banned'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'banned'])->default('inactive');
             $table->enum('gender', ['male', 'female'])->default('male')->nullable();
             $table->enum('role', ['admin', 'moderator', 'user', 'trader'])->default('user');
             $table->date('birth_date')->nullable();

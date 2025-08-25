@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\dashboard\AdminRoleRequestController;
 use App\Http\Controllers\dashboard\BrandController;
 use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
@@ -57,6 +58,12 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::post('notifications/{notification}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('notifications/{notification}/mark-as-unread', [NotificationController::class, 'markAsUnread'])->name('notifications.mark-as-unread');
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+
+    // مسارات إدارة طلبات تغيير الأدوار
+    Route::get('/role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
+    Route::post('/role-requests/{request}/approve', [AdminRoleRequestController::class, 'approve'])->name('role-requests.approve');
+    Route::post('/role-requests/{request}/reject', [AdminRoleRequestController::class, 'reject'])->name('role-requests.reject');
+    Route::delete('/role-requests/{request}', [AdminRoleRequestController::class, 'destroy'])->name('role-requests.destroy');
 });
 
 

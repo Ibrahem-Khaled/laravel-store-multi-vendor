@@ -183,4 +183,6 @@ class UserController extends Controller
             return back()->with('error', 'حدث خطأ أثناء تحديث الرصيد: ' . $e->getMessage());
         }
     }
+
+
 }
