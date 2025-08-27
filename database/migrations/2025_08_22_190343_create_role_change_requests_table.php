@@ -11,25 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('role_change_requests', function (Blueprint $table) {
+        Schema::create('role_change_requests', function (Blueprint $table) {
             $table->id();
 
-            // ربط الطلب بالمستخدم الذي قدمه
+            // --- معلومات الطلب الأساسية ---
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-
-            // الدور المطلوب (يجب أن تكون القيم متطابقة مع الموجودة في جدول users)
             $table->enum('requested_role', ['admin', 'moderator', 'user', 'trader']);
-
-            // حالة الطلب
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('reason')->nullable(); // سبب عام للطلب
 
-            // سبب الطلب (لماذا يريد المستخدم هذا الدور)
-            $table->text('reason')->nullable();
+            // --- معلومات شخصية للتحقق (تُملأ إذا كان الدور المطلوب "تاجر") ---
+            $table->string('full_name')->nullable(); // الاسم الكامل كما في الهوية
+            $table->string('national_id_number')->nullable(); // رقم الهوية الوطنية أو الإقامة
+            $table->string('national_id_image_path')->nullable(); // مسار صورة الهوية
 
-            // ملاحظات من المدير (سبب الرفض أو الموافقة)
+            // --- معلومات النشاط التجاري (تُملأ إذا كان الدور المطلوب "تاجر") ---
+            $table->string('store_name')->nullable(); // اسم المتجر المقترح
+            $table->text('store_description')->nullable(); // نبذة عن المتجر
+            $table->string('commercial_registration_number')->nullable(); // رقم السجل التجاري
+            $table->string('commercial_registration_image_path')->nullable(); // مسار صورة السجل التجاري
+            $table->string('bank_account_number')->nullable(); // رقم الحساب البنكي (IBAN) لاستقبال المدفوعات
+            $table->string('bank_name')->nullable(); // اسم البنك
+
+            // --- معلومات المراجعة بواسطة المدير ---
             $table->text('admin_notes')->nullable();
-
-            // ربط الطلب بالمدير الذي قام بمراجعته (اختياري لكن مفيد)
             $table->foreignId('reviewed_by')->nullable()->constrained('users')->onDelete('set null');
 
             $table->timestamps();

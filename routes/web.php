@@ -60,10 +60,8 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
 
     // مسارات إدارة طلبات تغيير الأدوار
-    Route::get('/role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
-    Route::post('/role-requests/{request}/approve', [AdminRoleRequestController::class, 'approve'])->name('role-requests.approve');
-    Route::post('/role-requests/{request}/reject', [AdminRoleRequestController::class, 'reject'])->name('role-requests.reject');
-    Route::delete('/role-requests/{request}', [AdminRoleRequestController::class, 'destroy'])->name('role-requests.destroy');
+    Route::get('role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
+    Route::put('role-requests/{roleRequest}', [AdminRoleRequestController::class, 'update'])->name('role-requests.update');
 });
 
 

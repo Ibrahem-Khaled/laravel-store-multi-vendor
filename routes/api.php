@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\api\authController;
+use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\ChatController;
 use App\Http\Controllers\api\CreateProductController;
 use App\Http\Controllers\api\FollowController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
+use App\Http\Controllers\api\RoleChangeRequestController;
+use App\Http\Controllers\api\UserAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -82,4 +85,20 @@ Route::middleware('api.auth')->group(function () {
 
     Route::post('/create/products', [CreateProductController::class, 'store']);
     Route::delete('products/{product}', [CreateProductController::class, 'destroy']);
+
+
+    //this api handles user addresses
+    Route::apiResource('user/addresses', UserAddressController::class)->only(['index', 'store', 'destroy']);
+
+    // Cart Routes
+    Route::get('/cart', [CartController::class, 'index']);
+    Route::post('/cart', [CartController::class, 'store']);
+    // مسار حذف منتج واحد من السلة
+    Route::delete('/cart/items/{product_id}', [CartController::class, 'destroyItem']);
+    // مسار حذف السلة بأكملها
+    Route::delete('/cart', [CartController::class, 'destroyCart']);
+
+
+    Route::get('role-change-request', [RoleChangeRequestController::class, 'show']);
+    Route::post('role-change-request', [RoleChangeRequestController::class, 'store']);
 });

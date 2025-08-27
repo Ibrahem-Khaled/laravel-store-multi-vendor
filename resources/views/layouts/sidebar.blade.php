@@ -26,6 +26,9 @@
             aria-expanded="true" aria-controls="collapseUsers">
             <i class="fas fa-fw fa-users-cog"></i>
             <span>إدارة المستخدمين</span>
+            @if (isset($pendingRequestsCount) && $pendingRequestsCount > 0)
+                <span class="badge badge-danger badge-counter ml-2">{{ $pendingRequestsCount }}</span>
+            @endif
         </a>
         <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
@@ -37,7 +40,7 @@
                 <a class="collapse-item" href="{{ route('role-requests.index') }}"> {{-- تأكد من اسم الراوت هنا --}}
                     <i class="fas fa-fw fa-user-shield text-gray-600"></i>
                     <span>طلبات الصلاحيات</span>
-                    @if(isset($pendingRequestsCount) && $pendingRequestsCount > 0)
+                    @if (isset($pendingRequestsCount) && $pendingRequestsCount > 0)
                         <span class="badge badge-danger badge-counter ml-2">{{ $pendingRequestsCount }}</span>
                     @endif
                 </a>
