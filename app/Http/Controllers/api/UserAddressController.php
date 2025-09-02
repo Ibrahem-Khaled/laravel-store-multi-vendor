@@ -10,8 +10,23 @@ class UserAddressController extends Controller
 {
     public function index()
     {
+        // الحصول على المستخدم
         $user = auth()->guard('api')->user();
-        return response()->json($user->addresses);
+
+        // [تحسين 1] التحقق من أن المستخدم مسجل دخوله
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthenticated.' // رسالة خطأ واضحة
+            ], 401); // 401 هو رمز HTTP المناسب لغير المصرح لهم
+        }
+
+        // [تحسين 2] توحيد شكل الاستجابة الناجحة
+        return response()->json([
+            'success' => true,
+            'message' => 'Addresses retrieved successfully.',
+            'data'    => $user->addresses
+        ]);
     }
 
     // إضافة عنوان جديد
