@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -97,9 +98,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(RoleChangeRequest::class);
     }
 
-    public function addresses()
+    public function addresses(): HasMany
     {
-        return $this->hasMany(UserAddress::class);
+        return $this->hasMany(UserAddress::class, 'user_id', 'id');
     }
     public function carts()
     {
