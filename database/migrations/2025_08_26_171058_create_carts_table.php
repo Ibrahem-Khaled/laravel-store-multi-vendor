@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_address_id')->nullable()->constrained()->onDelete('set null');
-            $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
+            $table->enum('status', ['pending', 'completed', 'cancelled', 'in_progress'])->default('pending');
             $table->string('payment_method')->default('cash_on_delivery');
             $table->timestamps();
         });

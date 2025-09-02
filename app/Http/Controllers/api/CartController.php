@@ -55,6 +55,24 @@ class CartController extends Controller
         return response()->json($cart->load('items.product'), 201);
     }
 
+    public function checkOut(Request $request)
+    {
+        $user = auth()->guard('api')->user();
+        $cart = $user->carts()->where('status', 'pending')->first();
+
+        if (!$cart || $cart->items->isEmpty()) {
+            return response()->json(['message' => 'السلة فارغة أو غير موجودة.'], 400);
+        }
+
+        // تحديث حالة السلة إلى "مكتملة"
+        $cart->status = 'in_progress';
+        $cart->user_address_id = $request->user_address_id ?? $user->addresses()->first()?->id;
+        $cart->payment_method = $request->payment_method ?? 'cash_on_delivery';
+        $cart->save();
+
+        return response()->json(['message' => 'تم إتمام عملية الشراء بنجاح.', 'cart' => $cart], 200);
+    }
+
     public function destroyItem($productId)
     {
         $user = auth()->guard('api')->user();

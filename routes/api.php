@@ -98,6 +98,7 @@ Route::middleware('api.auth')->group(function () {
     Route::delete('/cart/items/{product_id}', [CartController::class, 'destroyItem']);
     // مسار حذف السلة بأكملها
     Route::delete('/cart', [CartController::class, 'destroyCart']);
+    Route::post('/cart/checkout', [CartController::class, 'checkOut']);
 
 
     Route::get('role-change-request', [RoleChangeRequestController::class, 'show']);
