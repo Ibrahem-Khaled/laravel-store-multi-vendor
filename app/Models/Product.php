@@ -70,6 +70,7 @@ class Product extends Model
         return $this->belongsToMany(Product::class, 'product_favorites', 'product_id', 'user_id');
     }
 
+    ////////
     public function getReservationTypeAttribute()
     {
         return $this->subCategory->type;

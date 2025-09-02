@@ -17,7 +17,7 @@ class CartController extends Controller
         $cart = $user->carts()->firstOrCreate(
             ['status' => 'pending'], // الشروط
             ['payment_method' => 'cash_on_delivery'] // القيم عند الإنشاء
-        )->load('items.product.store'); // تحميل العلاقات اللازمة
+        )->load('items.product'); // تحميل العلاقات اللازمة
 
         return response()->json($cart);
     }
