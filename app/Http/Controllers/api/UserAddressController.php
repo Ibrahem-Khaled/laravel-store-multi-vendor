@@ -34,7 +34,7 @@ class UserAddressController extends Controller
         // هنا بترجع البيانات بعد الفاليديشن
         $validatedData = $validator->validated();
 
-        $address = $user()->addresses()->create($validatedData);
+        $address = $user->addresses()->create($validatedData);
 
         return response()->json($address, 201);
     }
