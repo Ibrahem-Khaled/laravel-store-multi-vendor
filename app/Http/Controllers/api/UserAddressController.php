@@ -12,7 +12,7 @@ class UserAddressController extends Controller
     {
         // الحصول على المستخدم
         $user = auth()->guard('api')->user();
-
+        $user->load('addresses');
         // [تحسين 1] التحقق من أن المستخدم مسجل دخوله
         if (!$user) {
             return response()->json([
