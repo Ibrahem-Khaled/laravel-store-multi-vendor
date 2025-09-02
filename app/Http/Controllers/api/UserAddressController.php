@@ -17,6 +17,8 @@ class UserAddressController extends Controller
     // إضافة عنوان جديد
     public function store(Request $request)
     {
+        $user = auth()->guard('api')->user();
+
         $validator = Validator::make($request->all(), [
             'type' => 'required|string|in:home,work,other',
             'address_line_1' => 'nullable|string|max:255',
@@ -32,7 +34,7 @@ class UserAddressController extends Controller
         // هنا بترجع البيانات بعد الفاليديشن
         $validatedData = $validator->validated();
 
-        $address = $request->user()->addresses()->create($validatedData);
+        $address = $user()->addresses()->create($validatedData);
 
         return response()->json($address, 201);
     }
