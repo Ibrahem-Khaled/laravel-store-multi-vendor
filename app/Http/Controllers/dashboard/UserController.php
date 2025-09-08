@@ -3,186 +3,108 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\dashboard\UserStoreRequest;
+use App\Http\Requests\dashboard\UserUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
-
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // <-- أضف هذا
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+    use AuthorizesRequests; // <-- أضف هذا السطر
+
     public function index(Request $request)
     {
-        // إحصائيات المستخدمين
-        $usersCount = User::count();
-        $activeUsersCount = User::where('status', 'active')->count();
-        $adminsCount = User::where('role', 'admin')->count();
-        $roles = ['admin', 'moderator', 'user', 'trader'];
+        $this->authorize('manage-users');
 
-        // فلترة حسب الدور
-        $selectedRole = $request->role ?? 'all';
-        $users = User::query();
+        $selectedRole = $request->get('role', 'all');
+        $search = $request->get('search');
 
+        $query = User::query();
         if ($selectedRole !== 'all') {
-            $users->where('role', $selectedRole);
+            $query->where('role', $selectedRole);
         }
-
-        // البحث
-        if ($request->has('search')) {
-            $search = $request->search;
-            $users->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%")
-                    ->orWhere('phone', 'like', "%$search%")
-                    ->orWhere('username', 'like', "%$search%");
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
-        $users = $users->latest()->paginate(10);
+        $users = $query->latest()->paginate(10)->withQueryString();
+
+        $roles = ['admin', 'moderator', 'user', 'trader'];
+
+        // الإحصائيات العامة
+        $usersCount        = User::count();
+        $activeUsersCount  = User::where('status', 'active')->count();
+        $adminsCount       = User::where('role', 'admin')->count();
+
+        // عداد لكل دور (للتابات)
+        $roleCounts = User::select('role', DB::raw('COUNT(*) as c'))
+            ->groupBy('role')->pluck('c', 'role'); // ['admin'=>10, 'user'=>50, ...]
 
         return view('dashboard.users.index', compact(
             'users',
+            'roles',
+            'selectedRole',
             'usersCount',
             'activeUsersCount',
             'adminsCount',
-            'roles',
-            'selectedRole'
+            'roleCounts'
         ));
     }
 
-    public function store(Request $request)
+
+    public function store(UserStoreRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:255|unique:users',
-            'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'nullable|string|max:20|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,moderator,user,trader',
-            'status' => 'required|in:active,inactive,banned',
-            'gender' => 'nullable|in:male,female',
-            'birth_date' => 'nullable|date',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bio' => 'nullable|string|max:500',
-            'address' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:100',
-        ]);
-
-        $userData = $request->except('password', 'avatar');
-        $userData['password'] = Hash::make($request->password);
-
+        $data = $request->validated();
         if ($request->hasFile('avatar')) {
-            $userData['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
+        $data['password'] = bcrypt($data['password']);
+        // status المبدئي للمستخدم الجديد يكون pending حتى تتم الموافقة
+        $data['status'] = $data['status'] ?? 'pending';
 
-        User::create($userData);
 
-        return redirect()->route('users.index')->with('success', 'تم إنشاء المستخدم بنجاح');
+        $user = User::create($data);
+        return back()->with('success', 'تم إنشاء المستخدم بنجاح (بانتظار الاعتماد).');
     }
 
-    public function update(Request $request, User $user)
+
+    public function update(UserUpdateRequest $request, User $user)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'phone' => ['nullable', 'string', 'max:20', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:admin,moderator,user,trader',
-            'status' => 'required|in:active,inactive,banned',
-            'gender' => 'nullable|in:male,female',
-            'birth_date' => 'nullable|date',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'bio' => 'nullable|string|max:500',
-            'address' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:100',
-        ]);
-
-        $userData = $request->except('password', 'avatar');
-
-        if ($request->filled('password')) {
-            $userData['password'] = Hash::make($request->password);
-        }
-
+        $data = $request->validated();
         if ($request->hasFile('avatar')) {
-            // حذف الصورة القديمة إذا كانت موجودة
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
-            }
-            $userData['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            if ($user->avatar) Storage::disk('public')->delete($user->avatar);
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
-
-        $user->update($userData);
-
-        return redirect()->route('users.index')->with('success', 'تم تحديث المستخدم بنجاح');
+        $user->update($data);
+        return back()->with('success', 'تم تحديث بيانات المستخدم بنجاح.');
     }
+
 
     public function destroy(User $user)
     {
-        // حذف الصورة إذا كانت موجودة
-        if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-        }
-
+        if ($user->avatar) Storage::disk('public')->delete($user->avatar);
         $user->delete();
-
-        return redirect()->route('users.index')->with('success', 'تم حذف المستخدم بنجاح');
+        return back()->with('success', 'تم حذف المستخدم.');
     }
 
-    public function updateCoins(Request $request, User $user)
+
+    public function approve(User $user)
     {
-        $request->validate([
-            'coins' => 'required|integer|min:0',
-            'operation' => 'required|in:add,subtract,set',
-            'description' => 'nullable|string|max:255'
-        ]);
-
-        $currentCoins = $user->coins;
-        $newCoins = $request->coins;
-        $description = $request->description ?? 'تحديث رصيد العملات';
-
-        DB::beginTransaction();
-        try {
-            switch ($request->operation) {
-                case 'add':
-                    $user->coins += $newCoins;
-                    $message = "تم إضافة $newCoins عملة بنجاح. الرصيد الجديد: {$user->coins}";
-                    $amount = $newCoins;
-                    break;
-                case 'subtract':
-                    if ($currentCoins < $newCoins) {
-                        return back()->with('error', 'لا يمكن خصم هذا المبلغ. الرصيد الحالي غير كافي.');
-                    }
-                    $user->coins -= $newCoins;
-                    $message = "تم خصم $newCoins عملة بنجاح. الرصيد الجديد: {$user->coins}";
-                    $amount = -$newCoins;
-                    break;
-                case 'set':
-                    $amount = $newCoins - $currentCoins;
-                    $user->coins = $newCoins;
-                    $message = "تم تعيين الرصيد إلى $newCoins عملة بنجاح";
-                    break;
-            }
-
-            $user->save();
-
-            // تسجيل العملية في سجل التحويلات
-            // $user->coinTransactions()->create([
-            //     'amount' => $amount,
-            //     'description' => $description,
-            //     'admin_id' => auth()->id()
-            // ]);
-
-            DB::commit();
-
-            return back()->with('success', $message);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'حدث خطأ أثناء تحديث الرصيد: ' . $e->getMessage());
-        }
+        $user->update(['status' => 'active', 'is_verified' => true]);
+        return back()->with('success', 'تم اعتماد وتفعيل المستخدم.');
     }
 
 
+    public function deactivate(User $user)
+    {
+        $user->update(['status' => 'inactive']);
+        return back()->with('success', 'تم إلغاء تفعيل المستخدم.');
+    }
 }

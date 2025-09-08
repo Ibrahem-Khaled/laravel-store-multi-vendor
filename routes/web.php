@@ -6,8 +6,10 @@ use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
 use App\Http\Controllers\dashboard\DashboardController;
 use App\Http\Controllers\dashboard\FeatureController;
+use App\Http\Controllers\dashboard\MerchantAdminController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
 use App\Http\Controllers\dashboard\NotificationController;
+use App\Http\Controllers\dashboard\OrderAdminController;
 use App\Http\Controllers\dashboard\ProductController;
 use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
@@ -24,7 +26,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
 
     Route::resource('users', UserController::class);
-    Route::put('users/{user}/coins', [UserController::class, 'updateCoins'])->name('users.updateCoins');
+    // اعتماد/إلغاء تفعيل
+    Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
+    Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
 
     Route::resource('categories', CategoryController::class);
     Route::resource('sub-categories', SubCategoryController::class);
@@ -62,6 +66,17 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     // مسارات إدارة طلبات تغيير الأدوار
     Route::get('role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
     Route::put('role-requests/{roleRequest}', [AdminRoleRequestController::class, 'update'])->name('role-requests.update');
+
+
+    Route::get('/orders',         [OrderAdminController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderAdminController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/status', [OrderAdminController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::post('/orders/bulk',   [OrderAdminController::class, 'bulkAction'])->name('orders.bulk');
+
+    // التجّار
+    Route::get('/merchants',           [MerchantAdminController::class, 'index'])->name('merchants.index');
+    Route::get('/merchants/{merchant}', [MerchantAdminController::class, 'show'])->name('merchants.show');
+    Route::post('/merchants/{merchant}/settlements', [MerchantAdminController::class, 'settle'])->name('merchants.settle');
 });
 
 

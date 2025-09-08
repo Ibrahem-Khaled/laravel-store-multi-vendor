@@ -25,10 +25,10 @@
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
             aria-expanded="true" aria-controls="collapseUsers">
             <i class="fas fa-fw fa-users-cog"></i>
-            <span>إدارة المستخدمين</span>
             @if (isset($pendingRequestsCount) && $pendingRequestsCount > 0)
                 <span class="badge badge-danger badge-counter ml-2">{{ $pendingRequestsCount }}</span>
             @endif
+            <span>إدارة المستخدمين</span>
         </a>
         <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
@@ -67,12 +67,51 @@
     </li>
 
     <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseOrders"
+            aria-expanded="false" aria-controls="collapseOrders">
+            <i class="fas fa-fw fa-shopping-cart"></i>
+            <span>إدارة الطلبات</span>
+        </a>
+        <div id="collapseOrders" class="collapse" aria-labelledby="headingOrders" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">الطلبات:</h6>
+                <a class="collapse-item" href="{{ route('orders.index') }}">كل الطلبات</a>
+                {{-- ممكن تضيف فلاتر سريعة كرابط إن أحببت: --}}
+                <a class="collapse-item" href="{{ route('orders.index', ['status' => 'pending']) }}">قيد
+                    الانتظار</a>
+                <a class="collapse-item" href="{{ route('orders.index', ['status' => 'paid']) }}">مدفوعة</a>
+                <a class="collapse-item" href="{{ route('orders.index', ['status' => 'shipped']) }}">مُرسلة</a>
+                <a class="collapse-item" href="{{ route('orders.index', ['status' => 'completed']) }}">مكتملة</a>
+                <a class="collapse-item" href="{{ route('orders.index', ['status' => 'cancelled']) }}">ملغاة</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseMerchants"
+            aria-expanded="false" aria-controls="collapseMerchants">
+            <i class="fas fa-fw fa-user-tie"></i>
+            <span>التجّار والمحاسبة</span>
+        </a>
+        <div id="collapseMerchants" class="collapse" aria-labelledby="headingMerchants" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">إدارة التجّار:</h6>
+                <a class="collapse-item" href="{{ route('merchants.index') }}">قائمة التجّار</a>
+                {{-- أمثلة روابط تقارير سريعة --}}
+                <a class="collapse-item" href="{{ route('merchants.index', ['sort' => 'balance']) }}">أعلى
+                    أرصدة</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseLocations"
             aria-expanded="true" aria-controls="collapseLocations">
             <i class="fas fa-fw fa-map-marked-alt"></i>
             <span>إدارة المواقع</span>
         </a>
-        <div id="collapseLocations" class="collapse" aria-labelledby="headingLocations" data-parent="#accordionSidebar">
+        <div id="collapseLocations" class="collapse" aria-labelledby="headingLocations"
+            data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">المواقع الجغرافية:</h6>
                 <a class="collapse-item" href="{{ route('cities.index') }}">المدن</a>

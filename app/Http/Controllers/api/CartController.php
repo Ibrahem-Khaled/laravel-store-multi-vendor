@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Product;
+use App\Services\Checkout\CreateOrderFromCart;
 
 class CartController extends Controller
 {
@@ -16,7 +17,6 @@ class CartController extends Controller
         // نستخدم firstOrCreate لإنشاء سلة تلقائيًا إذا لم تكن موجودة لتجنب الأخطاء
         $cart = $user->carts()->firstOrCreate(
             ['status' => 'pending'], // الشروط
-            ['payment_method' => 'cash_on_delivery'] // القيم عند الإنشاء
         )->load('items.product'); // تحميل العلاقات اللازمة
 
         return response()->json($cart);
@@ -42,9 +42,7 @@ class CartController extends Controller
         // 3. الحصول على السلة الحالية أو إنشاء واحدة جديدة
         $cart = $user->carts()->firstOrCreate(
             ['status' => 'pending'],
-            ['payment_method' => 'cash_on_delivery']
         );
-
         // 4. إضافة المنتج أو تحديث كميته باستخدام updateOrCreate
         // هذا الخيار أفضل وأكثر أمانًا من التحقق اليدوي
         $cart->items()->updateOrCreate(
@@ -55,22 +53,33 @@ class CartController extends Controller
         return response()->json($cart->load('items.product'), 201);
     }
 
-    public function checkOut(Request $request)
+    public function checkOut(Request $request, CreateOrderFromCart $service)
     {
         $user = auth()->guard('api')->user();
-        $cart = $user->carts()->where('status', 'pending')->first();
+
+        $cart = $user->carts()
+            ->where('status', 'pending')
+            ->with(['items.product.brand.user']) // نحضّر كل العلاقات لقراءة التاجر
+            ->first();
 
         if (!$cart || $cart->items->isEmpty()) {
             return response()->json(['message' => 'السلة فارغة أو غير موجودة.'], 400);
         }
 
-        // تحديث حالة السلة إلى "مكتملة"
-        $cart->status = 'in_progress';
-        $cart->user_address_id = $request->user_address_id ?? $user->addresses()->first()?->id;
-        $cart->payment_method = $request->payment_method ?? 'cash_on_delivery';
-        $cart->save();
+        // اختيار وسيلة الدفع والعنوان
+        $paymentMethod  = $request->input('payment_method', 'cash_on_delivery'); // cod|card
+        $userAddressId  = $request->input('user_address_id', $user->addresses()->value('id'));
 
-        return response()->json(['message' => 'تم إتمام عملية الشراء بنجاح.', 'cart' => $cart], 200);
+        // نُحوّل السلة إلى Order + OrderItems + Ledger داخل معاملة (transaction)
+        $order = $service->handle($cart, [
+            'payment_method'  => $paymentMethod,
+            'user_address_id' => $userAddressId,
+        ]);
+
+        return response()->json([
+            'message' => 'تم إنشاء الطلب وحساب التسويات المحاسبية.',
+            'order'   => $order->load('items'),
+        ], 201);
     }
 
     public function destroyItem($productId)

@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 'is_verified' => $faker->boolean,
                 'status' => $faker->randomElement(['active', 'inactive', 'banned']),
                 'gender' => $faker->randomElement(['male', 'female']),
-                'role' => $faker->randomElement(['user', 'trader']),
+                'role' => $faker->randomElement(['user', 'trader', 'admin']),
                 'birth_date' => $faker->date('Y-m-d', '2005-01-01'),
                 'password' => Hash::make('password123'), // كلمة مرور افتراضية
                 'coins' => rand(0, 500),

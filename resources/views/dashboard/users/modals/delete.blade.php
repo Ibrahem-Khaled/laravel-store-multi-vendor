@@ -1,25 +1,25 @@
-<div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1" role="dialog"
-    aria-labelledby="deleteUserModalLabel{{ $user->id }}" aria-hidden="true">
+<div class="modal fade" id="deleteUserModal{{ $user->id }}" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
+
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteUserModalLabel{{ $user->id }}">تأكيد الحذف</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title">حذف مستخدم</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             </div>
+
             <div class="modal-body">
-                <p>هل أنت متأكد من رغبتك في حذف المستخدم <strong>{{ $user->name }}</strong>؟</p>
-                <p class="text-danger">هذا الإجراء لا يمكن التراجع عنه.</p>
+                هل أنت متأكد من حذف المستخدم <strong>{{ $user->name }}</strong>؟
             </div>
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
-                <form action="{{ route('users.destroy', $user->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
+                <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline">
+                    @csrf @method('DELETE')
                     <button type="submit" class="btn btn-danger">حذف</button>
                 </form>
             </div>
+
         </div>
     </div>
 </div>

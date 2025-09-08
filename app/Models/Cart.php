@@ -9,8 +9,6 @@ class Cart extends Model
     protected $fillable = [
         'user_id',
         'user_address_id',
-        'status',
-        'payment_method',
     ];
 
     public function user()
