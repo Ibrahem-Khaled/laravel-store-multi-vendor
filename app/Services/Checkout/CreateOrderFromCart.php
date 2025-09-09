@@ -84,7 +84,7 @@ class CreateOrderFromCart
                 'grand_total'  => $subtotal, // عدّلها لاحقاً لو عندك شحن/خصم
             ]);
 
-            $cart->update(['status' => 'completed']);
+            $cart->delete();
 
             return $order;
         });
