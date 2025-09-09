@@ -6,14 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RoleChangeRequest extends Model
 {
-    protected $fillable = [
-        'user_id',
-        'requested_role',
-        'status',
-        'reason',
-        'admin_notes',
-        'reviewed_by',
-    ];
+    protected $guarded = ['id'];
 
     // علاقة: كل طلب ينتمي لمستخدم واحد
     public function user()
