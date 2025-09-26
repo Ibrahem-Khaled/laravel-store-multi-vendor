@@ -5,6 +5,7 @@ namespace App\Traits\user;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\Conversation;
+use App\Models\Driver;
 use App\Models\MerchantLedgerEntry;
 use App\Models\MerchantPayment;
 use App\Models\MerchantProfile;
@@ -86,5 +87,10 @@ trait UserRelations
     public function merchantProfile()
     {
         return $this->hasOne(MerchantProfile::class, 'user_id');
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class, 'user_id');
     }
 }

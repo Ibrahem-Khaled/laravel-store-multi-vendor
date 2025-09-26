@@ -1,11 +1,217 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* Import custom fonts */
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/assets/public/fonts/SFPRODISPLAYREGULAR.OTF') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+}
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/assets/public/fonts/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/assets/public/fonts/SFPRODISPLAYBOLD.OTF') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'SF Pro Display', 'Tajawal', sans-serif !important;
+    line-height: 1.6;
+    background: #ffffff;
+    min-height: 100vh;
+    direction: rtl;
+}
+
+/* Custom Components */
+
+/* Custom Classes */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-secondary {
+    background: linear-gradient(45deg, #f093fb, #f5576c);
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-custom {
+    @apply px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform scale-100 no-underline inline-flex items-center;
+}
+
+.btn-custom:hover {
+    @apply scale-105;
+}
+
+.btn-primary-custom {
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg;
+}
+
+.btn-primary-custom:hover {
+    @apply shadow-xl;
+}
+
+.btn-secondary-custom {
+    @apply bg-white text-gray-700 border-2 border-gray-300;
+}
+
+.btn-secondary-custom:hover {
+    @apply border-gray-400 bg-gray-50;
+}
+
+.card-hover {
+    @apply transition-all duration-300 transform translate-y-0;
+}
+
+.card-hover:hover {
+    @apply -translate-y-2 shadow-xl;
+}
+
+.glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+}
+
+/* Additional TechStore Styles */
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RTL Support */
+.gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Improved mobile responsiveness */
+@media (max-width: 768px) {
+    .mobile-text-center {
+        text-align: center !important;
+    }
+
+    .mobile-items-center {
+        align-items: center !important;
+    }
+}
+
+/* Blob animations */
+@keyframes blob {
+    0% {
+        transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+        transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
+    100% {
+        transform: translate(0px, 0px) scale(1);
+    }
+}
+
+.animate-blob {
+    animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+
+/* Enhanced gradient backgrounds */
+.bg-gradient-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #7c3aed 25%, #1e293b 50%, #6366f1 75%, #1e293b 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Grid pattern background */
+.bg-grid-pattern {
+    background-image:
+        linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6fdb 0%, #6b4393 100%);
 }

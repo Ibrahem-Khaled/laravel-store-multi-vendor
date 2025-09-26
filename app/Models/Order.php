@@ -34,6 +34,11 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function userAddress()
+    {
+        return $this->belongsTo(UserAddress::class, 'user_address_id');
+    }
+
     public function scopeFilter($q, array $f)
     {
         return $q

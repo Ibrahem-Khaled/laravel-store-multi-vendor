@@ -5,6 +5,7 @@ use App\Http\Controllers\dashboard\BrandController;
 use App\Http\Controllers\dashboard\CategoryController;
 use App\Http\Controllers\dashboard\CityController;
 use App\Http\Controllers\dashboard\DashboardController;
+use App\Http\Controllers\dashboard\DriverManagementController;
 use App\Http\Controllers\dashboard\FeatureController;
 use App\Http\Controllers\dashboard\MerchantAdminController;
 use App\Http\Controllers\dashboard\NeighborhoodController;
@@ -77,6 +78,25 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::get('/merchants',           [MerchantAdminController::class, 'index'])->name('merchants.index');
     Route::get('/merchants/{merchant}', [MerchantAdminController::class, 'show'])->name('merchants.show');
     Route::post('/merchants/{merchant}/settlements', [MerchantAdminController::class, 'settle'])->name('merchants.settle');
+
+    // إدارة السواقين
+    Route::prefix('driver-management')->name('admin.driver.')->group(function () {
+        Route::get('/dashboard', [DriverManagementController::class, 'dashboard'])->name('dashboard');
+        Route::get('/drivers', [DriverManagementController::class, 'drivers'])->name('drivers');
+        Route::get('/drivers/create', [DriverManagementController::class, 'createDriver'])->name('create');
+        Route::post('/drivers', [DriverManagementController::class, 'storeDriver'])->name('store');
+        Route::get('/drivers/{id}', [DriverManagementController::class, 'driverDetails'])->name('details');
+        Route::get('/drivers/{id}/edit', [DriverManagementController::class, 'editDriver'])->name('edit');
+        Route::put('/drivers/{id}', [DriverManagementController::class, 'updateDriver'])->name('update');
+        Route::delete('/drivers/{id}', [DriverManagementController::class, 'destroyDriver'])->name('destroy');
+
+        Route::get('/orders', [DriverManagementController::class, 'orders'])->name('orders');
+        Route::get('/orders/{id}', [DriverManagementController::class, 'orderDetails'])->name('order.details');
+        Route::post('/orders/assign', [DriverManagementController::class, 'assignOrder'])->name('order.assign');
+        Route::post('/orders/{id}/reassign', [DriverManagementController::class, 'reassignOrder'])->name('order.reassign');
+        Route::post('/orders/{id}/confirm', [DriverManagementController::class, 'confirmDelivery'])->name('order.confirm');
+        Route::post('/orders/{id}/cancel', [DriverManagementController::class, 'cancelOrder'])->name('order.cancel');
+    });
 });
 
 

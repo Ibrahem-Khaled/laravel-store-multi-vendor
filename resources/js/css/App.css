@@ -1,0 +1,58 @@
+
+
+
+
+
+@font-face {
+  font-family: 'MyFont';
+  src: url('/fonts/SFPRODISPLAYBOLD.OTF') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MyFont';
+  src: url('/fonts/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MyFont';
+  src: url('/fonts/SFPRODISPLAYMEDIUM.OTF') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+html {
+  font-family: "MyFont";
+  overflow-x: hidden;
+}
+
+.blur {
+  filter: blur(12px);
+}
+
+.gradient-text {
+  background: linear-gradient(to right,
+     #68eddb 0%,
+     #f55cb2 50%,
+     #f55cb2 50%,
+     #68eddb 100%);
+  -webkit-background-clip: text;
+  background-size: 200%;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: animate-gradient 2.5s linear infinite;
+}
+
+@keyframes animate-gradient {
+  to {
+    background-position: 200%;
+  }
+}
+
+
+.gradient-bg {
+  background: linear-gradient(to bottom right,#ff5656 , #db44dd, #2e39ff);
+}
