@@ -57,7 +57,7 @@ return new class extends Migration {
             'email' => 'admin@admin.com',
             'role' => 'admin',
             'password' => Hash::make('123456'),
-            'status' => 1
+            'status' => 'active'
         ]);
     }
 

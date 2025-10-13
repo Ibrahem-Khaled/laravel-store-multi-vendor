@@ -16,6 +16,7 @@ use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
 use App\Http\Controllers\dashboard\UserController;
+use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -96,6 +97,17 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::post('/orders/{id}/reassign', [DriverManagementController::class, 'reassignOrder'])->name('order.reassign');
         Route::post('/orders/{id}/confirm', [DriverManagementController::class, 'confirmDelivery'])->name('order.confirm');
         Route::post('/orders/{id}/cancel', [DriverManagementController::class, 'cancelOrder'])->name('order.cancel');
+    });
+
+    // إدارة نقاط الولاء
+    Route::prefix('loyalty-management')->name('loyalty-management.')->group(function () {
+        Route::get('/dashboard', [LoyaltyManagementController::class, 'dashboard'])->name('dashboard');
+        Route::get('/users', [LoyaltyManagementController::class, 'users'])->name('users');
+        Route::get('/users/{userId}', [LoyaltyManagementController::class, 'userDetails'])->name('user-details');
+        Route::get('/transactions', [LoyaltyManagementController::class, 'transactions'])->name('transactions');
+        Route::post('/add-points', [LoyaltyManagementController::class, 'addPoints'])->name('add-points');
+        Route::delete('/transactions/{transactionId}', [LoyaltyManagementController::class, 'deleteTransaction'])->name('delete-transaction');
+        Route::get('/export', [LoyaltyManagementController::class, 'exportReport'])->name('export');
     });
 });
 

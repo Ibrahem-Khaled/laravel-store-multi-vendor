@@ -7,6 +7,7 @@ use App\Http\Controllers\api\CreateProductController;
 use App\Http\Controllers\api\DriverController;
 use App\Http\Controllers\api\DriverSupervisorController;
 use App\Http\Controllers\api\FollowController;
+use App\Http\Controllers\api\LoyaltyController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\MerchantController;
 use App\Http\Controllers\api\productController;
@@ -261,6 +262,19 @@ Route::middleware('api.auth.active')->group(function () {
         Route::post('/orders/{driverOrderId}/reassign', [DriverSupervisorController::class, 'reassignOrder']);
         Route::post('/orders/{driverOrderId}/confirm', [DriverSupervisorController::class, 'confirmDelivery']);
         Route::post('/orders/{driverOrderId}/cancel', [DriverSupervisorController::class, 'cancelOrder']);
+    });
+
+    // ========================================
+    // LOYALTY POINTS SYSTEM
+    // ========================================
+    Route::prefix('loyalty')->group(function () {
+        // User loyalty points management
+        Route::get('/points', [LoyaltyController::class, 'getLoyaltyPoints']);
+        Route::get('/transactions', [LoyaltyController::class, 'getLoyaltyTransactions']);
+        Route::post('/use', [LoyaltyController::class, 'useLoyaltyPoints']);
+
+        // Admin loyalty points management
+        Route::post('/add', [LoyaltyController::class, 'addLoyaltyPoints']);
     });
 
 });

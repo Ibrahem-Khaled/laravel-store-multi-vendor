@@ -6,6 +6,8 @@ use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\Conversation;
 use App\Models\Driver;
+use App\Models\LoyaltyPoints;
+use App\Models\LoyaltyTransaction;
 use App\Models\MerchantLedgerEntry;
 use App\Models\MerchantPayment;
 use App\Models\MerchantProfile;
@@ -92,5 +94,16 @@ trait UserRelations
     public function driver()
     {
         return $this->hasOne(Driver::class, 'user_id');
+    }
+
+    // Relations for Loyalty Points
+    public function loyaltyPoints()
+    {
+        return $this->hasOne(LoyaltyPoints::class);
+    }
+
+    public function loyaltyTransactions()
+    {
+        return $this->hasMany(LoyaltyTransaction::class);
     }
 }

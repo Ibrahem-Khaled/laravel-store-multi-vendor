@@ -193,6 +193,38 @@
         </div>
     </li>
 
+    <li class="nav-item {{ request()->routeIs('loyalty-management.*') ? 'active' : '' }}">
+        <a class="nav-link {{ request()->routeIs('loyalty-management.*') ? '' : 'collapsed' }}"
+           href="#" data-toggle="collapse" data-target="#collapseLoyalty"
+            aria-expanded="{{ request()->routeIs('loyalty-management.*') ? 'true' : 'false' }}"
+            aria-controls="collapseLoyalty">
+            <i class="fas fa-fw fa-star"></i>
+            <span>نقاط الولاء</span>
+        </a>
+        <div id="collapseLoyalty" class="collapse {{ request()->routeIs('loyalty-management.*') ? 'show' : '' }}"
+             aria-labelledby="headingLoyalty" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">إدارة نقاط الولاء:</h6>
+                <a class="collapse-item {{ request()->routeIs('loyalty-management.dashboard') ? 'active' : '' }}" href="{{ route('loyalty-management.dashboard') }}">
+                    <i class="fas fa-fw fa-tachometer-alt text-gray-600"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a class="collapse-item {{ request()->routeIs('loyalty-management.users') ? 'active' : '' }}" href="{{ route('loyalty-management.users') }}">
+                    <i class="fas fa-fw fa-users text-gray-600"></i>
+                    <span>المستخدمين</span>
+                </a>
+                <a class="collapse-item {{ request()->routeIs('loyalty-management.transactions') ? 'active' : '' }}" href="{{ route('loyalty-management.transactions') }}">
+                    <i class="fas fa-fw fa-exchange-alt text-gray-600"></i>
+                    <span>المعاملات</span>
+                </a>
+                <a class="collapse-item {{ request()->routeIs('loyalty-management.export') ? 'active' : '' }}" href="{{ route('loyalty-management.export') }}">
+                    <i class="fas fa-fw fa-download text-gray-600"></i>
+                    <span>تصدير التقارير</span>
+                </a>
+            </div>
+        </div>
+    </li>
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">
