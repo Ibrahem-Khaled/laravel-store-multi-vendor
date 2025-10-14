@@ -27,30 +27,24 @@ class CheckUserActive
             ], 401);
         }
 
-        // التحقق من حالة المستخدم (نشط/غير نشط)
-        if (!$user->is_active) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Your account is deactivated. Please contact support.',
-                'code' => 'ACCOUNT_DEACTIVATED'
-            ], 403);
-        }
+        // التحقق من حالة المستخدم (نشط/غير نشط/محظور)
+        if ($user->status !== 'active') {
+            $message = match($user->status) {
+                'inactive' => 'Your account is deactivated. Please contact support.',
+                'banned' => 'Your account has been banned. Please contact support.',
+                default => 'Your account is not active. Please contact support.'
+            };
 
-        // التحقق من حالة المستخدم (محظور/غير محظور)
-        if ($user->is_banned) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Your account has been banned. Please contact support.',
-                'code' => 'ACCOUNT_BANNED'
-            ], 403);
-        }
+            $code = match($user->status) {
+                'inactive' => 'ACCOUNT_DEACTIVATED',
+                'banned' => 'ACCOUNT_BANNED',
+                default => 'ACCOUNT_INACTIVE'
+            };
 
-        // التحقق من حالة المستخدم (محذوف/غير محذوف)
-        if ($user->deleted_at) {
             return response()->json([
                 'status' => false,
-                'message' => 'Your account has been deleted.',
-                'code' => 'ACCOUNT_DELETED'
+                'message' => $message,
+                'code' => $code
             ], 403);
         }
 

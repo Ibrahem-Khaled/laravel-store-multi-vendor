@@ -24,8 +24,7 @@ class MerchantApiTest extends TestCase
 
         // Create merchant user
         $this->merchant = User::factory()->create([
-            'is_active' => true,
-            'is_banned' => false,
+            'status' => 'active',
         ]);
 
         // Create merchant profile
@@ -370,7 +369,7 @@ class MerchantApiTest extends TestCase
     public function test_inactive_merchant_access()
     {
         $inactiveMerchant = User::factory()->create([
-            'is_active' => false,
+            'status' => 'inactive',
         ]);
 
         $token = $inactiveMerchant->createToken('test-token')->plainTextToken;

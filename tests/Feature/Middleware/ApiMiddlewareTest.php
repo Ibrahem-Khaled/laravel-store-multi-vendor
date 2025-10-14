@@ -17,8 +17,7 @@ class ApiMiddlewareTest extends TestCase
     public function test_api_auth_middleware_with_valid_token()
     {
         $user = User::factory()->create([
-            'is_active' => true,
-            'is_banned' => false,
+            'status' => 'active',
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
@@ -66,8 +65,7 @@ class ApiMiddlewareTest extends TestCase
     public function test_api_auth_active_middleware_with_inactive_user()
     {
         $user = User::factory()->create([
-            'is_active' => false,
-            'is_banned' => false,
+            'status' => 'inactive',
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
@@ -89,8 +87,7 @@ class ApiMiddlewareTest extends TestCase
     public function test_api_auth_active_middleware_with_banned_user()
     {
         $user = User::factory()->create([
-            'is_active' => true,
-            'is_banned' => true,
+            'status' => 'banned',
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
@@ -112,8 +109,7 @@ class ApiMiddlewareTest extends TestCase
     public function test_api_auth_active_middleware_with_deleted_user()
     {
         $user = User::factory()->create([
-            'is_active' => true,
-            'is_banned' => false,
+            'status' => 'active',
         ]);
 
         $user->delete(); // Soft delete
@@ -137,8 +133,7 @@ class ApiMiddlewareTest extends TestCase
     public function test_api_auth_active_middleware_with_active_user()
     {
         $user = User::factory()->create([
-            'is_active' => true,
-            'is_banned' => false,
+            'status' => 'active',
         ]);
 
         $token = $user->createToken('test-token')->plainTextToken;
