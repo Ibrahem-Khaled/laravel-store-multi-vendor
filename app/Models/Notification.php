@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
+    use Auditable;
     protected $fillable = [
         'user_id',
         'title',

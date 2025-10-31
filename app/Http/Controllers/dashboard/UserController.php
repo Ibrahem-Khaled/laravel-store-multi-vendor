@@ -5,11 +5,13 @@ namespace App\Http\Controllers\dashboard;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\dashboard\UserStoreRequest;
 use App\Http\Requests\dashboard\UserUpdateRequest;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests; // <-- أضف هذا
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class UserController extends Controller
 {
@@ -34,27 +36,60 @@ class UserController extends Controller
             });
         }
 
-        $users = $query->latest()->paginate(10)->withQueryString();
+        $users = $query->with('roles')->latest()->paginate(10)->withQueryString();
 
-        $roles = ['admin', 'moderator', 'user', 'trader'];
+        // الحصول على الأدوار القديمة للتوافق
+        $oldRoles = ['admin', 'moderator', 'user', 'trader'];
+        
+        // الحصول على الأدوار الجديدة من قاعدة البيانات
+        $dbRoles = collect();
+        try {
+            if (class_exists(Role::class) && Schema::hasTable('roles')) {
+                $dbRoles = Role::active()->orderBy('order')->get();
+            }
+        } catch (\Exception $e) {
+            // في حالة عدم وجود جدول roles بعد
+            $dbRoles = collect();
+        }
 
         // الإحصائيات العامة
         $usersCount        = User::count();
         $activeUsersCount  = User::where('status', 'active')->count();
         $adminsCount       = User::where('role', 'admin')->count();
 
-        // عداد لكل دور (للتابات)
+        // عداد لكل دور (للتابات) - القديم والجديد
         $roleCounts = User::select('role', DB::raw('COUNT(*) as c'))
-            ->groupBy('role')->pluck('c', 'role'); // ['admin'=>10, 'user'=>50, ...]
+            ->groupBy('role')->pluck('c', 'role');
+        
+        // إحصائيات الأدوار الجديدة
+        $roleCountsNew = collect();
+        try {
+            if (Schema::hasTable('user_roles') && Schema::hasTable('roles')) {
+                $roleCountsNew = DB::table('user_roles')
+                    ->join('roles', 'user_roles.role_id', '=', 'roles.id')
+                    ->select('roles.name', DB::raw('COUNT(*) as count'))
+                    ->groupBy('roles.name')
+                    ->pluck('count', 'name');
+            }
+        } catch (\Exception $e) {
+            // في حالة عدم وجود الجداول بعد
+            $roleCountsNew = collect();
+        }
+
+        // إجمالي عدد الأدوار
+        $totalRolesCount = count($oldRoles) + $dbRoles->count();
 
         return view('dashboard.users.index', compact(
             'users',
-            'roles',
+            'oldRoles',
+            'dbRoles',
             'selectedRole',
             'usersCount',
             'activeUsersCount',
             'adminsCount',
-            'roleCounts'
+            'roleCounts',
+            'roleCountsNew',
+            'totalRolesCount'
         ));
     }
 
@@ -62,6 +97,8 @@ class UserController extends Controller
     public function store(UserStoreRequest $request)
     {
         $data = $request->validated();
+        $roleIds = $request->input('role_ids', []);
+        
         if ($request->hasFile('avatar')) {
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
@@ -69,8 +106,13 @@ class UserController extends Controller
         // status المبدئي للمستخدم الجديد يكون pending حتى تتم الموافقة
         $data['status'] = $data['status'] ?? 'pending';
 
-
         $user = User::create($data);
+        
+        // تعيين الأدوار الجديدة
+        if (!empty($roleIds)) {
+            $user->roles()->sync($roleIds);
+        }
+        
         return back()->with('success', 'تم إنشاء المستخدم بنجاح (بانتظار الاعتماد).');
     }
 
@@ -78,11 +120,20 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $data = $request->validated();
+        $roleIds = $request->input('role_ids', []);
+        
         if ($request->hasFile('avatar')) {
             if ($user->avatar) Storage::disk('public')->delete($user->avatar);
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
+        
         $user->update($data);
+        
+        // تحديث الأدوار
+        if ($request->has('role_ids')) {
+            $user->roles()->sync($roleIds);
+        }
+
         return back()->with('success', 'تم تحديث بيانات المستخدم بنجاح.');
     }
 

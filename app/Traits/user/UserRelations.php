@@ -2,6 +2,7 @@
 
 namespace App\Traits\user;
 
+use App\Models\AuditLog;
 use App\Models\Brand;
 use App\Models\Cart;
 use App\Models\Conversation;
@@ -12,11 +13,14 @@ use App\Models\MerchantLedgerEntry;
 use App\Models\MerchantPayment;
 use App\Models\MerchantProfile;
 use App\Models\Notification;
+use App\Models\Permission;
 use App\Models\Product;
 use App\Models\Review;
+use App\Models\Role;
 use App\Models\RoleChangeRequest;
 use App\Models\User;
 use App\Models\UserAddress;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
@@ -105,5 +109,33 @@ trait UserRelations
     public function loyaltyTransactions()
     {
         return $this->hasMany(LoyaltyTransaction::class);
+    }
+
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    /**
+     * الأدوار المرتبطة بالمستخدم
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles')
+            ->withTimestamps();
+    }
+
+    /**
+     * الحصول على جميع الصلاحيات للمستخدم (من خلال الأدوار)
+     * ملاحظة: هذه دالة helper وليست علاقة مباشرة
+     */
+    public function getPermissionsAttribute()
+    {
+        return $this->roles()
+            ->with('permissions')
+            ->get()
+            ->pluck('permissions')
+            ->flatten()
+            ->unique('id');
     }
 }

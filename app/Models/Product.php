@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    use Auditable;
     protected $guarded = ['id'];
     protected $appends = ['reservation_type', 'cover', 'is_from_favorite'];
     protected $with = ['images', 'vendor', 'city', 'neighborhood']; // <--- أضف هذا السطر

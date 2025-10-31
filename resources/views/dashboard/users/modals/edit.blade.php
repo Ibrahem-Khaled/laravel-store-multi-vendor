@@ -29,13 +29,60 @@
                             <input type="text" name="phone" class="form-control" value="{{ $user->phone }}">
                         </div>
                         <div class="form-group col-md-6">
-                            <label>الدور</label>
+                            <label>الدور (القديم)</label>
                             <select name="role" class="form-control" required>
                                 @foreach (['user' => 'مستخدم', 'trader' => 'متداول', 'moderator' => 'مشرف', 'admin' => 'مدير'] as $val => $label)
                                     <option value="{{ $val }}" @selected($user->role === $val)>{{ $label }}
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>الأدوار (الحديثة) <small class="text-muted">يمكن اختيار عدة أدوار</small></label>
+                        @php
+                            try {
+                                $dbRoles = \App\Models\Role::active()->orderBy('order')->get();
+                                $userRoleIds = $user->roles ? $user->roles->pluck('id')->toArray() : [];
+                                if (!$dbRoles || $dbRoles->isEmpty()) {
+                                    $dbRoles = collect();
+                                    $userRoleIds = [];
+                                }
+                            } catch (\Exception $e) {
+                                $dbRoles = collect();
+                                $userRoleIds = [];
+                            }
+                        @endphp
+                        <div class="row">
+                            @if($dbRoles && $dbRoles->isNotEmpty())
+                                <div class="col-md-12">
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            @foreach($dbRoles as $role)
+                                                <div class="form-check">
+                                                    <input type="checkbox" 
+                                                           name="role_ids[]" 
+                                                           class="form-check-input" 
+                                                           value="{{ $role->id }}" 
+                                                           id="edit_role_{{ $user->id }}_{{ $role->id }}"
+                                                           {{ in_array($role->id, $userRoleIds) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="edit_role_{{ $user->id }}_{{ $role->id }}">
+                                                        <strong>{{ $role->display_name }}</strong>
+                                                        @if($role->description)
+                                                            <br><small class="text-muted">{{ $role->description }}</small>
+                                                        @endif
+                                                    </label>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-md-12">
+                                    <p class="text-muted">لا توجد أدوار متاحة حالياً. قم بتشغيل Seeder أولاً.</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -67,7 +114,7 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إ取消</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
                     <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
                 </div>
             </form>

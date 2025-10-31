@@ -56,7 +56,7 @@
 
                 <x-stat-card icon="fas fa-user-shield" title="عدد المشرفين" :value="$adminsCount" color="info" />
 
-                <x-stat-card icon="fas fa-user-tag" title="عدد الأدوار" :value="count($roles)" color="warning" />
+                <x-stat-card icon="fas fa-user-tag" title="عدد الأدوار" :value="$totalRolesCount ?? 4" color="warning" />
         </div>
 
         {{-- بطاقة قائمة المستخدمين --}}
@@ -86,7 +86,7 @@
                             <span class="badge badge-pill badge-secondary ml-1">{{ $usersCount }}</span>
                         </a>
                     </li>
-                    @foreach ($roles as $role)
+                    @foreach ($oldRoles as $role)
                         <li class="nav-item">
                             <a class="nav-link {{ $selectedRole === $role ? 'active' : '' }}"
                                 href="{{ route('users.index', ['role' => $role]) }}">
@@ -95,6 +95,18 @@
                             </a>
                         </li>
                     @endforeach
+                    {{-- الأدوار الجديدة من قاعدة البيانات --}}
+                    @if(isset($dbRoles))
+                        @foreach ($dbRoles as $role)
+                            <li class="nav-item">
+                                <a class="nav-link {{ $selectedRole === $role->name ? 'active' : '' }}"
+                                    href="{{ route('users.index', ['role' => $role->name]) }}">
+                                    {{ $role->display_name }}
+                                    <span class="badge badge-pill badge-info border ml-1">{{ $roleCountsNew[$role->name] ?? 0 }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    @endif
                 </ul>
 
                 {{-- نموذج البحث --}}
@@ -137,7 +149,15 @@
                                         </div>
                                     </td>
                                     <td>
+                                        {{-- الدور القديم --}}
                                         <span class="badge badge-info">{{ $roleNames[$user->role] ?? $user->role }}</span>
+                                        {{-- الأدوار الجديدة --}}
+                                        @if($user->roles->count() > 0)
+                                            <br>
+                                            @foreach($user->roles as $role)
+                                                <span class="badge badge-success mt-1">{{ $role->display_name }}</span>
+                                            @endforeach
+                                        @endif
                                     </td>
                                     <td>{{ $user->email ?? '-' }}</td>
                                     <td>{{ $user->phone ?? '-' }}</td>

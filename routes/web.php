@@ -16,6 +16,9 @@ use App\Http\Controllers\dashboard\ReviewController;
 use App\Http\Controllers\dashboard\SlideShowController;
 use App\Http\Controllers\dashboard\SubCategoryController;
 use App\Http\Controllers\dashboard\UserController;
+use App\Http\Controllers\dashboard\AuditLogController;
+use App\Http\Controllers\dashboard\BackupController;
+use App\Http\Controllers\dashboard\RoleController;
 use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -108,6 +111,31 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::post('/add-points', [LoyaltyManagementController::class, 'addPoints'])->name('add-points');
         Route::delete('/transactions/{transactionId}', [LoyaltyManagementController::class, 'deleteTransaction'])->name('delete-transaction');
         Route::get('/export', [LoyaltyManagementController::class, 'exportReport'])->name('export');
+    });
+
+    // سجل التدقيق
+    Route::prefix('audit-logs')->name('audit-logs.')->group(function () {
+        Route::get('/', [AuditLogController::class, 'index'])->name('index');
+        Route::get('/{auditLog}', [AuditLogController::class, 'show'])->name('show');
+    });
+
+    // النسخ الاحتياطية
+    Route::middleware('permission:manage-backups')->prefix('backups')->name('backups.')->group(function () {
+        Route::get('/', [BackupController::class, 'index'])->name('index');
+        Route::post('/', [BackupController::class, 'create'])->name('create');
+        Route::get('/{backup}/download', [BackupController::class, 'download'])->name('download');
+        Route::post('/{backup}/restore', [BackupController::class, 'restore'])->name('restore');
+        Route::delete('/{backup}', [BackupController::class, 'destroy'])->name('destroy');
+    });
+
+    // إدارة الأدوار والصلاحيات
+    Route::middleware('permission:manage-roles')->prefix('roles')->name('roles.')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('index');
+        Route::get('/create', [RoleController::class, 'create'])->name('create');
+        Route::post('/', [RoleController::class, 'store'])->name('store');
+        Route::get('/{role}/edit', [RoleController::class, 'edit'])->name('edit');
+        Route::put('/{role}', [RoleController::class, 'update'])->name('update');
+        Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
     });
 });
 

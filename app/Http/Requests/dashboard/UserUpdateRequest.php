@@ -20,6 +20,8 @@ class UserUpdateRequest extends FormRequest
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $id],
             'phone' => ['nullable', 'string', 'max:30', 'unique:users,phone,' . $id],
             'role' => ['required', 'in:admin,moderator,user,trader'],
+            'role_ids' => ['nullable', 'array'],
+            'role_ids.*' => ['exists:roles,id'],
             'status' => ['required', 'in:pending,active,inactive,banned'],
             'gender' => ['nullable', 'in:male,female'],
             'avatar' => ['nullable', 'image', 'max:2048'],

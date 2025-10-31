@@ -225,6 +225,31 @@
         </div>
     </li>
 
+    <li class="nav-item {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('audit-logs.index') }}">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>سجل التدقيق</span>
+        </a>
+    </li>
+
+        @can('manage-roles')
+        <li class="nav-item {{ request()->routeIs('roles.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('roles.index') }}">
+                <i class="fas fa-fw fa-user-shield"></i>
+                <span>الأدوار والصلاحيات</span>
+            </a>
+        </li>
+        @endcan
+
+        {{-- @can('manage-backups') --}}
+        <li class="nav-item {{ request()->routeIs('backups.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('backups.index') }}">
+                <i class="fas fa-fw fa-database"></i>
+                <span>النسخ الاحتياطية</span>
+            </a>
+        </li>
+        {{-- @endcan --}}
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">

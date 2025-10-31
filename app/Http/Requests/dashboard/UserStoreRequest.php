@@ -20,6 +20,8 @@ class UserStoreRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:30', 'unique:users,phone'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'role' => ['required', 'in:admin,moderator,user,trader'],
+            'role_ids' => ['nullable', 'array'],
+            'role_ids.*' => ['exists:roles,id'],
             'status' => ['nullable', 'in:pending,active,inactive,banned'],
             'gender' => ['nullable', 'in:male,female'],
             'avatar' => ['nullable', 'image', 'max:2048'],

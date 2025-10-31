@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.auth' => \App\Http\Middleware\ApiAuth::class,
             'api.auth.active' => \App\Http\Middleware\ApiAuthAndActive::class,
             'api.user.active' => \App\Http\Middleware\CheckUserActive::class,
+            'permission' => \App\Http\Middleware\CheckPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -20,6 +20,9 @@
         body {
             font-family: "Tajawal", sans-serif !important;
         }
+        label {
+            margin: 0 20px;
+        }
     </style>
 
     <!-- Custom styles for this template-->

@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\HasRolesAndPermissions;
 use App\Traits\user\GeneratesUniqueIdentifiers;
 use App\Traits\user\UserAttributes;
 use App\Traits\user\UserRelations;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +15,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, UserRelations, UserAttributes, GeneratesUniqueIdentifiers;
+    use HasFactory, Notifiable, UserRelations, UserAttributes, GeneratesUniqueIdentifiers, Auditable, HasRolesAndPermissions;
 
     protected $fillable = [
         'name',
