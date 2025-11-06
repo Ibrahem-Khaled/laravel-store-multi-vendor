@@ -137,8 +137,8 @@ class UserController extends Controller
         // الحالة الافتراضية
         $data['status'] = $data['status'] ?? 'pending';
         
-        // معالجة is_verified
-        $data['is_verified'] = $request->has('is_verified') ? (bool)$request->input('is_verified') : false;
+        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1'
+        $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // إنشاء المستخدم
         $user = User::create($data);
@@ -197,8 +197,8 @@ class UserController extends Controller
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // معالجة is_verified
-        $data['is_verified'] = $request->has('is_verified') ? (bool)$request->input('is_verified') : false;
+        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1'
+        $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // تحديث بيانات المستخدم
         $user->update($data);

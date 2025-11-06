@@ -114,6 +114,7 @@
 
                     <div class="form-group">
                         <div class="form-check">
+                            <input type="hidden" name="is_verified" value="0">
                             <input type="checkbox" name="is_verified" class="form-check-input" id="editIsVerified{{ $user->id }}" value="1" {{ $user->is_verified ? 'checked' : '' }}>
                             <label class="form-check-label" for="editIsVerified{{ $user->id }}">
                                 <strong>حساب موثق</strong>
