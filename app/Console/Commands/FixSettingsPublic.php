@@ -13,7 +13,7 @@ class FixSettingsPublic extends Command
     public function handle()
     {
         $publicKeys = ['privacy_policy', 'terms_of_service', 'about_us'];
-        
+
         foreach ($publicKeys as $key) {
             $setting = Setting::where('key', $key)->first();
             if ($setting) {
@@ -23,7 +23,7 @@ class FixSettingsPublic extends Command
                 $this->warn("{$key} غير موجود");
             }
         }
-        
+
         $this->info('تم!');
     }
 }

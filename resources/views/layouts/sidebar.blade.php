@@ -259,6 +259,15 @@
         </li>
         @endcan
 
+        @can('manage-tickets')
+        <li class="nav-item {{ request()->routeIs('help-center.*') || request()->routeIs('tickets.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('help-center.index') }}">
+                <i class="fas fa-fw fa-headset"></i>
+                <span>مركز المساعدة</span>
+            </a>
+        </li>
+        @endcan
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">

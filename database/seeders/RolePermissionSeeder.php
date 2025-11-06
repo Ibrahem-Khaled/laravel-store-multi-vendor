@@ -65,6 +65,7 @@ class RolePermissionSeeder extends Seeder
             // إدارة النسخ الاحتياطي
             ['name' => 'manage-backups', 'display_name' => 'إدارة النسخ الاحتياطي', 'group' => 'system', 'description' => 'إمكانية إنشاء واستعادة النسخ الاحتياطية'],
             ['name' => 'manage-settings', 'display_name' => 'إدارة الإعدادات', 'group' => 'system', 'description' => 'إمكانية تعديل إعدادات الموقع'],
+            ['name' => 'manage-tickets', 'display_name' => 'إدارة التذاكر', 'group' => 'system', 'description' => 'إمكانية إدارة تذاكر الدعم الفني ومركز المساعدة'],
 
             // لوحة التحكم
             ['name' => 'access-dashboard', 'display_name' => 'الوصول للوحة التحكم', 'group' => 'system', 'description' => 'إمكانية الوصول إلى لوحة التحكم'],
@@ -101,6 +102,7 @@ class RolePermissionSeeder extends Seeder
                     'view-audit-logs',
                     'manage-backups',
                     'manage-settings',
+                    'manage-tickets',
                 ],
             ],
             [

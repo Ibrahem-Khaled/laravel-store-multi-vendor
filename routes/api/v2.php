@@ -13,6 +13,7 @@ use App\Http\Controllers\api\MerchantController;
 use App\Http\Controllers\api\productController;
 use App\Http\Controllers\api\RoleChangeRequestController;
 use App\Http\Controllers\api\SettingController;
+use App\Http\Controllers\api\TicketController;
 use App\Http\Controllers\api\UserAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -178,6 +179,22 @@ Route::middleware('api.auth.active')->group(function () {
             Route::delete('/{user}', [FollowController::class, 'unfollow']);
             Route::get('/{user}/following', [FollowController::class, 'following']);
             Route::get('/{user}/followers', [FollowController::class, 'followers']);
+        });
+    });
+
+    // ========================================
+    // HELP CENTER & TICKETS
+    // ========================================
+    Route::prefix('help-center')->group(function () {
+        // Get ticket categories (public)
+        Route::get('/categories', [TicketController::class, 'categories']);
+        
+        // Ticket management (requires auth)
+        Route::prefix('tickets')->group(function () {
+            Route::get('/', [TicketController::class, 'index']); // Get user tickets
+            Route::post('/', [TicketController::class, 'store']); // Create ticket
+            Route::get('/{id}', [TicketController::class, 'show']); // Get ticket details
+            Route::post('/{id}/rate', [TicketController::class, 'rate']); // Rate ticket
         });
     });
 

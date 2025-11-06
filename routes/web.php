@@ -19,6 +19,8 @@ use App\Http\Controllers\dashboard\UserController;
 use App\Http\Controllers\dashboard\AuditLogController;
 use App\Http\Controllers\dashboard\BackupController;
 use App\Http\Controllers\dashboard\RoleController;
+use App\Http\Controllers\dashboard\HelpCenterController;
+use App\Http\Controllers\dashboard\TicketController;
 use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -145,6 +147,21 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::post('/reset', [\App\Http\Controllers\dashboard\SettingController::class, 'reset'])->name('reset');
         Route::get('/export', [\App\Http\Controllers\dashboard\SettingController::class, 'export'])->name('export');
         Route::post('/import', [\App\Http\Controllers\dashboard\SettingController::class, 'import'])->name('import');
+    });
+
+    // مركز المساعدة والدعم الفني
+    Route::middleware('permission:manage-tickets')->prefix('help-center')->name('help-center.')->group(function () {
+        Route::get('/', [HelpCenterController::class, 'index'])->name('index');
+    });
+
+    Route::middleware('permission:manage-tickets')->prefix('tickets')->name('tickets.')->group(function () {
+        Route::get('/', [TicketController::class, 'index'])->name('index');
+        Route::get('/{ticket}', [TicketController::class, 'show'])->name('show');
+        Route::post('/{ticket}/respond', [TicketController::class, 'respond'])->name('respond');
+        Route::put('/{ticket}/status', [TicketController::class, 'updateStatus'])->name('update-status');
+        Route::put('/{ticket}/priority', [TicketController::class, 'updatePriority'])->name('update-priority');
+        Route::get('/{ticket}/download', [TicketController::class, 'downloadAttachment'])->name('download');
+        Route::delete('/{ticket}', [TicketController::class, 'destroy'])->name('destroy');
     });
 });
 
