@@ -137,7 +137,8 @@ class UserController extends Controller
         // الحالة الافتراضية
         $data['status'] = $data['status'] ?? 'pending';
         
-        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1'
+        // معالجة is_verified - toggle يرسل '1' إذا كان checked، وإلا لا يرسل شيء
+        // مع hidden input، القيمة ستكون '0' أو '1' (Laravel يأخذ آخر قيمة)
         $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // إنشاء المستخدم
@@ -197,7 +198,7 @@ class UserController extends Controller
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1'
+        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1' (Laravel يأخذ آخر قيمة)
         $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // تحديث بيانات المستخدم

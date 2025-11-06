@@ -96,14 +96,15 @@
                     </div>
 
                     <div class="form-group">
-                        <div class="form-check">
-                            <input type="hidden" name="is_verified" value="0">
-                            <input type="checkbox" name="is_verified" class="form-check-input" id="createIsVerified" value="1">
-                            <label class="form-check-label" for="createIsVerified">
-                                <strong>حساب موثق</strong>
-                                <small class="text-muted d-block">تفعيل التحقق من الحساب</small>
+                        <label>حالة التحقق من الحساب</label>
+                        <input type="hidden" name="is_verified" value="0">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" name="is_verified" class="custom-control-input" id="createIsVerified" value="1">
+                            <label class="custom-control-label" for="createIsVerified">
+                                حساب موثق
                             </label>
                         </div>
+                        <small class="form-text text-muted">تفعيل التحقق من الحساب</small>
                     </div>
                 </div>
 
