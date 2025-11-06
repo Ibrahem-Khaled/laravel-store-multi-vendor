@@ -11,6 +11,7 @@ use App\Http\Controllers\api\LoyaltyController;
 use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\MerchantController;
 use App\Http\Controllers\api\productController;
+use App\Http\Controllers\api\ReviewController;
 use App\Http\Controllers\api\RoleChangeRequestController;
 use App\Http\Controllers\api\SettingController;
 use App\Http\Controllers\api\TicketController;
@@ -85,6 +86,9 @@ Route::prefix('products')->group(function () {
     Route::get('/{product}', [productController::class, 'Product']);
     Route::get('/featured/list', [productController::class, 'featuredProducts']);
     Route::get('/{product}/similar', [ProductController::class, 'similarsProducts']);
+    
+    // Product reviews (Public - get reviews)
+    Route::get('/{productId}/reviews', [ReviewController::class, 'getProductReviews']);
 });
 
 // ========================================
@@ -157,9 +161,11 @@ Route::middleware('api.auth.active')->group(function () {
         Route::post('/create', [CreateProductController::class, 'store']);
         Route::delete('/{product}', [CreateProductController::class, 'destroy']);
 
-        // Product reviews
-        Route::post('/{product}/reviews', [ProductController::class, 'addReview']);
-        Route::delete('/{product}/reviews', [ProductController::class, 'deleteReview']);
+        // Product reviews - Managed by ReviewController
+        Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::put('/reviews/{reviewId}', [ReviewController::class, 'update']);
+        Route::delete('/reviews/{reviewId}', [ReviewController::class, 'destroy']);
+        Route::get('/reviews/my-reviews', [ReviewController::class, 'getUserReviews']);
 
         // User favorites
         Route::get('/favorites/user', [ProductController::class, 'userFavorites']);
