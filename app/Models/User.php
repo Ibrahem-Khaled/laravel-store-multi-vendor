@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'coins',
         'username',
         'uuid',
+        'is_verified',
     ];
 
     protected $hidden = [
