@@ -7,10 +7,14 @@ use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Feature;
+use App\Models\MerchantProfile;
 use App\Models\Notification;
+use App\Models\PopularSearch;
 use App\Models\Product;
+use App\Models\SearchLog;
 use App\Models\SlideShow;
 use App\Models\SubCategory;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
@@ -49,6 +53,9 @@ class mainApiController extends Controller
         return response()->json($features);
     }
 
+    /**
+     * البحث عن المنتجات (Legacy - للتوافق مع الإصدارات القديمة)
+     */
     public function searchProducts(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -77,7 +84,206 @@ class mainApiController extends Controller
 
         $products = $query->with(['brand', 'images'])->latest()->paginate(15);
 
+        // تسجيل عملية البحث
+        $userId = auth()->guard('api')->id();
+        SearchLog::log($searchQuery, 'product', $products->total(), $userId);
+        PopularSearch::updateOrCreatePopular($searchQuery, 'product', $products->total());
+
         return response()->json($products);
+    }
+
+    /**
+     * البحث الشامل (منتجات + تجار)
+     */
+    public function search(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'query' => 'required|string|max:255|min:2',
+            'type' => 'nullable|in:product,merchant,all',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البيانات غير صحيحة',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $validated = $validator->validated();
+        $searchQuery = $validated['query'];
+        $type = $validated['type'] ?? 'all';
+        $limit = $validated['limit'] ?? 15;
+
+        $userId = auth()->guard('api')->id();
+        $results = [
+            'products' => [],
+            'merchants' => [],
+            'total' => 0,
+        ];
+
+        // البحث عن المنتجات
+        if ($type === 'all' || $type === 'product') {
+            $productQuery = Product::query();
+
+            $productQuery->where(function (Builder $q) use ($searchQuery) {
+                $q->where('name', 'LIKE', "%{$searchQuery}%")
+                    ->orWhere('description', 'LIKE', "%{$searchQuery}%");
+
+                if (is_numeric($searchQuery)) {
+                    $q->orWhere('price', '=', (float)$searchQuery);
+                }
+            });
+
+            $products = $productQuery->with(['brand', 'images'])
+                ->latest()
+                ->limit($limit)
+                ->get();
+
+            $results['products'] = $products;
+            $results['total'] += $products->count();
+        }
+
+        // البحث عن التجار
+        if ($type === 'all' || $type === 'merchant') {
+            $merchantQuery = MerchantProfile::query()
+                ->with(['user']);
+
+            $merchantQuery->whereHas('user', function ($q) use ($searchQuery) {
+                $q->where('name', 'LIKE', "%{$searchQuery}%")
+                    ->orWhere('username', 'LIKE', "%{$searchQuery}%")
+                    ->orWhere('email', 'LIKE', "%{$searchQuery}%");
+            });
+
+            $merchants = $merchantQuery->limit($limit)->get();
+
+            // تنسيق بيانات التجار
+            $results['merchants'] = $merchants->map(function ($merchant) {
+                return [
+                    'id' => $merchant->id,
+                    'user_id' => $merchant->user_id,
+                    'name' => $merchant->user->name ?? 'Unknown',
+                    'username' => $merchant->user->username ?? null,
+                    'email' => $merchant->user->email ?? null,
+                    'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
+                    'default_commission_rate' => $merchant->default_commission_rate,
+                    'created_at' => $merchant->created_at->format('Y-m-d H:i:s'),
+                ];
+            });
+
+            $results['total'] += $merchants->count();
+        }
+
+        // تسجيل عملية البحث
+        SearchLog::log($searchQuery, $type, $results['total'], $userId);
+        PopularSearch::updateOrCreatePopular($searchQuery, $type, $results['total']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم البحث بنجاح',
+            'data' => $results,
+            'query' => $searchQuery,
+            'type' => $type,
+        ]);
+    }
+
+    /**
+     * البحث عن التجار فقط
+     */
+    public function searchMerchants(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'query' => 'required|string|max:255|min:2',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البيانات غير صحيحة',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $validated = $validator->validated();
+        $searchQuery = $validated['query'];
+        $limit = $validated['limit'] ?? 15;
+
+        $merchantQuery = MerchantProfile::query()
+            ->with(['user']);
+
+        $merchantQuery->whereHas('user', function ($q) use ($searchQuery) {
+            $q->where('name', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('username', 'LIKE', "%{$searchQuery}%")
+                ->orWhere('email', 'LIKE', "%{$searchQuery}%");
+        });
+
+        $merchants = $merchantQuery->limit($limit)->get();
+
+        // تنسيق بيانات التجار
+        $formattedMerchants = $merchants->map(function ($merchant) {
+            return [
+                'id' => $merchant->id,
+                'user_id' => $merchant->user_id,
+                'name' => $merchant->user->name ?? 'Unknown',
+                'username' => $merchant->user->username ?? null,
+                'email' => $merchant->user->email ?? null,
+                'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
+                'default_commission_rate' => $merchant->default_commission_rate,
+                'created_at' => $merchant->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
+        // تسجيل عملية البحث
+        $userId = auth()->guard('api')->id();
+        SearchLog::log($searchQuery, 'merchant', $merchants->count(), $userId);
+        PopularSearch::updateOrCreatePopular($searchQuery, 'merchant', $merchants->count());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم البحث عن التجار بنجاح',
+            'data' => $formattedMerchants,
+            'total' => $merchants->count(),
+        ]);
+    }
+
+    /**
+     * الحصول على عمليات البحث الأكثر شيوعاً
+     */
+    public function popularSearches(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'type' => 'nullable|in:product,merchant,all',
+            'limit' => 'nullable|integer|min:1|max:50',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البيانات غير صحيحة',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $type = $request->input('type', 'all');
+        $limit = $request->input('limit', 10);
+
+        $popularSearches = PopularSearch::mostPopular($type === 'all' ? null : $type, $limit)->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'تم جلب عمليات البحث الأكثر شيوعاً بنجاح',
+            'data' => $popularSearches->map(function ($search) {
+                return [
+                    'query' => $search->query,
+                    'type' => $search->type,
+                    'search_count' => $search->search_count,
+                    'results_count' => $search->results_count,
+                    'last_searched_at' => $search->last_searched_at ? $search->last_searched_at->format('Y-m-d H:i:s') : null,
+                ];
+            }),
+        ]);
     }
 
     public function Notifications($type = 'all')

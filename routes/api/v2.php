@@ -56,7 +56,10 @@ Route::prefix('data')->group(function () {
     Route::get('/cities', [mainApiController::class, 'cities']);
 
     // Search functionality
-    Route::get('/search', [mainApiController::class, 'searchProducts']);
+    Route::get('/search', [mainApiController::class, 'searchProducts']); // Legacy: البحث عن المنتجات فقط
+    Route::get('/search/advanced', [mainApiController::class, 'search']); // البحث الشامل (منتجات + تجار)
+    Route::get('/search/merchants', [mainApiController::class, 'searchMerchants']); // البحث عن التجار فقط
+    Route::get('/search/popular', [mainApiController::class, 'popularSearches']); // عمليات البحث الأكثر شيوعاً
 
     // Content management
     Route::get('/slider', [mainApiController::class, 'getSlider']);
@@ -95,7 +98,7 @@ Route::prefix('settings')->group(function () {
     Route::get('/terms-of-service', [SettingController::class, 'termsOfService']);
     Route::get('/about-us', [SettingController::class, 'aboutUs']);
     Route::get('/group/{group}', [SettingController::class, 'getGroup']);
-    
+
     // Routes العامة
     Route::get('/', [SettingController::class, 'index']);
     Route::get('/{key}', [SettingController::class, 'show']);
@@ -188,7 +191,7 @@ Route::middleware('api.auth.active')->group(function () {
     Route::prefix('help-center')->group(function () {
         // Get ticket categories (public)
         Route::get('/categories', [TicketController::class, 'categories']);
-        
+
         // Ticket management (requires auth)
         Route::prefix('tickets')->group(function () {
             Route::get('/', [TicketController::class, 'index']); // Get user tickets
