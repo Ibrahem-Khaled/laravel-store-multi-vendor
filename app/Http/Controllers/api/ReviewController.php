@@ -74,8 +74,8 @@ class ReviewController extends Controller
                 'is_approved' => $isApproved,
             ]);
 
-            $message = $isApproved 
-                ? 'تم إضافة التقييم بنجاح وتمت الموافقة عليه.' 
+            $message = $isApproved
+                ? 'تم إضافة التقييم بنجاح وتمت الموافقة عليه.'
                 : 'تم إضافة التقييم بنجاح ولكنه في انتظار الموافقة. تحتاج إلى شراء المنتج ' . $requiredPurchases . ' مرة(مرات) للموافقة عليه.';
 
             return response()->json([
@@ -156,7 +156,7 @@ class ReviewController extends Controller
                         'id' => $review->user->id,
                         'name' => $review->user->name,
                         'username' => $review->user->username,
-                        'avatar' => $review->user->avatar ? asset('storage/' . $review->user->avatar) : null,
+                        'avatar' => $review->user->avatar_url,
                     ],
                     'rate' => $review->rate,
                     'comment' => $review->comment,
@@ -254,8 +254,8 @@ class ReviewController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => $review->is_approved 
-                    ? 'تم تحديث التقييم بنجاح وتمت الموافقة عليه.' 
+                'message' => $review->is_approved
+                    ? 'تم تحديث التقييم بنجاح وتمت الموافقة عليه.'
                     : 'تم تحديث التقييم بنجاح ولكنه في انتظار الموافقة.',
                 'data' => [
                     'review' => [
