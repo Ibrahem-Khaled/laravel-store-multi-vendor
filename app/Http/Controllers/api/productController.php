@@ -111,9 +111,31 @@ class productController extends Controller
 
     public function brands()
     {
-        $user = auth()->guard('api')->user();
-        $brands = Brand::where('user_id', $user->id)->get();
-        return response()->json($brands);
+        try {
+            $user = auth()->guard('api')->user();
+            
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'المستخدم غير مصادق عليه',
+                    'code' => 'UNAUTHENTICATED'
+                ], 401);
+            }
+
+            $brands = Brand::where('user_id', $user->id)->get();
+            
+            return response()->json([
+                'status' => true,
+                'message' => 'تم جلب البراندات بنجاح',
+                'data' => $brands
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'حدث خطأ أثناء جلب البراندات',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function featuredProducts()
