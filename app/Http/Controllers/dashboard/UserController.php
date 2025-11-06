@@ -275,9 +275,16 @@ class UserController extends Controller
     {
         $this->authorize('manage-users');
 
+        // حفظ الحالة الحالية قبل التحديث
+        $oldStatus = $user->is_verified;
+        
+        // تبديل الحالة
         $user->update([
-            'is_verified' => !$user->is_verified
+            'is_verified' => !$oldStatus
         ]);
+
+        // تحديث النموذج للحصول على القيمة الجديدة
+        $user->refresh();
 
         $message = $user->is_verified 
             ? 'تم توثيق الحساب بنجاح.' 

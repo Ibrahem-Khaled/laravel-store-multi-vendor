@@ -356,12 +356,14 @@
                                             <i class="fas fa-coins"></i> {{ number_format($user->coins ?? 0) }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <form action="{{ route('users.toggle-verification', $user) }}" method="POST" class="d-inline">
                                             @csrf
                                             <button type="submit" 
-                                                    class="btn btn-sm {{ $user->is_verified ? 'btn-success' : 'btn-secondary' }}"
-                                                    title="{{ $user->is_verified ? 'إلغاء التوثيق' : 'توثيق الحساب' }}">
+                                                    class="btn btn-sm {{ $user->is_verified ? 'btn-success' : 'btn-outline-secondary' }}"
+                                                    style="min-width: 100px; font-weight: 500;"
+                                                    title="{{ $user->is_verified ? 'إلغاء التوثيق' : 'توثيق الحساب' }}"
+                                                    onclick="return confirm('{{ $user->is_verified ? 'هل أنت متأكد من إلغاء توثيق هذا الحساب؟' : 'هل أنت متأكد من توثيق هذا الحساب؟' }}')">
                                                 @if($user->is_verified)
                                                     <i class="fas fa-check-circle"></i> موثق
                                                 @else
