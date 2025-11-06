@@ -55,6 +55,10 @@ Route::prefix('data')->group(function () {
     // Geographic data
     Route::get('/cities', [mainApiController::class, 'cities']);
 
+    // Merchants
+    Route::get('/merchants', [mainApiController::class, 'getMerchants']);
+    Route::get('/merchants/{id}', [mainApiController::class, 'getMerchant']);
+
     // Search functionality
     Route::get('/search', [mainApiController::class, 'searchProducts']); // Legacy: البحث عن المنتجات فقط
     Route::get('/search/advanced', [mainApiController::class, 'search']); // البحث الشامل (منتجات + تجار)

@@ -286,6 +286,141 @@ class mainApiController extends Controller
         ]);
     }
 
+    /**
+     * الحصول على جميع التجار المفعلين
+     */
+    public function getMerchants(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'city' => 'nullable|string',
+                'limit' => 'nullable|integer|min:1|max:100',
+                'page' => 'nullable|integer|min:1',
+                'search' => 'nullable|string|max:255',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'البيانات غير صحيحة',
+                    'errors' => $validator->errors(),
+                ], 422);
+            }
+
+            $limit = $request->input('limit', 20);
+            $search = $request->input('search');
+            $city = $request->input('city');
+
+            $query = MerchantProfile::query()
+                ->with(['user' => function ($q) {
+                    $q->select('id', 'name', 'username', 'email', 'phone', 'avatar', 'status', 'bio', 'city', 'neighborhood');
+                }])
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'active'); // فقط المستخدمين المفعلين
+                });
+
+            // البحث في اسم المستخدم أو البريد الإلكتروني
+            if ($search) {
+                $query->whereHas('user', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('username', 'LIKE', "%{$search}%")
+                        ->orWhere('email', 'LIKE', "%{$search}%");
+                });
+            }
+
+            // فلترة حسب المدينة
+            if ($city) {
+                $query->whereHas('user', function ($q) use ($city) {
+                    $q->where('city', $city);
+                });
+            }
+
+            $merchants = $query->latest()->paginate($limit);
+
+            $formattedMerchants = $merchants->map(function ($merchant) {
+                return [
+                    'id' => $merchant->id,
+                    'user_id' => $merchant->user_id,
+                    'name' => $merchant->user->name ?? 'Unknown',
+                    'username' => $merchant->user->username ?? null,
+                    'email' => $merchant->user->email ?? null,
+                    'phone' => $merchant->user->phone ?? null,
+                    'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
+                    'bio' => $merchant->user->bio ?? null,
+                    'city' => $merchant->user->city ?? null,
+                    'neighborhood' => $merchant->user->neighborhood ?? null,
+                    'default_commission_rate' => $merchant->default_commission_rate ?? 0,
+                    'payout_bank_name' => $merchant->payout_bank_name ?? null,
+                    'created_at' => $merchant->created_at->format('Y-m-d H:i:s'),
+                    'updated_at' => $merchant->updated_at->format('Y-m-d H:i:s'),
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب التجار بنجاح',
+                'data' => $formattedMerchants,
+                'meta' => [
+                    'current_page' => $merchants->currentPage(),
+                    'last_page' => $merchants->lastPage(),
+                    'per_page' => $merchants->perPage(),
+                    'total' => $merchants->total(),
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب التجار',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * الحصول على تاجر محدد
+     */
+    public function getMerchant($id)
+    {
+        try {
+            $merchant = MerchantProfile::with(['user'])
+                ->whereHas('user', function ($q) {
+                    $q->where('status', 'active');
+                })
+                ->findOrFail($id);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب بيانات التاجر بنجاح',
+                'data' => [
+                    'id' => $merchant->id,
+                    'user_id' => $merchant->user_id,
+                    'name' => $merchant->user->name ?? 'Unknown',
+                    'username' => $merchant->user->username ?? null,
+                    'email' => $merchant->user->email ?? null,
+                    'phone' => $merchant->user->phone ?? null,
+                    'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
+                    'bio' => $merchant->user->bio ?? null,
+                    'city' => $merchant->user->city ?? null,
+                    'neighborhood' => $merchant->user->neighborhood ?? null,
+                    'default_commission_rate' => $merchant->default_commission_rate ?? 0,
+                    'payout_bank_name' => $merchant->payout_bank_name ?? null,
+                    'payout_account_name' => $merchant->payout_account_name ?? null,
+                    'payout_account_iban' => $merchant->payout_account_iban ?? null,
+                    'created_at' => $merchant->created_at->format('Y-m-d H:i:s'),
+                    'updated_at' => $merchant->updated_at->format('Y-m-d H:i:s'),
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'التاجر غير موجود أو غير مفعل',
+                'error' => $e->getMessage(),
+            ], 404);
+        }
+    }
+
     public function Notifications($type = 'all')
     {
         // الحصول على المستخدم المصادق عليه
