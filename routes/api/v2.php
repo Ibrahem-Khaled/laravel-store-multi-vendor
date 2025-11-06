@@ -159,7 +159,7 @@ Route::middleware('api.auth.active')->group(function () {
     // PRODUCT INTERACTIONS & MANAGEMENT
     // ========================================
     Route::prefix('products')->group(function () {
-        // Brand management (protected)
+        // Brand management (protected) - يجب أن يكون قبل {product} route
         Route::get('/brands', [productController::class, 'brands']);
 
         // Product creation and management
