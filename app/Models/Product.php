@@ -67,6 +67,11 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public function favorites()
     {
         return $this->belongsToMany(Product::class, 'product_favorites', 'product_id', 'user_id');

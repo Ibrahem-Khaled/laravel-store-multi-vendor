@@ -43,7 +43,10 @@ Route::get('/search', [mainApiController::class, 'searchProducts']);
 Route::get('/slider', [mainApiController::class, 'getSlider']);
 Route::get('/categories', [mainApiController::class, 'Categories']);
 Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
+Route::get('/sub-categories/{subCategory}/products', [mainApiController::class, 'getSubCategoryProducts']);
 Route::get('/features', [mainApiController::class, 'getFeatures']);
+Route::get('/home', [mainApiController::class, 'homePage']);
+Route::get('/show-more', [mainApiController::class, 'showMore']);
 
 // --- Products ---
 Route::get('/products', [productController::class, 'Products']);

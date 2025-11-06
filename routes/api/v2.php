@@ -71,10 +71,15 @@ Route::prefix('data')->group(function () {
 
     // Category system
     Route::get('/categories', [mainApiController::class, 'Categories']);
-    Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategories']);
+    Route::get('/categories/{category}/sub-categories', [mainApiController::class, 'SubCategoriesV2']);
+    Route::get('/sub-categories/{subCategory}/products', [mainApiController::class, 'getSubCategoryProducts']);
 
     // Product features
     Route::get('/features', [mainApiController::class, 'getFeatures']);
+
+    // Home page
+    Route::get('/home', [mainApiController::class, 'homePage']);
+    Route::get('/show-more', [mainApiController::class, 'showMore']);
 });
 
 // ========================================
