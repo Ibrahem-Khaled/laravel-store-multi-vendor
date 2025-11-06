@@ -57,13 +57,21 @@
             aria-expanded="{{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('sub-categories.*') || request()->routeIs('brands.*') || request()->routeIs('features.*') ? 'true' : 'false' }}"
             aria-controls="collapseCatalog">
             <i class="fas fa-fw fa-store"></i>
+            @if (isset($pendingApprovalCount) && $pendingApprovalCount > 0)
+                <span class="badge badge-danger badge-counter ml-2">{{ $pendingApprovalCount }}</span>
+            @endif
             <span>إدارة الكتالوج</span>
         </a>
         <div id="collapseCatalog" class="collapse {{ request()->routeIs('products.*') || request()->routeIs('categories.*') || request()->routeIs('sub-categories.*') || request()->routeIs('brands.*') || request()->routeIs('features.*') ? 'show' : '' }}"
              aria-labelledby="headingCatalog" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">عناصر الكتالوج:</h6>
-                <a class="collapse-item {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">المنتجات</a>
+                <a class="collapse-item {{ request()->routeIs('products.*') ? 'active' : '' }}" href="{{ route('products.index') }}">
+                    المنتجات
+                    @if (isset($pendingApprovalCount) && $pendingApprovalCount > 0)
+                        <span class="badge badge-danger badge-counter ml-2">{{ $pendingApprovalCount }}</span>
+                    @endif
+                </a>
                 <a class="collapse-item {{ request()->routeIs('categories.*') ? 'active' : '' }}" href="{{ route('categories.index') }}">التصنيفات</a>
                 <a class="collapse-item {{ request()->routeIs('sub-categories.*') ? 'active' : '' }}" href="{{ route('sub-categories.index') }}">التصنيفات الفرعية</a>
                 <a class="collapse-item {{ request()->routeIs('brands.*') ? 'active' : '' }}" href="{{ route('brands.index') }}">العلامات التجارية</a>

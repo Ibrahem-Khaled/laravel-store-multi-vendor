@@ -59,7 +59,7 @@
                                 <h5>السعر:</h5>
                                 @if ($product->discount_percent > 0)
                                     <p class="text-danger"><del>{{ number_format($product->price, 2) }} </del></p>
-                                    <p class="text-success h4">{{ number_format($product->price_after_discount, 2) }}
+                                    <p class="text-success h4">{{ number_format($product->price * (1 - $product->discount_percent / 100), 2) }}
                                         </p>
                                     <span class="badge badge-success">وفر {{ $product->discount_percent }}%</span>
                                 @else
@@ -67,13 +67,8 @@
                                 @endif
                             </div>
                             <div class="col-md-6">
-                                <h5>الموقع:</h5>
-                                <p>{{ $product->city->name }} - {{ $product->neighborhood->name }}</p>
-                                {{-- @if ($product->latitude && $product->longitude)
-                                    <div id="productMap{{ $product->id }}" style="height: 150px; width: 100%;"></div>
-                                @else
-                                    <p class="text-muted">لا يوجد موقع محدد</p>
-                                @endif --}}
+                                <h5>الكمية:</h5>
+                                <p>{{ $product->quantity ?? 0 }}</p>
                             </div>
                         </div>
 

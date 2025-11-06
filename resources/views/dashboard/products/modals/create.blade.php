@@ -34,7 +34,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="brand_id">البراند *</label>
-                                <select class="form-control" id="brand_id" name="brand_id">
+                                <select class="form-control" id="brand_id" name="brand_id" required>
                                     <option value="">اختر البراند</option>
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
@@ -47,50 +47,34 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="city_id">المدينة *</label>
-                                <select class="form-control" id="city_id" name="city_id" required>
-                                    <option value="">اختر المدينة</option>
-                                    @foreach ($cities as $city)
-                                        <option value="{{ $city->id }}">{{ $city->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="neighborhood_id">الحي *</label>
-                                <select class="form-control" id="neighborhood_id" name="neighborhood_id" required>
-                                    <option value="">اختر الحي</option>
-                                    @foreach ($neighborhoods as $neighborhood)
-                                        <option value="{{ $neighborhood->id }}">{{ $neighborhood->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
                                 <label for="price">السعر *</label>
                                 <input type="number" class="form-control" id="price" name="price" step="0.01"
                                     min="0" required>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="discount_percent">نسبة الخصم %</label>
-                                <input readonly type="number" class="form-control" id="discount_percent"
-                                    name="discount_percent" min="0" max="100" value="0">
+                                <label for="quantity">الكمية</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" min="0" value="0">
                             </div>
                         </div>
                         <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="discount_percent">نسبة الخصم %</label>
+                                <input type="number" class="form-control" id="discount_percent"
+                                    name="discount_percent" min="0" max="100" value="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="price_after_discount">السعر بعد الخصم </label>
                                 <input type="text" class="form-control" id="price_after_discount" readonly>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="video_url">رابط الفيديو (اختياري)</label>
                                 <input type="url" class="form-control" id="video_url" name="video_url"

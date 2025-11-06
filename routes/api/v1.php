@@ -108,7 +108,10 @@ Route::middleware('api.auth')->group(function () {
 
     //this api handles user addresses
     Route::get('all/user/addresses', [UserAddressController::class, 'index']);
-    Route::apiResource('user/addresses', UserAddressController::class)->only(['store', 'destroy']);
+    Route::get('user/addresses/{id}', [UserAddressController::class, 'show']);
+    Route::post('user/addresses', [UserAddressController::class, 'store']);
+    Route::put('user/addresses/{id}', [UserAddressController::class, 'update']);
+    Route::delete('user/addresses/{id}', [UserAddressController::class, 'destroy']);
 
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index']);

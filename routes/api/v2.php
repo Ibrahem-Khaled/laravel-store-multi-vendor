@@ -222,8 +222,10 @@ Route::middleware('api.auth.active')->group(function () {
     // ========================================
     Route::prefix('addresses')->group(function () {
         Route::get('/all', [UserAddressController::class, 'index']);
+        Route::get('/{id}', [UserAddressController::class, 'show']);
         Route::post('/', [UserAddressController::class, 'store']);
-        Route::delete('/{address}', [UserAddressController::class, 'destroy']);
+        Route::put('/{id}', [UserAddressController::class, 'update']);
+        Route::delete('/{id}', [UserAddressController::class, 'destroy']);
     });
 
     // ========================================

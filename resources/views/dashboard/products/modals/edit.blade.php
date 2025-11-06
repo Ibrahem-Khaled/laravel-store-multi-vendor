@@ -51,58 +51,36 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="city_id">المدينة *</label>
-                                    <select class="form-control" id="city_id" name="city_id" required>
-                                        <option value="">اختر المدينة</option>
-                                        @foreach ($cities as $city)
-                                            <option value="{{ $city->id }}"
-                                                {{ $product->city_id == $city->id ? 'selected' : '' }}>
-                                                {{ $city->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="neighborhood_id">الحي *</label>
-                                    <select class="form-control" id="neighborhood_id" name="neighborhood_id" required>
-                                        <option value="">اختر الحي</option>
-                                        @foreach ($neighborhoods as $neighborhood)
-                                            <option value="{{ $neighborhood->id }}"
-                                                {{ $product->neighborhood_id == $neighborhood->id ? 'selected' : '' }}>
-                                                {{ $neighborhood->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
                                     <label for="price">السعر *</label>
                                     <input type="number" class="form-control" id="price" name="price"
                                         step="0.01" min="0" value="{{ $product->price }}" required>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="quantity">الكمية</label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" min="0" value="{{ $product->quantity ?? 0 }}">
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="discount_percent">نسبة الخصم %</label>
-                                    <input readonly type="number" class="form-control" id="discount_percent"
+                                    <input type="number" class="form-control" id="discount_percent"
                                         name="discount_percent" min="0" max="100"
                                         value="{{ $product->discount_percent }}">
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="price_after_discount">السعر بعد الخصم </label>
                                     <input type="text" class="form-control" id="price_after_discount"
-                                        value="{{ number_format($product->price_after_discount, 2) }}" readonly>
+                                        value="{{ number_format($product->price * (1 - ($product->discount_percent / 100)), 2) }}" readonly>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="video_url">رابط الفيديو (اختياري)</label>
                                     <input type="url" class="form-control" id="video_url" name="video_url"

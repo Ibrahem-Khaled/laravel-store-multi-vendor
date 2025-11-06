@@ -46,6 +46,7 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
 
     Route::resource('products', ProductController::class)->except(['show']);
     Route::delete('products/images/{image}', [ProductController::class, 'destroyImage'])->name('products.destroy-image');
+    Route::post('products/{product}/toggle-approval', [ProductController::class, 'toggleApproval'])->name('products.toggle-approval');
     Route::get('products/{product}/features', [ProductController::class, 'showFeatures'])
         ->name('products.features.show');
 

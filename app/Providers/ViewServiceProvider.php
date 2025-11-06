@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Models\RoleChangeRequest; // <-- استدعاء الموديل
+use App\Models\RoleChangeRequest;
+use App\Models\Product;
 use Illuminate\Support\Facades\View;
 
 class ViewServiceProvider extends ServiceProvider
@@ -27,9 +28,12 @@ class ViewServiceProvider extends ServiceProvider
             // تحقق إذا كان المستخدم مسجلاً دخوله لتجنب الأخطاء
             if (auth()->check() && auth()->user()->role === 'admin') {
                 $pendingRequestsCount = RoleChangeRequest::where('status', 'pending')->count();
+                $pendingApprovalCount = Product::where('is_approved', false)->count();
                 $view->with('pendingRequestsCount', $pendingRequestsCount);
+                $view->with('pendingApprovalCount', $pendingApprovalCount);
             } else {
-                $view->with('pendingRequestsCount', 0); // أو قيمة افتراضية
+                $view->with('pendingRequestsCount', 0);
+                $view->with('pendingApprovalCount', 0);
             }
         });
     }

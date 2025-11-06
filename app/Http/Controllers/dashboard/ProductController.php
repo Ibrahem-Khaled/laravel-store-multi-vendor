@@ -4,10 +4,8 @@ namespace App\Http\Controllers\dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
-use App\Models\City;
 use App\Models\Feature;
 use App\Models\Images;
-use App\Models\Neighborhood;
 use App\Models\Product;
 use App\Models\SubCategory;
 use App\Models\User;
@@ -23,22 +21,27 @@ class ProductController extends Controller
         $productsWithDiscount = Product::where('discount_percent', '>', 0)->count();
         $productsWithVideo = Product::whereNotNull('video_url')->count();
         $subCategoriesCount = SubCategory::count();
+        $pendingApprovalCount = Product::where('is_approved', false)->count();
         $brands = Brand::all();
-        $cities = City::all();
-        $neighborhoods = Neighborhood::all();
+        
         // البحث والتصفية
         $search = $request->input('search');
         $subCategoryId = $request->input('sub_category_id');
+        $approvalStatus = $request->input('approval_status'); // 'pending', 'approved', null
 
         $products = Product::with('subCategory')
             ->when($search, function ($query) use ($search) {
                 $query->where('name', 'like', "%$search%")
-                    ->orWhere('description', 'like', "%$search%")
-                    ->orWhere('city', 'like', "%$search%")
-                    ->orWhere('neighborhood', 'like', "%$search%");
+                    ->orWhere('description', 'like', "%$search%");
             })
             ->when($subCategoryId, function ($query) use ($subCategoryId) {
                 $query->where('sub_category_id', $subCategoryId);
+            })
+            ->when($approvalStatus === 'pending', function ($query) {
+                $query->where('is_approved', false);
+            })
+            ->when($approvalStatus === 'approved', function ($query) {
+                $query->where('is_approved', true);
             })
             ->latest()
             ->paginate(10);
@@ -51,12 +54,12 @@ class ProductController extends Controller
             'productsWithDiscount',
             'productsWithVideo',
             'subCategoriesCount',
+            'pendingApprovalCount',
             'subCategories',
             'search',
             'subCategoryId',
+            'approvalStatus',
             'brands',
-            'cities',
-            'neighborhoods',
         ));
     }
 
@@ -64,23 +67,20 @@ class ProductController extends Controller
     {
         $request->validate([
             'sub_category_id' => 'required|exists:sub_categories,id',
-            'brand_id' => 'required|exists:users,id',
+            'brand_id' => 'required|exists:brands,id',
             'name' => 'required|string|max:255',
-            'city_id' => 'required|exists:cities,id',
-            'neighborhood_id' => 'required|exists:neighborhoods,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'discount_percent' => 'required|integer|min:0|max:100',
+            'discount_percent' => 'nullable|integer|min:0|max:100',
+            'quantity' => 'nullable|integer|min:0',
             'video_url' => 'nullable|url',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         $productData = $request->except('images');
-
-        // حساب السعر بعد الخصم
-        $productData['price_after_discount'] = $request->price * (1 - ($request->discount_percent / 100));
+        $productData['discount_percent'] = $productData['discount_percent'] ?? 0;
+        $productData['quantity'] = $productData['quantity'] ?? 0;
+        $productData['is_approved'] = false; // المنتجات الجديدة تحتاج موافقة
 
         $product = Product::create($productData);
 
@@ -108,23 +108,19 @@ class ProductController extends Controller
     {
         $request->validate([
             'sub_category_id' => 'required|exists:sub_categories,id',
-            'brand_id' => 'required|exists:users,id',
+            'brand_id' => 'required|exists:brands,id',
             'name' => 'required|string|max:255',
-            'city_id' => 'required|exists:cities,id',
-            'neighborhood_id' => 'required|exists:neighborhoods,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'discount_percent' => 'required|integer|min:0|max:100',
+            'discount_percent' => 'nullable|integer|min:0|max:100',
+            'quantity' => 'nullable|integer|min:0',
             'video_url' => 'nullable|url',
-            'latitude' => 'nullable|numeric|between:-90,90',
-            'longitude' => 'nullable|numeric|between:-180,180',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
         ]);
 
         $productData = $request->except('images');
-
-        // حساب السعر بعد الخصم
-        $productData['price_after_discount'] = $request->price * (1 - ($request->discount_percent / 100));
+        $productData['discount_percent'] = $productData['discount_percent'] ?? 0;
+        $productData['quantity'] = $productData['quantity'] ?? 0;
 
         $product->update($productData);
 
@@ -159,5 +155,18 @@ class ProductController extends Controller
         $image->delete();
 
         return back()->with('success', 'تم حذف الصورة بنجاح');
+    }
+
+    /**
+     * Toggle product approval status
+     */
+    public function toggleApproval(Product $product)
+    {
+        $product->update([
+            'is_approved' => !$product->is_approved
+        ]);
+
+        $status = $product->is_approved ? 'مقبول' : 'غير مقبول';
+        return back()->with('success', "تم تغيير حالة المنتج إلى: {$status}");
     }
 }

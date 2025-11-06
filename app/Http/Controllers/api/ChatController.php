@@ -118,28 +118,69 @@ class ChatController extends Controller
      */
     public function startConversation(Request $request)
     {
-        $validated = $request->validate(['user_id' => 'required|integer|exists:users,id']);
+        try {
+            $validated = $request->validate(['user_id' => 'required|integer|exists:users,id']);
 
-        $currentUser = auth()->guard('api')->user();
+            $currentUser = auth()->guard('api')->user();
 
-        if ($currentUser->id == $validated['user_id']) {
-            return response()->json(['message' => 'You cannot start a conversation with yourself.'], 422);
-        }
+            if (!$currentUser) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'المستخدم غير مصادق عليه'
+                ], 401);
+            }
 
-        // ابحث إذا كانت هناك محادثة حالية بين هذين المستخدمين
-        $conversation = $currentUser->conversations()
+            if ($currentUser->id == $validated['user_id']) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لا يمكنك بدء محادثة مع نفسك'
+                ], 422);
+            }
+
+            // ابحث إذا كانت هناك محادثة حالية بين هذين المستخدمين
+            // استخدام استعلام أفضل للبحث عن المحادثة
+            $conversation = Conversation::whereHas('participants', function ($query) use ($currentUser) {
+                $query->where('user_id', $currentUser->id);
+            })
             ->whereHas('participants', function ($query) use ($validated) {
                 $query->where('user_id', $validated['user_id']);
             })
+            ->with(['participants:id,name,username,avatar', 'messages' => function($query) {
+                $query->latest()->limit(1);
+            }])
             ->first();
 
-        if ($conversation) {
-            return new ConversationResource($conversation->load('participants', 'messages'));
+            if ($conversation) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'تم العثور على محادثة موجودة',
+                    'data' => new ConversationResource($conversation)
+                ], 200);
+            }
+
+            // إنشاء محادثة جديدة
+            $newConversation = Conversation::create();
+            $newConversation->participants()->attach([$currentUser->id, $validated['user_id']]);
+            $newConversation->load(['participants:id,name,username,avatar', 'messages']);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم إنشاء محادثة جديدة بنجاح',
+                'data' => new ConversationResource($newConversation)
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'البيانات غير صحيحة',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء بدء المحادثة',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $newConversation = Conversation::create();
-        $newConversation->participants()->attach([$currentUser->id, $validated['user_id']]);
-
-        return new ConversationResource($newConversation);
     }
 }

@@ -24,7 +24,7 @@
             <x-stat-card title="إجمالي المنتجات" :count="$productsCount" icon="box" color="primary" class="mb-4" />
             <x-stat-card title="منتجات عليها خصم" :count="$productsWithDiscount" icon="tags" color="success" class="mb-4" />
             <x-stat-card title="منتجات تحتوي على فيديو" :count="$productsWithVideo" icon="video" color="info" class="mb-4" />
-            <x-stat-card title="عدد الأقسام الفرعية" :count="$subCategoriesCount" icon="folder" color="warning" class="mb-4" />
+            <x-stat-card title="منتجات تحتاج موافقة" :count="$pendingApprovalCount" icon="clock" color="warning" class="mb-4" />
         </div>
 
         {{-- بطاقة قائمة المنتجات --}}
@@ -39,10 +39,10 @@
                 {{-- نموذج البحث والتصفية --}}
                 <form action="{{ route('products.index') }}" method="GET" class="mb-4">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-5">
                             <div class="form-group">
                                 <input type="text" name="search" class="form-control"
-                                    placeholder="ابحث باسم المنتج أو الوصف أو المدينة..." value="{{ $search }}">
+                                    placeholder="ابحث باسم المنتج أو الوصف..." value="{{ $search }}">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -58,9 +58,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <select class="form-control" name="approval_status">
+                                    <option value="">كل المنتجات</option>
+                                    <option value="pending" {{ $approvalStatus == 'pending' ? 'selected' : '' }}>غير مقبولة</option>
+                                    <option value="approved" {{ $approvalStatus == 'approved' ? 'selected' : '' }}>مقبولة</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <button class="btn btn-primary w-100" type="submit">
-                                <i class="fas fa-search"></i>
+                                <i class="fas fa-search"></i> بحث
                             </button>
                         </div>
                     </div>
@@ -76,9 +85,9 @@
                                 <th>الاسم</th>
                                 <th>العلامة التجارية</th>
                                 <th>القسم الفرعي</th>
-                                <th>المدينة</th>
                                 <th>السعر</th>
                                 <th>الخصم</th>
+                                <th>الحالة</th>
                                 <th>الإجراءات</th>
                             </tr>
                         </thead>
@@ -104,14 +113,13 @@
                                     <td>{{ $product->name }}</td>
                                     <td>{{ $product->brand->name }}</td>
                                     <td>{{ $product->subCategory->name }}</td>
-                                    <td>{{ $product->city->name }} - {{ $product->neighborhood->name }}</td>
                                     <td>
                                         @if ($product->discount_percent > 0)
                                             <span class="text-danger"><del>{{ number_format($product->price, 2) }}
                                                 </del></span>
                                             <br>
                                             <span
-                                                class="text-success">{{ number_format($product->price_after_discount, 2) }}
+                                                class="text-success">{{ number_format($product->price * (1 - $product->discount_percent / 100), 2) }}
                                             </span>
                                         @else
                                             {{ number_format($product->price, 2) }}
@@ -123,6 +131,16 @@
                                         @else
                                             <span class="text-muted">لا يوجد</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('products.toggle-approval', $product->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-toggle {{ $product->is_approved ? 'btn-success' : 'btn-warning' }}" 
+                                                    title="{{ $product->is_approved ? 'مقبول' : 'غير مقبول' }}">
+                                                <i class="fas {{ $product->is_approved ? 'fa-check-circle' : 'fa-times-circle' }}"></i>
+                                                {{ $product->is_approved ? 'مقبول' : 'غير مقبول' }}
+                                            </button>
+                                        </form>
                                     </td>
                                     <td>
                                         {{-- زر عرض --}}
@@ -175,6 +193,25 @@
     {{-- مودال إضافة منتج (ثابت) --}}
     @include('dashboard.products.modals.create')
 @endsection
+
+@push('styles')
+    <style>
+        .btn-toggle {
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+        .btn-toggle:hover {
+            transform: scale(1.05);
+        }
+        .badge-counter {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+        }
+    </style>
+@endpush
 
 @push('scripts')
     <script>
