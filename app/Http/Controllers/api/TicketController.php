@@ -59,7 +59,7 @@ class TicketController extends Controller
             }
 
             $data = $validator->validated();
-            $data['user_id'] = auth()->id();
+            $data['user_id'] = auth()->guard('api')->id();
             $data['priority'] = $data['priority'] ?? 'medium';
             $data['status'] = 'pending';
 
@@ -101,7 +101,7 @@ class TicketController extends Controller
             $status = $request->get('status', 'all');
             $category = $request->get('category_id', 'all');
 
-            $query = Ticket::where('user_id', auth()->id())
+            $query = Ticket::where('user_id', auth()->guard('api')->id())
                 ->with(['category:id,name,icon', 'responder:id,name']);
 
             if ($status !== 'all' && in_array($status, ['pending', 'open', 'in_progress', 'resolved', 'closed'])) {
@@ -163,7 +163,7 @@ class TicketController extends Controller
     public function show($id)
     {
         try {
-            $ticket = Ticket::where('user_id', auth()->id())
+            $ticket = Ticket::where('user_id', auth()->guard('api')->id())
                 ->with(['category', 'responder'])
                 ->findOrFail($id);
 
@@ -227,7 +227,7 @@ class TicketController extends Controller
                 ], 422);
             }
 
-            $ticket = Ticket::where('user_id', auth()->id())
+            $ticket = Ticket::where('user_id', auth()->guard('api')->id())
                 ->findOrFail($id);
 
             if (!$ticket->hasResponse()) {
