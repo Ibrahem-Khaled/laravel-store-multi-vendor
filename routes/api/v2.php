@@ -86,7 +86,7 @@ Route::prefix('products')->group(function () {
     Route::get('/{product}', [productController::class, 'Product']);
     Route::get('/featured/list', [productController::class, 'featuredProducts']);
     Route::get('/{product}/similar', [ProductController::class, 'similarsProducts']);
-    
+
     // Product reviews (Public - get reviews)
     Route::get('/{productId}/reviews', [ReviewController::class, 'getProductReviews']);
 });

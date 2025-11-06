@@ -44,19 +44,8 @@ class ReviewController extends Controller
             $rate = $request->input('rate');
             $comment = $request->input('comment');
 
-            // التحقق من أن المستخدم لم يقيم هذا المنتج من قبل
-            $existingReview = Review::where('user_id', $user->id)
-                ->where('product_id', $productId)
-                ->first();
-
-            if ($existingReview) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'لقد قمت بتقييم هذا المنتج من قبل',
-                ], 400);
-            }
-
             // حساب عدد التقييمات السابقة للمستخدم لهذا المنتج
+            // هذا سيحدد عدد المشتريات المطلوبة للتقييم الجديد
             $previousReviewsCount = Review::where('user_id', $user->id)
                 ->where('product_id', $productId)
                 ->count();
