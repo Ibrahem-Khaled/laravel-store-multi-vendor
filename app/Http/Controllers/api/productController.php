@@ -113,7 +113,7 @@ class productController extends Controller
     {
         try {
             $user = auth()->guard('api')->user();
-            
+
             if (!$user) {
                 return response()->json([
                     'status' => false,
@@ -123,7 +123,7 @@ class productController extends Controller
             }
 
             $brands = Brand::where('user_id', $user->id)->get();
-            
+
             return response()->json([
                 'status' => true,
                 'message' => 'تم جلب البراندات بنجاح',

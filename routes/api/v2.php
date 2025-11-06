@@ -88,6 +88,10 @@ Route::prefix('data')->group(function () {
 Route::prefix('products')->group(function () {
     // Product listing and details
     Route::get('/', [productController::class, 'Products']);
+
+    // Brand management - يجب أن يكون قبل {product} route
+    Route::get('/brands', [productController::class, 'brands'])->middleware('api.auth.active');
+
     Route::get('/{product}', [productController::class, 'Product']);
     Route::get('/featured/list', [productController::class, 'featuredProducts']);
     Route::get('/{product}/similar', [ProductController::class, 'similarsProducts']);
@@ -159,9 +163,6 @@ Route::middleware('api.auth.active')->group(function () {
     // PRODUCT INTERACTIONS & MANAGEMENT
     // ========================================
     Route::prefix('products')->group(function () {
-        // Brand management (protected) - يجب أن يكون قبل {product} route
-        Route::get('/brands', [productController::class, 'brands']);
-
         // Product creation and management
         Route::post('/create', [CreateProductController::class, 'store']);
         Route::delete('/{product}', [CreateProductController::class, 'destroy']);
