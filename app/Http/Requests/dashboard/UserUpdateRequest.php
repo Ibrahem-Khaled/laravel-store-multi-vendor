@@ -30,6 +30,7 @@ class UserUpdateRequest extends FormRequest
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'coins' => ['nullable', 'integer', 'min:0'],
             'address' => ['nullable', 'string', 'max:500'],
+            'is_verified' => ['nullable', 'boolean'],
         ];
     }
 }

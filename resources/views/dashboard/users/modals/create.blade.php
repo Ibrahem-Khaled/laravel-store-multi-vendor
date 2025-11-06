@@ -94,6 +94,16 @@
                             <label class="custom-file-label" for="createAvatar">اختر ملف</label>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" name="is_verified" class="form-check-input" id="createIsVerified" value="1">
+                            <label class="form-check-label" for="createIsVerified">
+                                <strong>حساب موثق</strong>
+                                <small class="text-muted d-block">تفعيل التحقق من الحساب</small>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">

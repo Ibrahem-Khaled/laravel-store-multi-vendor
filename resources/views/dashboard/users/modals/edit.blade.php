@@ -111,6 +111,16 @@
                             <label class="custom-file-label" for="editAvatar{{ $user->id }}">اختر ملف</label>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" name="is_verified" class="form-check-input" id="editIsVerified{{ $user->id }}" value="1" {{ $user->is_verified ? 'checked' : '' }}>
+                            <label class="form-check-label" for="editIsVerified{{ $user->id }}">
+                                <strong>حساب موثق</strong>
+                                <small class="text-muted d-block">تفعيل التحقق من الحساب</small>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">

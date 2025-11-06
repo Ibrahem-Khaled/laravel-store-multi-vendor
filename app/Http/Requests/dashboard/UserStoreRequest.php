@@ -27,6 +27,7 @@ class UserStoreRequest extends FormRequest
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
             'address' => ['nullable', 'string', 'max:500'],
             'coins' => ['nullable', 'integer', 'min:0'],
+            'is_verified' => ['nullable', 'boolean'],
         ];
     }
 }
