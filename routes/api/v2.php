@@ -88,13 +88,16 @@ Route::get('/users/{user}', [authController::class, 'getUser']);
 // SETTINGS ROUTES (Public)
 // ========================================
 Route::prefix('settings')->group(function () {
-    Route::get('/', [SettingController::class, 'index']);
-    Route::get('/{key}', [SettingController::class, 'show']);
-    Route::get('/group/{group}', [SettingController::class, 'getGroup']);
+    // Routes المحددة يجب أن تكون قبل {key} route
     Route::get('/site/info', [SettingController::class, 'siteInfo']);
     Route::get('/privacy-policy', [SettingController::class, 'privacyPolicy']);
     Route::get('/terms-of-service', [SettingController::class, 'termsOfService']);
     Route::get('/about-us', [SettingController::class, 'aboutUs']);
+    Route::get('/group/{group}', [SettingController::class, 'getGroup']);
+    
+    // Routes العامة
+    Route::get('/', [SettingController::class, 'index']);
+    Route::get('/{key}', [SettingController::class, 'show']);
 });
 
 /*
