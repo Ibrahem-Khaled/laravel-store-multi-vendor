@@ -36,6 +36,7 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     // اعتماد/إلغاء تفعيل
     Route::post('/users/{user}/approve', [UserController::class, 'approve'])->name('users.approve');
     Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
+    Route::post('/users/{user}/toggle-verification', [UserController::class, 'toggleVerification'])->name('users.toggle-verification');
 
     Route::resource('categories', CategoryController::class);
     Route::resource('sub-categories', SubCategoryController::class);

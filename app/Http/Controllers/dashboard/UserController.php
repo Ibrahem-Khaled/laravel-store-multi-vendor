@@ -269,6 +269,26 @@ class UserController extends Controller
     }
 
     /**
+     * تبديل حالة التوثيق
+     */
+    public function toggleVerification(User $user)
+    {
+        $this->authorize('manage-users');
+
+        $user->update([
+            'is_verified' => !$user->is_verified
+        ]);
+
+        $message = $user->is_verified 
+            ? 'تم توثيق الحساب بنجاح.' 
+            : 'تم إلغاء توثيق الحساب بنجاح.';
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', $message);
+    }
+
+    /**
      * الحصول على الأدوار من قاعدة البيانات
      */
     private function getDbRoles()

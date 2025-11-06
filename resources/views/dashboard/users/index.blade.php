@@ -277,12 +277,13 @@
                         <thead class="thead-light">
                             <tr>
                                 <th width="5%">#</th>
-                                <th width="20%">المستخدم</th>
-                                <th width="15%">الأدوار</th>
+                                <th width="18%">المستخدم</th>
+                                <th width="12%">الأدوار</th>
                                 <th width="15%">معلومات الاتصال</th>
                                 <th width="10%">الحالة</th>
-                                <th width="10%">الرصيد</th>
-                                <th width="25%">الإجراءات</th>
+                                <th width="8%">الرصيد</th>
+                                <th width="8%">التوثيق</th>
+                                <th width="24%">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -349,16 +350,25 @@
                                         <span class="badge badge-status badge-{{ $statusClasses[$user->status] ?? 'light' }}">
                                             {{ $statusLabels[$user->status] ?? $user->status }}
                                         </span>
-                                        @if($user->is_verified)
-                                            <span class="badge badge-success badge-status mt-1">
-                                                <i class="fas fa-check-circle"></i> موثق
-                                            </span>
-                                        @endif
                                     </td>
                                     <td>
                                         <span class="badge badge-warning">
                                             <i class="fas fa-coins"></i> {{ number_format($user->coins ?? 0) }}
                                         </span>
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('users.toggle-verification', $user) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" 
+                                                    class="btn btn-sm {{ $user->is_verified ? 'btn-success' : 'btn-secondary' }}"
+                                                    title="{{ $user->is_verified ? 'إلغاء التوثيق' : 'توثيق الحساب' }}">
+                                                @if($user->is_verified)
+                                                    <i class="fas fa-check-circle"></i> موثق
+                                                @else
+                                                    <i class="fas fa-times-circle"></i> غير موثق
+                                                @endif
+                                            </button>
+                                        </form>
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
@@ -423,7 +433,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-5">
+                                    <td colspan="8" class="text-center py-5">
                                         <i class="fas fa-user-slash fa-3x text-gray-300 mb-3"></i>
                                         <p class="text-gray-500">لا يوجد مستخدمون</p>
                                     </td>
