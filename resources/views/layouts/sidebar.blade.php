@@ -250,6 +250,15 @@
         </li>
         {{-- @endcan --}}
 
+        @can('manage-settings')
+        <li class="nav-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('settings.index') }}">
+                <i class="fas fa-fw fa-cogs"></i>
+                <span>إعدادات الموقع</span>
+            </a>
+        </li>
+        @endcan
+
     <hr class="sidebar-divider d-none d-md-block">
 
     <div class="text-center d-none d-md-inline">

@@ -24,7 +24,9 @@ class UserStoreRequest extends FormRequest
             'role_ids.*' => ['exists:roles,id'],
             'status' => ['nullable', 'in:pending,active,inactive,banned'],
             'gender' => ['nullable', 'in:male,female'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'coins' => ['nullable', 'integer', 'min:0'],
         ];
     }
 }

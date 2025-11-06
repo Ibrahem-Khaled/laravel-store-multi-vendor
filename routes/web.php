@@ -137,6 +137,15 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::put('/{role}', [RoleController::class, 'update'])->name('update');
         Route::delete('/{role}', [RoleController::class, 'destroy'])->name('destroy');
     });
+
+    // إعدادات الموقع
+    Route::middleware('permission:manage-settings')->prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\dashboard\SettingController::class, 'index'])->name('index');
+        Route::put('/', [\App\Http\Controllers\dashboard\SettingController::class, 'update'])->name('update');
+        Route::post('/reset', [\App\Http\Controllers\dashboard\SettingController::class, 'reset'])->name('reset');
+        Route::get('/export', [\App\Http\Controllers\dashboard\SettingController::class, 'export'])->name('export');
+        Route::post('/import', [\App\Http\Controllers\dashboard\SettingController::class, 'import'])->name('import');
+    });
 });
 
 

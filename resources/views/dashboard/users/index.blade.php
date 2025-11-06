@@ -2,46 +2,116 @@
 
 @push('styles')
     <style>
-        /* تحسينات شكلية بسيطة */
-        .btn-circle {
-            width: 34px;
-            height: 34px;
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            line-height: 1;
+            border: 2px solid #e3e6f0;
+            max-width: 45px;
+            max-height: 45px;
         }
 
-        .table td,
+        .badge-status {
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.85rem;
+        }
+
         .table th {
+            font-weight: 600;
+            border-bottom: 2px solid #e3e6f0;
+        }
+
+        .table td {
             vertical-align: middle;
         }
 
-        .badge[class*="badge-"] {
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: #5a5c69;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-bottom-color: #4e73df;
+            color: #4e73df;
+        }
+
+        .nav-tabs .nav-link.active {
+            border-bottom-color: #4e73df;
+            color: #4e73df;
             font-weight: 600;
         }
 
-        .nav-tabs .badge {
-            font-size: 0.75rem;
+        .role-badge {
+            margin: 2px 4px;
+            display: inline-block;
+        }
+
+        .filter-section {
+            background: #f8f9fc;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
         }
     </style>
 @endpush
 
 @section('content')
     <div class="container-fluid" dir="rtl">
-
         {{-- عنوان الصفحة ومسار التنقل --}}
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-12">
-                <h1 class="h3 mb-0 text-gray-800">إدارة المستخدمين</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">لوحة التحكم</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">المستخدمين</li>
-                    </ol>
-                </nav>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-users mr-2"></i>
+                            إدارة المستخدمين
+                        </h1>
+                        <nav aria-label="breadcrumb" class="mt-2">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ route('dashboard') }}">
+                                        <i class="fas fa-home"></i> لوحة التحكم
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">المستخدمين</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createUserModal">
+                        <i class="fas fa-plus"></i> إضافة مستخدم جديد
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -49,152 +119,301 @@
 
         {{-- إحصائيات المستخدمين --}}
         <div class="row mb-4">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    إجمالي المستخدمين
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['total'] }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-users fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <x-stat-card icon="fas fa-users" title="إجمالي المستخدمين" :value="$usersCount" color="primary" />
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    المستخدمون النشطون
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['active'] }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <x-stat-card icon="fas fa-user-check" title="المستخدمون النشطون" :value="$activeUsersCount" color="success" />
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    قيد الاعتماد
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['pending'] }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <x-stat-card icon="fas fa-user-shield" title="عدد المشرفين" :value="$adminsCount" color="info" />
-
-                <x-stat-card icon="fas fa-user-tag" title="عدد الأدوار" :value="$totalRolesCount ?? 4" color="warning" />
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    عدد المشرفين
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['admins'] }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user-shield fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         {{-- بطاقة قائمة المستخدمين --}}
         <div class="card shadow mb-4">
-            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">قائمة المستخدمين</h6>
-                <button class="btn btn-primary" data-toggle="modal" data-target="#createUserModal">
-                    <i class="fas fa-plus"></i> إضافة مستخدم
-                </button>
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-list mr-2"></i>
+                    قائمة المستخدمين
+                </h6>
             </div>
 
             <div class="card-body">
-                {{-- تبويب الأدوار مع العدّاد --}}
-                @php
-                    $roleNames = [
-                        'admin' => 'مدير',
-                        'moderator' => 'مشرف',
-                        'user' => 'مستخدم',
-                        'trader' => 'متداول',
-                    ];
-                @endphp
-
+                {{-- فلترة الأدوار --}}
                 <ul class="nav nav-tabs mb-4">
                     <li class="nav-item">
-                        <a class="nav-link {{ $selectedRole === 'all' ? 'active' : '' }}" href="{{ route('users.index') }}">
-                            الكل
-                            <span class="badge badge-pill badge-secondary ml-1">{{ $usersCount }}</span>
+                        <a class="nav-link {{ $selectedRole === 'all' ? 'active' : '' }}"
+                           href="{{ route('users.index', array_merge(request()->except('role'), ['role' => 'all'])) }}">
+                            <i class="fas fa-list"></i> الكل
+                            <span class="badge badge-secondary">{{ $stats['total'] }}</span>
                         </a>
                     </li>
-                    @foreach ($oldRoles as $role)
+                    @foreach ($oldRoles as $roleKey => $roleLabel)
                         <li class="nav-item">
-                            <a class="nav-link {{ $selectedRole === $role ? 'active' : '' }}"
-                                href="{{ route('users.index', ['role' => $role]) }}">
-                                {{ $roleNames[$role] ?? $role }}
-                                <span class="badge badge-pill badge-light border ml-1">{{ $roleCounts[$role] ?? 0 }}</span>
+                            <a class="nav-link {{ $selectedRole === $roleKey ? 'active' : '' }}"
+                               href="{{ route('users.index', array_merge(request()->except('role'), ['role' => $roleKey])) }}">
+                                {{ $roleLabel }}
+                                <span class="badge badge-light border">{{ $roleCounts[$roleKey] ?? 0 }}</span>
                             </a>
                         </li>
                     @endforeach
-                    {{-- الأدوار الجديدة من قاعدة البيانات --}}
-                    @if(isset($dbRoles))
-                        @foreach ($dbRoles as $role)
-                            <li class="nav-item">
-                                <a class="nav-link {{ $selectedRole === $role->name ? 'active' : '' }}"
-                                    href="{{ route('users.index', ['role' => $role->name]) }}">
-                                    {{ $role->display_name }}
-                                    <span class="badge badge-pill badge-info border ml-1">{{ $roleCountsNew[$role->name] ?? 0 }}</span>
-                                </a>
-                            </li>
-                        @endforeach
-                    @endif
+                    @foreach ($dbRoles as $role)
+                        <li class="nav-item">
+                            <a class="nav-link {{ $selectedRole === $role->name ? 'active' : '' }}"
+                               href="{{ route('users.index', array_merge(request()->except('role'), ['role' => $role->name])) }}">
+                                {{ $role->display_name }}
+                                <span class="badge badge-info border">{{ $roleCountsNew[$role->name] ?? 0 }}</span>
+                            </a>
+                        </li>
+                    @endforeach
                 </ul>
 
-                {{-- نموذج البحث --}}
-                <form action="{{ route('users.index') }}" method="GET" class="mb-4">
-                    <div class="input-group">
-                        <input type="text" name="search" class="form-control"
-                            placeholder="ابحث بالاسم أو البريد أو الهاتف..." value="{{ request('search') }}">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i> بحث</button>
+                {{-- نموذج البحث والفلترة --}}
+                <div class="filter-section">
+                    <form action="{{ route('users.index') }}" method="GET" class="form-inline">
+                        <input type="hidden" name="role" value="{{ $selectedRole }}">
+
+                        <div class="form-group flex-grow-1 mr-2 mb-2">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text"
+                                       name="search"
+                                       class="form-control"
+                                       placeholder="ابحث بالاسم، البريد، الهاتف أو اسم المستخدم..."
+                                       value="{{ $search }}">
+                            </div>
                         </div>
-                    </div>
-                </form>
+
+                        <div class="form-group mr-2 mb-2">
+                            <select name="status" class="form-control">
+                                <option value="all">جميع الحالات</option>
+                                <option value="active" {{ $status === 'active' ? 'selected' : '' }}>نشط</option>
+                                <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>قيد الاعتماد</option>
+                                <option value="inactive" {{ $status === 'inactive' ? 'selected' : '' }}>غير نشط</option>
+                                <option value="banned" {{ $status === 'banned' ? 'selected' : '' }}>محظور</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-2">
+                            <i class="fas fa-filter"></i> بحث
+                        </button>
+
+                        @if ($search || $status !== 'all')
+                            <a href="{{ route('users.index', ['role' => $selectedRole]) }}" class="btn btn-secondary mb-2">
+                                <i class="fas fa-times"></i> إلغاء
+                            </a>
+                        @endif
+                    </form>
+                </div>
 
                 {{-- جدول المستخدمين --}}
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover">
                         <thead class="thead-light">
                             <tr>
-                                <th>الاسم</th>
-                                <th>الدور</th>
-                                <th>البريد الإلكتروني</th>
-                                <th>الهاتف</th>
-                                <th>الحالة</th>
-                                <th>الإجراءات</th>
+                                <th width="5%">#</th>
+                                <th width="20%">المستخدم</th>
+                                <th width="15%">الأدوار</th>
+                                <th width="15%">معلومات الاتصال</th>
+                                <th width="10%">الحالة</th>
+                                <th width="10%">الرصيد</th>
+                                <th width="25%">الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($users as $user)
                                 <tr>
+                                    <td>{{ $user->id }}</td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('img/default-avatar.png') }}"
-                                                alt="{{ $user->name }}" class="rounded-circle mr-2" width="40"
-                                                height="40">
-                                            <div class="d-flex flex-column">
+                                                 alt="{{ $user->name }}"
+                                                 class="user-avatar mr-3"
+                                                 style="width: 45px; height: 45px; object-fit: cover;"
+                                                 onerror="this.onerror=null; this.src='{{ asset('img/default-avatar.png') }}';">
+                                            <div>
                                                 <strong>{{ $user->name }}</strong>
-                                                <small class="text-muted">{{ '@' . $user->username }} ·
-                                                    {{ $user->uuid }}</small>
+                                                <div class="small text-muted">
+                                                    <i class="fas fa-at"></i> {{ $user->username }}
+                                                </div>
+                                                <div class="small text-muted">
+                                                    <i class="fas fa-fingerprint"></i> {{ Str::limit($user->uuid, 8) }}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>
-                                        {{-- الدور القديم --}}
-                                        <span class="badge badge-info">{{ $roleNames[$user->role] ?? $user->role }}</span>
-                                        {{-- الأدوار الجديدة --}}
+                                        <span class="badge badge-info role-badge">
+                                            {{ $oldRoles[$user->role] ?? $user->role }}
+                                        </span>
                                         @if($user->roles->count() > 0)
-                                            <br>
                                             @foreach($user->roles as $role)
-                                                <span class="badge badge-success mt-1">{{ $role->display_name }}</span>
+                                                <span class="badge badge-success role-badge">
+                                                    {{ $role->display_name }}
+                                                </span>
                                             @endforeach
                                         @endif
                                     </td>
-                                    <td>{{ $user->email ?? '-' }}</td>
-                                    <td>{{ $user->phone ?? '-' }}</td>
                                     <td>
-                                        @php $statusMap = ['pending'=>'warning','active'=>'success','inactive'=>'secondary','banned'=>'danger']; @endphp
-                                        <span
-                                            class="badge badge-{{ $statusMap[$user->status] ?? 'light' }}">{{ $user->status }}</span>
+                                        <div class="small">
+                                            <div>
+                                                <i class="fas fa-envelope text-primary"></i>
+                                                {{ $user->email ?? '-' }}
+                                            </div>
+                                            <div class="mt-1">
+                                                <i class="fas fa-phone text-success"></i>
+                                                {{ $user->phone ?? '-' }}
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-sm btn-circle btn-info" data-toggle="modal"
-                                            data-target="#showUserModal{{ $user->id }}" title="عرض"
-                                            data-toggle="tooltip">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-
-                                        <button type="button" class="btn btn-sm btn-circle btn-primary" data-toggle="modal"
-                                            data-target="#editUserModal{{ $user->id }}" title="تعديل"
-                                            data-toggle="tooltip">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-
-                                        <button type="button" class="btn btn-sm btn-circle btn-danger" data-toggle="modal"
-                                            data-target="#deleteUserModal{{ $user->id }}" title="حذف"
-                                            data-toggle="tooltip">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-
-                                        {{-- زرّ تفعيل واضح في الصف (لو Pending أو Inactive) --}}
-                                        @if (in_array($user->status, ['pending', 'inactive']))
-                                            <form action="{{ route('users.approve', $user) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf
-                                                <button class="btn btn-sm btn-success" title="تفعيل" data-toggle="tooltip">
-                                                    <i class="fas fa-check"></i> تفعيل
-                                                </button>
-                                            </form>
+                                        @php
+                                            $statusClasses = [
+                                                'pending' => 'warning',
+                                                'active' => 'success',
+                                                'inactive' => 'secondary',
+                                                'banned' => 'danger'
+                                            ];
+                                            $statusLabels = [
+                                                'pending' => 'قيد الاعتماد',
+                                                'active' => 'نشط',
+                                                'inactive' => 'غير نشط',
+                                                'banned' => 'محظور'
+                                            ];
+                                        @endphp
+                                        <span class="badge badge-status badge-{{ $statusClasses[$user->status] ?? 'light' }}">
+                                            {{ $statusLabels[$user->status] ?? $user->status }}
+                                        </span>
+                                        @if($user->is_verified)
+                                            <span class="badge badge-success badge-status mt-1">
+                                                <i class="fas fa-check-circle"></i> موثق
+                                            </span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-warning">
+                                            <i class="fas fa-coins"></i> {{ number_format($user->coins ?? 0) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-info btn-action"
+                                                    data-toggle="modal"
+                                                    data-target="#showUserModal{{ $user->id }}"
+                                                    title="عرض التفاصيل">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-primary btn-action"
+                                                    data-toggle="modal"
+                                                    data-target="#editUserModal{{ $user->id }}"
+                                                    title="تعديل">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+
+                                            @if (in_array($user->status, ['pending', 'inactive']))
+                                                <form action="{{ route('users.approve', $user) }}"
+                                                      method="POST"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('هل أنت متأكد من تفعيل هذا المستخدم؟')">
+                                                    @csrf
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-success btn-action"
+                                                            title="تفعيل">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            @if ($user->status === 'active')
+                                                <form action="{{ route('users.deactivate', $user) }}"
+                                                      method="POST"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('هل أنت متأكد من إلغاء تفعيل هذا المستخدم؟')">
+                                                    @csrf
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-warning btn-action"
+                                                            title="إلغاء التفعيل">
+                                                        <i class="fas fa-ban"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            <button type="button"
+                                                    class="btn btn-sm btn-danger btn-action"
+                                                    data-toggle="modal"
+                                                    data-target="#deleteUserModal{{ $user->id }}"
+                                                    title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
 
                                         {{-- مودالات لكل مستخدم --}}
                                         @include('dashboard.users.modals.show', ['user' => $user])
@@ -204,7 +423,10 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">لا يوجد مستخدمون</td>
+                                    <td colspan="7" class="text-center py-5">
+                                        <i class="fas fa-user-slash fa-3x text-gray-300 mb-3"></i>
+                                        <p class="text-gray-500">لا يوجد مستخدمون</p>
+                                    </td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -212,12 +434,14 @@
                 </div>
 
                 {{-- الترقيم --}}
-                <div class="d-flex justify-content-center">{{ $users->links() }}</div>
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $users->links() }}
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- مودال إضافة مستخدم (ثابت) --}}
+    {{-- مودال إضافة مستخدم --}}
     @include('dashboard.users.modals.create')
 @endsection
 
@@ -230,6 +454,15 @@
         });
 
         // تفعيل الـ Tooltip
-        $('[data-toggle="tooltip"]').tooltip();
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // تأكيد الحذف
+        $('.delete-user-form').on('submit', function(e) {
+            if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                e.preventDefault();
+            }
+        });
     </script>
 @endpush

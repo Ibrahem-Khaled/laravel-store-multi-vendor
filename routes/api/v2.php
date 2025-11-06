@@ -12,6 +12,7 @@ use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\MerchantController;
 use App\Http\Controllers\api\productController;
 use App\Http\Controllers\api\RoleChangeRequestController;
+use App\Http\Controllers\api\SettingController;
 use App\Http\Controllers\api\UserAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -82,6 +83,19 @@ Route::prefix('products')->group(function () {
 // USER PROFILE ROUTES (Public)
 // ========================================
 Route::get('/users/{user}', [authController::class, 'getUser']);
+
+// ========================================
+// SETTINGS ROUTES (Public)
+// ========================================
+Route::prefix('settings')->group(function () {
+    Route::get('/', [SettingController::class, 'index']);
+    Route::get('/{key}', [SettingController::class, 'show']);
+    Route::get('/group/{group}', [SettingController::class, 'getGroup']);
+    Route::get('/site/info', [SettingController::class, 'siteInfo']);
+    Route::get('/privacy-policy', [SettingController::class, 'privacyPolicy']);
+    Route::get('/terms-of-service', [SettingController::class, 'termsOfService']);
+    Route::get('/about-us', [SettingController::class, 'aboutUs']);
+});
 
 /*
 |--------------------------------------------------------------------------
