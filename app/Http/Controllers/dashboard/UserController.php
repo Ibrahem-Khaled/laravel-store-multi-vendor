@@ -278,15 +278,16 @@ class UserController extends Controller
         // حفظ الحالة الحالية قبل التحديث
         $oldStatus = $user->is_verified;
         
-        // تبديل الحالة
+        // حساب الحالة الجديدة
+        $newStatus = !$oldStatus;
+        
+        // تحديث الحالة
         $user->update([
-            'is_verified' => !$oldStatus
+            'is_verified' => $newStatus
         ]);
 
-        // تحديث النموذج للحصول على القيمة الجديدة
-        $user->refresh();
-
-        $message = $user->is_verified 
+        // بناء الرسالة بناءً على الحالة الجديدة
+        $message = $newStatus 
             ? 'تم توثيق الحساب بنجاح.' 
             : 'تم إلغاء توثيق الحساب بنجاح.';
 
