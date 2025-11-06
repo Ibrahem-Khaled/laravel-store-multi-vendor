@@ -313,7 +313,9 @@ class mainApiController extends Controller
 
             $query = MerchantProfile::query()
                 ->with(['user' => function ($q) {
-                    $q->select('id', 'name', 'username', 'email', 'phone', 'avatar', 'status', 'bio', 'city', 'neighborhood');
+                    $q->select('id', 'name', 'username', 'email', 'phone', 'avatar', 'status', 'bio', 'address', 'country');
+                }, 'user.addresses' => function ($q) {
+                    $q->select('id', 'user_id', 'city', 'neighborhood', 'address');
                 }])
                 ->whereHas('user', function ($q) {
                     $q->where('status', 'active'); // فقط المستخدمين المفعلين
@@ -330,14 +332,20 @@ class mainApiController extends Controller
 
             // فلترة حسب المدينة
             if ($city) {
-                $query->whereHas('user', function ($q) use ($city) {
-                    $q->where('city', $city);
+                $query->whereHas('user.addresses', function ($q) use ($city) {
+                    $q->where('city', 'LIKE', "%{$city}%");
                 });
             }
 
             $merchants = $query->latest()->paginate($limit);
 
             $formattedMerchants = $merchants->map(function ($merchant) {
+                // الحصول على المدينة والحي من العنوان الرئيسي
+                $primaryAddress = $merchant->user->addresses->first();
+                $cityName = $primaryAddress ? $primaryAddress->city : null;
+                $neighborhoodName = $primaryAddress ? $primaryAddress->neighborhood : null;
+                $fullAddress = $primaryAddress ? $primaryAddress->address : null;
+
                 return [
                     'id' => $merchant->id,
                     'user_id' => $merchant->user_id,
@@ -347,8 +355,10 @@ class mainApiController extends Controller
                     'phone' => $merchant->user->phone ?? null,
                     'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
                     'bio' => $merchant->user->bio ?? null,
-                    'city' => $merchant->user->city ?? null,
-                    'neighborhood' => $merchant->user->neighborhood ?? null,
+                    'address' => $fullAddress ?? $merchant->user->address ?? null,
+                    'country' => $merchant->user->country ?? null,
+                    'city' => $cityName,
+                    'neighborhood' => $neighborhoodName,
                     'default_commission_rate' => $merchant->default_commission_rate ?? 0,
                     'payout_bank_name' => $merchant->payout_bank_name ?? null,
                     'created_at' => $merchant->created_at->format('Y-m-d H:i:s'),
@@ -383,11 +393,22 @@ class mainApiController extends Controller
     public function getMerchant($id)
     {
         try {
-            $merchant = MerchantProfile::with(['user'])
+            $merchant = MerchantProfile::with([
+                'user',
+                'user.addresses' => function ($q) {
+                    $q->select('id', 'user_id', 'city', 'neighborhood', 'address');
+                }
+            ])
                 ->whereHas('user', function ($q) {
                     $q->where('status', 'active');
                 })
                 ->findOrFail($id);
+
+            // الحصول على المدينة والحي من العنوان الرئيسي
+            $primaryAddress = $merchant->user->addresses->first();
+            $cityName = $primaryAddress ? $primaryAddress->city : null;
+            $neighborhoodName = $primaryAddress ? $primaryAddress->neighborhood : null;
+            $fullAddress = $primaryAddress ? $primaryAddress->address : null;
 
             return response()->json([
                 'success' => true,
@@ -401,8 +422,10 @@ class mainApiController extends Controller
                     'phone' => $merchant->user->phone ?? null,
                     'avatar' => $merchant->user->avatar ? asset('storage/' . $merchant->user->avatar) : null,
                     'bio' => $merchant->user->bio ?? null,
-                    'city' => $merchant->user->city ?? null,
-                    'neighborhood' => $merchant->user->neighborhood ?? null,
+                    'address' => $fullAddress ?? $merchant->user->address ?? null,
+                    'country' => $merchant->user->country ?? null,
+                    'city' => $cityName,
+                    'neighborhood' => $neighborhoodName,
                     'default_commission_rate' => $merchant->default_commission_rate ?? 0,
                     'payout_bank_name' => $merchant->payout_bank_name ?? null,
                     'payout_account_name' => $merchant->payout_account_name ?? null,
