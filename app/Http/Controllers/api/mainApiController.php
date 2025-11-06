@@ -697,10 +697,7 @@ class mainApiController extends Controller
                 ->with(['images', 'vendor', 'city', 'neighborhood', 'brand'])
                 ->latest()
                 ->take(6)
-                ->get()
-                ->map(function ($product) {
-                    return $this->formatProduct($product);
-                });
+                ->get();
 
             // الخصومات - المنتجات التي لديها خصم (discount_percent > 0)
             $discounts = Product::where('discount_percent', '>', 0)
@@ -709,10 +706,7 @@ class mainApiController extends Controller
                 ->with(['images', 'vendor', 'city', 'neighborhood', 'brand'])
                 ->orderBy('discount_percent', 'desc')
                 ->take(6)
-                ->get()
-                ->map(function ($product) {
-                    return $this->formatProduct($product);
-                });
+                ->get();
 
             // الأحدث - أحدث المنتجات
             $latest = Product::where('is_active', true)
@@ -720,10 +714,7 @@ class mainApiController extends Controller
                 ->with(['images', 'vendor', 'city', 'neighborhood', 'brand'])
                 ->latest()
                 ->take(6)
-                ->get()
-                ->map(function ($product) {
-                    return $this->formatProduct($product);
-                });
+                ->get();
 
             // الأكثر مبيعاً - حسب عدد المبيعات من OrderItem
             $bestSellingIds = OrderItem::whereHas('order', function ($q) {
@@ -746,11 +737,25 @@ class mainApiController extends Controller
                         return $bestSellingIds->search($product->id);
                     })
                     ->take(6)
-                    ->values()
-                    ->map(function ($product) {
-                        return $this->formatProduct($product);
-                    });
+                    ->values();
             }
+
+            // تنسيق جميع المنتجات
+            $offers = $offers->map(function ($product) {
+                return $this->formatProduct($product);
+            });
+
+            $discounts = $discounts->map(function ($product) {
+                return $this->formatProduct($product);
+            });
+
+            $latest = $latest->map(function ($product) {
+                return $this->formatProduct($product);
+            });
+
+            $bestSelling = $bestSelling->map(function ($product) {
+                return $this->formatProduct($product);
+            });
 
             return response()->json([
                 'success' => true,
@@ -898,7 +903,9 @@ class mainApiController extends Controller
             'is_featured' => (bool) $product->is_featured,
             'average_rating' => round((float) $averageRating, 2),
             'reviews_count' => $reviewsCount,
-            'cover_image' => $product->cover ? asset('storage/' . $product->cover) : asset('assets/img/logo-ct.png'),
+            'cover_image' => $product->images->isNotEmpty()
+                ? asset('storage/' . $product->images->first()->path)
+                : asset('assets/img/logo-ct.png'),
             'images' => $product->images->map(function ($image) {
                 return asset('storage/' . $image->path);
             })->toArray(),

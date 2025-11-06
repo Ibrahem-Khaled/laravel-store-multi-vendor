@@ -39,6 +39,8 @@ class ProductSeeder extends Seeder
                 'discount_percent' => rand(0, 50),
                 'video_url' => 'https://www.youtube.com/watch?v=' . Str::random(11),
                 'is_featured' => rand(0, 1) == 1,
+                'is_active' => true,
+                'is_approved' => true, // الموافقة على المنتجات في الـ seeder
                 'latitude' => fake()->latitude(30.0, 33.0),
                 'longitude' => fake()->longitude(10.0, 14.0),
             ]);
