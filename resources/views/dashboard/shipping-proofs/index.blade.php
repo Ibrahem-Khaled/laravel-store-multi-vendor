@@ -81,7 +81,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <strong class="text-primary">{{ number_format($proof->amount, 2) }} جنيه</strong>
+                                        <strong class="text-primary">{{ number_format($proof->amount, 2) }}</strong>
                                     </td>
                                     <td>
                                         <a href="{{ asset('storage/' . $proof->proof_image) }}" target="_blank" class="btn btn-sm btn-info">
@@ -146,7 +146,7 @@
                                                         <div class="form-group">
                                                             <label>عدد العملات المضافة *</label>
                                                             <input type="number" name="coins_amount" class="form-control" min="1" required>
-                                                            <small class="form-text text-muted">القيمة المطلوبة: {{ number_format($proof->amount, 2) }} جنيه</small>
+                                                            <small class="form-text text-muted">القيمة المطلوبة: {{ number_format($proof->amount, 2) }}</small>
                                                         </div>
                                                         <div class="form-group">
                                                             <label>ملاحظات الإدارة</label>

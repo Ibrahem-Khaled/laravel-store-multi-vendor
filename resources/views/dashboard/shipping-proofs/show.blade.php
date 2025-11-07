@@ -50,7 +50,7 @@
                         </div>
                         <div class="row mb-3">
                             <div class="col-md-4"><strong>القيمة المطلوبة:</strong></div>
-                            <div class="col-md-8"><strong class="text-primary">{{ number_format($proof->amount, 2) }} جنيه</strong></div>
+                            <div class="col-md-8"><strong class="text-primary">{{ number_format($proof->amount, 2) }}</strong></div>
                         </div>
                         @if($proof->coins_added)
                             <div class="row mb-3">
@@ -161,7 +161,7 @@
                             <div class="form-group">
                                 <label>عدد العملات المضافة *</label>
                                 <input type="number" name="coins_amount" class="form-control" min="1" required>
-                                <small class="form-text text-muted">القيمة المطلوبة: {{ number_format($proof->amount, 2) }} جنيه</small>
+                                <small class="form-text text-muted">القيمة المطلوبة: {{ number_format($proof->amount, 2) }}</small>
                             </div>
                             <div class="form-group">
                                 <label>ملاحظات الإدارة</label>
