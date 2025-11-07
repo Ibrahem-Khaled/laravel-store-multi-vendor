@@ -9,6 +9,7 @@ use App\Http\Controllers\api\mainApiController;
 use App\Http\Controllers\api\productController;
 use App\Http\Controllers\api\RoleChangeRequestController;
 use App\Http\Controllers\api\UserAddressController;
+use App\Http\Controllers\api\ShippingProofController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -112,6 +113,15 @@ Route::middleware('api.auth')->group(function () {
     Route::post('user/addresses', [UserAddressController::class, 'store']);
     Route::put('user/addresses/{id}', [UserAddressController::class, 'update']);
     Route::delete('user/addresses/{id}', [UserAddressController::class, 'destroy']);
+
+    // Shipping Proofs & Coins Management
+    Route::get('shipping-proofs', [ShippingProofController::class, 'index']);
+    Route::post('shipping-proofs', [ShippingProofController::class, 'store']);
+    Route::get('shipping-proofs/{id}', [ShippingProofController::class, 'show']);
+    // Admin routes
+    Route::get('admin/shipping-proofs', [ShippingProofController::class, 'adminIndex']);
+    Route::post('admin/shipping-proofs/{id}/approve', [ShippingProofController::class, 'approve']);
+    Route::post('admin/shipping-proofs/{id}/reject', [ShippingProofController::class, 'reject']);
 
     // Cart Routes
     Route::get('/cart', [CartController::class, 'index']);

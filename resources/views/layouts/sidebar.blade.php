@@ -233,6 +233,16 @@
         </div>
     </li>
 
+    <li class="nav-item {{ request()->routeIs('shipping-proofs.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('shipping-proofs.index') }}">
+            <i class="fas fa-fw fa-shipping-fast"></i>
+            @if (isset($pendingShippingProofsCount) && $pendingShippingProofsCount > 0)
+                <span class="badge badge-danger badge-counter ml-2">{{ $pendingShippingProofsCount }}</span>
+            @endif
+            <span>طلبات الشحن والعملات</span>
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('audit-logs.index') }}">
             <i class="fas fa-fw fa-clipboard-list"></i>

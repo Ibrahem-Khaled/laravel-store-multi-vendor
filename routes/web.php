@@ -21,6 +21,7 @@ use App\Http\Controllers\dashboard\BackupController;
 use App\Http\Controllers\dashboard\RoleController;
 use App\Http\Controllers\dashboard\HelpCenterController;
 use App\Http\Controllers\dashboard\TicketController;
+use App\Http\Controllers\dashboard\ShippingProofController;
 use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,6 +76,14 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     // مسارات إدارة طلبات تغيير الأدوار
     Route::get('role-requests', [AdminRoleRequestController::class, 'index'])->name('role-requests.index');
     Route::put('role-requests/{roleRequest}', [AdminRoleRequestController::class, 'update'])->name('role-requests.update');
+
+    // إدارة طلبات الشحن والعملات
+    Route::prefix('shipping-proofs')->name('shipping-proofs.')->group(function () {
+        Route::get('/', [ShippingProofController::class, 'index'])->name('index');
+        Route::get('/{id}', [ShippingProofController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [ShippingProofController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [ShippingProofController::class, 'reject'])->name('reject');
+    });
 
 
     Route::get('/orders',         [OrderAdminController::class, 'index'])->name('orders.index');

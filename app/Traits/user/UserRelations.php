@@ -18,6 +18,7 @@ use App\Models\Product;
 use App\Models\Review;
 use App\Models\Role;
 use App\Models\RoleChangeRequest;
+use App\Models\ShippingProof;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -64,6 +65,11 @@ trait UserRelations
     public function addresses(): HasMany
     {
         return $this->hasMany(UserAddress::class, 'user_id', 'id');
+    }
+
+    public function shippingProofs(): HasMany
+    {
+        return $this->hasMany(ShippingProof::class, 'user_id', 'id');
     }
 
     public function carts(): HasMany

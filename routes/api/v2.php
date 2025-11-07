@@ -16,6 +16,7 @@ use App\Http\Controllers\api\RoleChangeRequestController;
 use App\Http\Controllers\api\SettingController;
 use App\Http\Controllers\api\TicketController;
 use App\Http\Controllers\api\UserAddressController;
+use App\Http\Controllers\api\ShippingProofController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -226,6 +227,22 @@ Route::middleware('api.auth.active')->group(function () {
         Route::post('/', [UserAddressController::class, 'store']);
         Route::put('/{id}', [UserAddressController::class, 'update']);
         Route::delete('/{id}', [UserAddressController::class, 'destroy']);
+    });
+
+    // ========================================
+    // SHIPPING PROOF & COINS MANAGEMENT
+    // ========================================
+    Route::prefix('shipping-proofs')->group(function () {
+        Route::get('/', [ShippingProofController::class, 'index']); // Get user's shipping proofs
+        Route::post('/', [ShippingProofController::class, 'store']); // Create new shipping proof
+        Route::get('/{id}', [ShippingProofController::class, 'show']); // Get specific shipping proof
+        
+        // Admin routes
+        Route::prefix('admin')->group(function () {
+            Route::get('/all', [ShippingProofController::class, 'adminIndex']); // Get all proofs (admin)
+            Route::post('/{id}/approve', [ShippingProofController::class, 'approve']); // Approve proof
+            Route::post('/{id}/reject', [ShippingProofController::class, 'reject']); // Reject proof
+        });
     });
 
     // ========================================
