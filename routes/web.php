@@ -25,9 +25,12 @@ use App\Http\Controllers\dashboard\ShippingProofController;
 use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// الصفحات العامة
+Route::get('/', [\App\Http\Controllers\PageController::class, 'home'])->name('home');
+Route::get('/privacy', [\App\Http\Controllers\PageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [\App\Http\Controllers\PageController::class, 'terms'])->name('terms');
+Route::get('/support', [\App\Http\Controllers\PageController::class, 'support'])->name('support');
+Route::post('/support/contact', [\App\Http\Controllers\PageController::class, 'contact'])->name('support.contact');
 
 Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
