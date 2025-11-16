@@ -25,84 +25,77 @@ class UserController extends Controller
         $this->authorize('manage-users');
 
         // الحصول على معاملات البحث والفلترة
-        $selectedRole = $request->get('role', 'all');
-        $search = $request->get('search');
-        $status = $request->get('status', 'all');
+        $filters = [
+            'role' => $request->get('role', 'all'),
+            'status' => $request->get('status', 'all'),
+            'search' => $request->get('search'),
+            'sort' => $request->get('sort', 'id'),
+            'direction' => $request->get('direction', 'desc'),
+        ];
 
         // بناء الاستعلام
         $query = User::query();
 
-        // فلترة حسب الدور (القديم)
-        if ($selectedRole !== 'all' && !in_array($selectedRole, ['admin', 'moderator', 'user', 'trader'])) {
-            // محاولة البحث في الأدوار الجديدة
-            $query->whereHas('roles', function ($q) use ($selectedRole) {
-                $q->where('name', $selectedRole);
-            });
-        } elseif ($selectedRole !== 'all') {
-            $query->where('role', $selectedRole);
+        // فلترة حسب الدور
+        if ($filters['role'] !== 'all') {
+            if (in_array($filters['role'], ['admin', 'moderator', 'user', 'trader'])) {
+                $query->where('role', $filters['role']);
+            } else {
+                $query->whereHas('roles', function ($q) use ($filters) {
+                    $q->where('name', $filters['role']);
+                });
+            }
         }
 
         // فلترة حسب الحالة
-        if ($status !== 'all' && in_array($status, ['pending', 'active', 'inactive', 'banned'])) {
-            $query->where('status', $status);
+        if ($filters['status'] !== 'all' && in_array($filters['status'], ['pending', 'active', 'inactive', 'banned'])) {
+            $query->where('status', $filters['status']);
         }
 
         // البحث
-        if ($search) {
+        if ($filters['search']) {
+            $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('phone', 'like', "%{$search}%")
-                    ->orWhere('username', 'like', "%{$search}%");
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('uuid', 'like', "%{$search}%");
             });
         }
 
+        // الترتيب
+        $allowedSorts = ['id', 'name', 'email', 'created_at', 'status'];
+        $sort = in_array($filters['sort'], $allowedSorts) ? $filters['sort'] : 'id';
+        $direction = in_array($filters['direction'], ['asc', 'desc']) ? $filters['direction'] : 'desc';
+        $query->orderBy($sort, $direction);
+
         // جلب المستخدمين مع العلاقات
         $users = $query->with(['roles'])
-            ->latest()
             ->paginate(20)
             ->withQueryString();
 
-        // الحصول على الأدوار القديمة للتوافق
+        // الإحصائيات
+        $stats = $this->getStats();
+
+        // الأدوار
         $oldRoles = [
             'admin' => 'مدير',
             'moderator' => 'مشرف',
             'user' => 'مستخدم',
-            'trader' => 'متداول',
+            'trader' => 'تاجر',
         ];
 
-        // الحصول على الأدوار الجديدة من قاعدة البيانات
         $dbRoles = $this->getDbRoles();
-
-        // الإحصائيات العامة
-        $stats = [
-            'total' => User::count(),
-            'active' => User::where('status', 'active')->count(),
-            'pending' => User::where('status', 'pending')->count(),
-            'inactive' => User::where('status', 'inactive')->count(),
-            'banned' => User::where('status', 'banned')->count(),
-            'admins' => User::where('role', 'admin')->count(),
-        ];
-
-        // عداد لكل دور (للتابات) - القديم
-        $roleCounts = User::select('role', DB::raw('COUNT(*) as count'))
-            ->groupBy('role')
-            ->pluck('count', 'role')
-            ->toArray();
-
-        // إحصائيات الأدوار الجديدة
-        $roleCountsNew = $this->getRoleCountsNew();
+        $roleCounts = $this->getRoleCounts();
 
         return view('dashboard.users.index', compact(
             'users',
+            'filters',
+            'stats',
             'oldRoles',
             'dbRoles',
-            'selectedRole',
-            'status',
-            'search',
-            'stats',
-            'roleCounts',
-            'roleCountsNew'
+            'roleCounts'
         ));
     }
 
@@ -136,15 +129,12 @@ class UserController extends Controller
 
         // الحالة الافتراضية
         $data['status'] = $data['status'] ?? 'pending';
-        
-        // معالجة is_verified - toggle يرسل '1' إذا كان checked، وإلا لا يرسل شيء
-        // مع hidden input، القيمة ستكون '0' أو '1' (Laravel يأخذ آخر قيمة)
         $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // إنشاء المستخدم
         $user = User::create($data);
 
-        // تعيين الأدوار الجديدة
+        // تعيين الأدوار
         if (!empty($roleIds)) {
             $user->roles()->sync($roleIds);
         }
@@ -161,11 +151,21 @@ class UserController extends Controller
     {
         $this->authorize('manage-users');
         
-        $user->load(['roles', 'auditLogs' => function ($query) {
-            $query->latest()->limit(10);
-        }]);
+        $user->load([
+            'roles',
+            'auditLogs' => function ($query) {
+                $query->latest()->limit(20);
+            }
+        ]);
 
-        return view('dashboard.users.show', compact('user'));
+        // إحصائيات المستخدم
+        $userStats = [
+            'total_orders' => 0, // يمكن إضافتها لاحقاً
+            'total_products' => $user->products()->count() ?? 0,
+            'total_brands' => $user->brands()->count() ?? 0,
+        ];
+
+        return view('dashboard.users.show', compact('user', 'userStats'));
     }
 
     /**
@@ -198,7 +198,7 @@ class UserController extends Controller
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // معالجة is_verified - مع hidden input، القيمة ستكون '0' أو '1' (Laravel يأخذ آخر قيمة)
+        // معالجة is_verified
         $data['is_verified'] = $request->input('is_verified', '0') == '1';
 
         // تحديث بيانات المستخدم
@@ -208,7 +208,6 @@ class UserController extends Controller
         if ($request->has('role_ids')) {
             $user->roles()->sync($roleIds);
         } else {
-            // إذا لم يتم إرسال role_ids، احذف جميع الأدوار
             $user->roles()->sync([]);
         }
 
@@ -275,25 +274,34 @@ class UserController extends Controller
     {
         $this->authorize('manage-users');
 
-        // حفظ الحالة الحالية قبل التحديث
-        $oldStatus = $user->is_verified;
-        
-        // حساب الحالة الجديدة
-        $newStatus = !$oldStatus;
-        
-        // تحديث الحالة
         $user->update([
-            'is_verified' => $newStatus
+            'is_verified' => !$user->is_verified
         ]);
 
-        // بناء الرسالة بناءً على الحالة الجديدة
-        $message = $newStatus 
+        $message = $user->is_verified 
             ? 'تم توثيق الحساب بنجاح.' 
             : 'تم إلغاء توثيق الحساب بنجاح.';
 
         return redirect()
             ->route('users.index')
             ->with('success', $message);
+    }
+
+    /**
+     * الحصول على الإحصائيات
+     */
+    private function getStats()
+    {
+        return [
+            'total' => User::count(),
+            'active' => User::where('status', 'active')->count(),
+            'pending' => User::where('status', 'pending')->count(),
+            'inactive' => User::where('status', 'inactive')->count(),
+            'banned' => User::where('status', 'banned')->count(),
+            'verified' => User::where('is_verified', true)->count(),
+            'admins' => User::where('role', 'admin')->count(),
+            'traders' => User::where('role', 'trader')->count(),
+        ];
     }
 
     /**
@@ -316,13 +324,21 @@ class UserController extends Controller
     }
 
     /**
-     * الحصول على إحصائيات الأدوار الجديدة
+     * الحصول على إحصائيات الأدوار
      */
-    private function getRoleCountsNew()
+    private function getRoleCounts()
     {
+        $counts = [
+            'old' => User::select('role', DB::raw('COUNT(*) as count'))
+                ->groupBy('role')
+                ->pluck('count', 'role')
+                ->toArray(),
+            'new' => []
+        ];
+
         try {
             if (Schema::hasTable('user_roles') && Schema::hasTable('roles')) {
-                return DB::table('user_roles')
+                $counts['new'] = DB::table('user_roles')
                     ->join('roles', 'user_roles.role_id', '=', 'roles.id')
                     ->select('roles.name', DB::raw('COUNT(*) as count'))
                     ->groupBy('roles.name')
@@ -333,6 +349,6 @@ class UserController extends Controller
             // في حالة عدم وجود الجداول بعد
         }
 
-        return [];
+        return $counts;
     }
 }
