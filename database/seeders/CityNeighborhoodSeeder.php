@@ -40,10 +40,10 @@ class CityNeighborhoodSeeder extends Seeder
         ];
 
         foreach ($cities as $index => $cityName) {
-            $city = City::create(['name' => $cityName]);
+            $city = City::firstOrCreate(['name' => $cityName]);
 
             foreach ($neighborhoods[$index] as $neighborhoodName) {
-                Neighborhood::create([
+                Neighborhood::firstOrCreate([
                     'name' => $neighborhoodName,
                     'city_id' => $city->id,
                 ]);
