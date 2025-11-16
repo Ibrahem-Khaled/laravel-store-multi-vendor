@@ -61,6 +61,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info('🛒 Seeding orders...');
         $this->call(OrderSeeder::class);
         
+        // Step 9: Seed Drivers (require users)
+        $this->command->info('🚗 Seeding drivers...');
+        $this->call(DriverSeeder::class);
+        
         $this->command->info('✅ Database seeding completed successfully!');
     }
 }

@@ -103,11 +103,19 @@ class DriverManagementController extends Controller
 
         // Get filter options
         $filterOptions = $this->getOrderFilterOptions();
+        
+        // Extract for backward compatibility with view
+        $drivers = $filterOptions['drivers'];
+        $cities = $filterOptions['cities'];
+        $statuses = $filterOptions['statuses'];
 
         return view('dashboard.driver-management.orders', compact(
             'orders',
             'filters',
-            'filterOptions'
+            'filterOptions',
+            'drivers',
+            'cities',
+            'statuses'
         ));
     }
 
