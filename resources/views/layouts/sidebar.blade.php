@@ -243,6 +243,13 @@
         </a>
     </li>
 
+    <li class="nav-item {{ request()->routeIs('currencies.*') ? 'active' : '' }}">
+        <a class="nav-link" href="{{ route('currencies.index') }}">
+            <i class="fas fa-fw fa-coins"></i>
+            <span>إدارة العملات</span>
+        </a>
+    </li>
+
     <li class="nav-item {{ request()->routeIs('audit-logs.*') ? 'active' : '' }}">
         <a class="nav-link" href="{{ route('audit-logs.index') }}">
             <i class="fas fa-fw fa-clipboard-list"></i>

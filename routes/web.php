@@ -22,6 +22,7 @@ use App\Http\Controllers\dashboard\RoleController;
 use App\Http\Controllers\dashboard\HelpCenterController;
 use App\Http\Controllers\dashboard\TicketController;
 use App\Http\Controllers\dashboard\ShippingProofController;
+use App\Http\Controllers\dashboard\CurrencyController;
 use App\Http\Controllers\Admin\LoyaltyManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -86,6 +87,20 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::get('/{id}', [ShippingProofController::class, 'show'])->name('show');
         Route::post('/{id}/approve', [ShippingProofController::class, 'approve'])->name('approve');
         Route::post('/{id}/reject', [ShippingProofController::class, 'reject'])->name('reject');
+    });
+
+    // إدارة العملات وأسعار الصرف
+    Route::prefix('currencies')->name('currencies.')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index'])->name('index');
+        Route::get('/create', [CurrencyController::class, 'create'])->name('create');
+        Route::post('/', [CurrencyController::class, 'store'])->name('store');
+        Route::get('/{id}', [CurrencyController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [CurrencyController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [CurrencyController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CurrencyController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/update-exchange-rate', [CurrencyController::class, 'updateExchangeRate'])->name('update-exchange-rate');
+        Route::post('/{id}/toggle-status', [CurrencyController::class, 'toggleStatus'])->name('toggle-status');
+        Route::post('/{id}/set-base', [CurrencyController::class, 'setBaseCurrency'])->name('set-base');
     });
 
 

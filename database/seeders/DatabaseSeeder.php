@@ -29,6 +29,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info('📋 Seeding roles and permissions...');
         $this->call(RolePermissionSeeder::class);
         
+        // Step 1.5: Seed Currencies (independent, can be seeded early)
+        $this->command->info('💰 Seeding currencies...');
+        $this->call(CurrencySeeder::class);
+        
         // Step 2: Seed Users (require roles)
         $this->command->info('👥 Seeding users...');
         $this->call(UserSeeder::class);

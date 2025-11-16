@@ -17,6 +17,7 @@ use App\Http\Controllers\api\SettingController;
 use App\Http\Controllers\api\TicketController;
 use App\Http\Controllers\api\UserAddressController;
 use App\Http\Controllers\api\ShippingProofController;
+use App\Http\Controllers\api\CurrencyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -349,4 +350,26 @@ Route::middleware('api.auth.active')->group(function () {
         Route::post('/add', [LoyaltyController::class, 'addLoyaltyPoints']);
     });
 
+    // ========================================
+    // CURRENCY MANAGEMENT (Admin Only)
+    // ========================================
+    Route::prefix('admin/currencies')->group(function () {
+        Route::get('/', [CurrencyController::class, 'index']);
+        Route::post('/', [CurrencyController::class, 'store']);
+        Route::get('/{id}', [CurrencyController::class, 'show']);
+        Route::put('/{id}', [CurrencyController::class, 'update']);
+        Route::delete('/{id}', [CurrencyController::class, 'destroy']);
+        Route::patch('/{id}/exchange-rate', [CurrencyController::class, 'updateExchangeRate']);
+        Route::patch('/{id}/toggle-status', [CurrencyController::class, 'toggleStatus']);
+        Route::get('/{id}/exchange-rate-history', [CurrencyController::class, 'exchangeRateHistory']);
+        Route::post('/bulk-update-rates', [CurrencyController::class, 'bulkUpdateRates']);
+    });
+
+});
+
+// ========================================
+// PUBLIC CURRENCY ROUTES (No Auth Required)
+// ========================================
+Route::prefix('settings')->group(function () {
+    Route::get('/exchange-rates', [CurrencyController::class, 'getExchangeRates']);
 });
