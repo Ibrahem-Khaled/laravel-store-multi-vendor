@@ -37,49 +37,76 @@ class authController extends Controller
             ], 400);
         }
 
-        // التحقق من صحة البيانات المدخلة
-        $validator = Validator::make([
-            'login_field' => $loginField,
-            'password' => $password
-        ], [
-            'login_field' => $fieldType === 'email'
-                ? 'required|email|exists:users,email'
-                : 'required|string|exists:users,phone',
-            'password' => 'required|string|min:6',
-        ]);
+        // البحث عن المستخدم
+        $user = null;
+        
+        if ($fieldType === 'email') {
+            // التحقق من صحة البريد الإلكتروني
+            $validator = Validator::make([
+                'login_field' => $loginField,
+                'password' => $password
+            ], [
+                'login_field' => 'required|email',
+                'password' => 'required|string|min:6',
+            ]);
 
-        if ($validator->fails()) {
+            if ($validator->fails()) {
+                return response()->json([
+                    'error' => 'بيانات الاعتماد غير صحيحة',
+                    'details' => $validator->errors()
+                ], 401);
+            }
+
+            // البحث عن المستخدم بالبريد الإلكتروني
+            $user = User::where('email', $loginField)->first();
+        } else {
+            // تنظيف رقم الهاتف من المسافات والرموز
+            $cleanedPhone = $this->cleanPhoneNumber($loginField);
+            $phoneWithoutPlus = ltrim($cleanedPhone, '+');
+            $phoneWithPlus = '+' . $phoneWithoutPlus;
+            
+            // البحث عن المستخدم برقم الهاتف (بأي تنسيق)
+            // نحاول البحث بعدة طرق لتغطية جميع التنسيقات المحتملة
+            $user = User::where(function($query) use ($loginField, $cleanedPhone, $phoneWithoutPlus, $phoneWithPlus) {
+                $query->where('phone', $loginField)
+                      ->orWhere('phone', $cleanedPhone)
+                      ->orWhere('phone', $phoneWithPlus)
+                      ->orWhere('phone', $phoneWithoutPlus)
+                      ->orWhereRaw('REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(phone, " ", ""), "-", ""), "(", ""), ")", ""), ".", "") = ?', [preg_replace('/[^0-9+]/', '', $cleanedPhone)]);
+            })->first();
+        }
+
+        // التحقق من وجود المستخدم
+        if (!$user) {
             return response()->json([
                 'error' => 'بيانات الاعتماد غير صحيحة',
-                'details' => $validator->errors()
+                'message' => 'المستخدم غير موجود'
             ], 401);
         }
 
-        // إعداد بيانات الاعتماد للمصادقة
-        $credentials = [
-            $fieldType => $loginField,
-            'password' => $password
-        ];
-
-        // محاولة تسجيل الدخول والتحقق من صحة كلمة المرور
-        if (!$token = JWTAuth::attempt($credentials)) {
+        // التحقق من صحة كلمة المرور
+        if (!Hash::check($password, $user->password)) {
             return response()->json([
-                'error' => 'بيانات الاعتماد غير صحيحة'
+                'error' => 'بيانات الاعتماد غير صحيحة',
+                'message' => 'كلمة المرور غير صحيحة'
             ], 401);
         }
 
         // التحقق من حالة المستخدم
-        $user = Auth::user();
         if ($user->status !== 'active') {
-            // إبطال التوكن إذا كان المستخدم غير نشط
-            try {
-                JWTAuth::invalidate($token);
-            } catch (\Exception $e) {
-                // تجاهل خطأ إبطال التوكن إذا لم يكن صالحاً
-            }
             return response()->json([
                 'error' => 'حسابك غير نشط. يرجى التواصل مع الإدارة'
             ], 403);
+        }
+
+        // إنشاء التوكن
+        try {
+            $token = JWTAuth::fromUser($user);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'حدث خطأ أثناء تسجيل الدخول',
+                'message' => 'يرجى المحاولة مرة أخرى'
+            ], 500);
         }
 
         // إرجاع التوكن وبيانات المستخدم
@@ -102,12 +129,27 @@ class authController extends Controller
         }
 
         // التحقق من أن الحقل يحتوي على رقم هاتف صالح
-        // يمكن تخصيص هذا التحقق حسب متطلباتك
-        if (preg_match('/^[\+]?[0-9\s\-\(\)]{10,}$/', $field)) {
+        // يقبل أرقام الهواتف بأي تنسيق (مع أو بدون +، مسافات، أقواس، إلخ)
+        $cleaned = preg_replace('/[^0-9+]/', '', $field);
+        if (preg_match('/^[\+]?[0-9]{8,15}$/', $cleaned)) {
             return 'phone';
         }
 
         return null;
+    }
+
+    /**
+     * تنظيف رقم الهاتف من المسافات والرموز
+     */
+    private function cleanPhoneNumber($phone)
+    {
+        // إزالة جميع المسافات، الأقواس، الشرطات، والنقاط
+        $cleaned = preg_replace('/[\s\-\(\)\.]/', '', $phone);
+        
+        // إزالة علامة + من البداية إذا كانت موجودة (سنحتفظ بها للبحث)
+        // لكن سنبحث أيضاً بدونها
+        
+        return $cleaned;
     }
 
     public function register(Request $request)
