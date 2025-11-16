@@ -10,9 +10,10 @@ class MerchantSeeder extends Seeder
     public function run(): void
     {
         // أدمن واحد
+        $adminData = User::factory()->admin()->make();
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            User::factory()->admin()->make()->toArray()
+            $adminData->only($adminData->getFillable())
         );
 
         // 20 تاجر + بروفايل
