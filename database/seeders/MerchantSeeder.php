@@ -10,22 +10,33 @@ class MerchantSeeder extends Seeder
     public function run(): void
     {
         // أدمن واحد
-        User::factory()->admin()->create();
+        User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            User::factory()->admin()->make()->toArray()
+        );
 
         // 20 تاجر + بروفايل
-        $merchants = User::factory(20)->merchant()->create();
-        foreach ($merchants as $m) {
-            MerchantProfile::factory()->create([
-                'user_id' => $m->id,
-                'default_commission_rate' => fake()->randomElement([0.10, 0.12, 0.15]),
-            ]);
+        $merchants = [];
+        for ($i = 0; $i < 20; $i++) {
+            $merchant = User::factory()->merchant()->create();
+            $merchants[] = $merchant;
+            
+            MerchantProfile::firstOrCreate(
+                ['user_id' => $merchant->id],
+                MerchantProfile::factory()->make([
+                    'user_id' => $merchant->id,
+                    'default_commission_rate' => fake()->randomElement([0.10, 0.12, 0.15]),
+                ])->toArray()
+            );
         }
 
         // عينات مدفوعات (صرف/تحصيل) لتغذية التقارير
-        MerchantPayment::factory(30)->create([
-            // سيولّد merchant جديد افتراضياً؛ نربطه بواحد من الـ merchants الموجودين
-        ])->each(function ($p) use ($merchants) {
-            $p->update(['merchant_id' => $merchants->random()->id]);
-        });
+        if (count($merchants) > 0) {
+            MerchantPayment::factory(30)->create([
+                // سيولّد merchant جديد افتراضياً؛ نربطه بواحد من الـ merchants الموجودين
+            ])->each(function ($p) use ($merchants) {
+                $p->update(['merchant_id' => $merchants[array_rand($merchants)]->id]);
+            });
+        }
     }
 }
