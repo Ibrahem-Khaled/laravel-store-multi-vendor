@@ -370,6 +370,12 @@ Route::middleware('api.auth.active')->group(function () {
 // ========================================
 // PUBLIC CURRENCY ROUTES (No Auth Required)
 // ========================================
+Route::prefix('currencies')->group(function () {
+    Route::get('/', [CurrencyController::class, 'getCurrencies']); // Get all active currencies
+    Route::get('/{code}', [CurrencyController::class, 'getCurrencyByCode']); // Get currency by code
+    Route::post('/convert', [CurrencyController::class, 'convertCurrency']); // Convert currency
+});
+
 Route::prefix('settings')->group(function () {
-    Route::get('/exchange-rates', [CurrencyController::class, 'getExchangeRates']);
+    Route::get('/exchange-rates', [CurrencyController::class, 'getExchangeRates']); // Get exchange rates
 });

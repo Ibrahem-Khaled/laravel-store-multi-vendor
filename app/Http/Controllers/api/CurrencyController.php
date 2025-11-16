@@ -614,6 +614,177 @@ class CurrencyController extends Controller
     }
 
     /**
+     * جلب جميع العملات النشطة (للمستخدمين العاديين)
+     * GET /v2/currencies
+     */
+    public function getCurrencies(Request $request)
+    {
+        try {
+            $currencies = Currency::active()
+                ->orderBy('is_base_currency', 'desc')
+                ->orderBy('code')
+                ->get();
+
+            $currenciesData = $currencies->map(function ($currency) {
+                return [
+                    'id' => $currency->id,
+                    'code' => $currency->code,
+                    'name_ar' => $currency->name_ar,
+                    'name_en' => $currency->name_en,
+                    'symbol' => $currency->symbol,
+                    'symbol_ar' => $currency->symbol_ar,
+                    'exchange_rate' => (float) $currency->exchange_rate,
+                    'is_base_currency' => $currency->is_base_currency,
+                ];
+            });
+
+            $baseCurrency = $currencies->where('is_base_currency', true)->first();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب العملات بنجاح',
+                'data' => [
+                    'base_currency' => $baseCurrency ? [
+                        'code' => $baseCurrency->code,
+                        'name_ar' => $baseCurrency->name_ar,
+                        'name_en' => $baseCurrency->name_en,
+                        'symbol' => $baseCurrency->symbol,
+                    ] : null,
+                    'currencies' => $currenciesData,
+                    'total' => $currencies->count(),
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب العملات',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * جلب عملة محددة (للمستخدمين العاديين)
+     * GET /v2/currencies/{code}
+     */
+    public function getCurrencyByCode($code)
+    {
+        try {
+            $currency = Currency::active()
+                ->where('code', strtoupper($code))
+                ->first();
+
+            if (!$currency) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'العملة غير موجودة أو غير نشطة',
+                    'errors' => [
+                        'currency' => ['لا توجد عملة بهذا الرمز']
+                    ]
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم جلب العملة بنجاح',
+                'data' => [
+                    'currency' => [
+                        'id' => $currency->id,
+                        'code' => $currency->code,
+                        'name_ar' => $currency->name_ar,
+                        'name_en' => $currency->name_en,
+                        'symbol' => $currency->symbol,
+                        'symbol_ar' => $currency->symbol_ar,
+                        'exchange_rate' => (float) $currency->exchange_rate,
+                        'is_base_currency' => $currency->is_base_currency,
+                    ]
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء جلب العملة',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * تحويل العملات
+     * POST /v2/currencies/convert
+     */
+    public function convertCurrency(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'amount' => 'required|numeric|min:0.01',
+                'from' => 'required|string|exists:currencies,code',
+                'to' => 'required|string|exists:currencies,code',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'خطأ في التحقق من البيانات',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            $fromCurrency = Currency::active()->where('code', strtoupper($request->from))->first();
+            $toCurrency = Currency::active()->where('code', strtoupper($request->to))->first();
+
+            if (!$fromCurrency || !$toCurrency) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'إحدى العملات غير موجودة أو غير نشطة',
+                ], 404);
+            }
+
+            $amount = (float) $request->amount;
+            
+            // التحويل: من عملة إلى عملة أخرى
+            // أولاً نحول من العملة المصدر إلى العملة الأساسية (USD)
+            $amountInBase = $amount / $fromCurrency->exchange_rate;
+            
+            // ثم نحول من العملة الأساسية إلى العملة الهدف
+            $convertedAmount = $amountInBase * $toCurrency->exchange_rate;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'تم تحويل العملة بنجاح',
+                'data' => [
+                    'from' => [
+                        'code' => $fromCurrency->code,
+                        'name_ar' => $fromCurrency->name_ar,
+                        'name_en' => $fromCurrency->name_en,
+                        'symbol' => $fromCurrency->symbol,
+                        'amount' => $amount,
+                        'exchange_rate' => (float) $fromCurrency->exchange_rate,
+                    ],
+                    'to' => [
+                        'code' => $toCurrency->code,
+                        'name_ar' => $toCurrency->name_ar,
+                        'name_en' => $toCurrency->name_en,
+                        'symbol' => $toCurrency->symbol,
+                        'amount' => round($convertedAmount, 4),
+                        'exchange_rate' => (float) $toCurrency->exchange_rate,
+                    ],
+                    'conversion_rate' => round($toCurrency->exchange_rate / $fromCurrency->exchange_rate, 6),
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ أثناء تحويل العملة',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * جلب أسعار الصرف الحالية (للمستخدمين العاديين)
      * GET /v2/settings/exchange-rates
      */
