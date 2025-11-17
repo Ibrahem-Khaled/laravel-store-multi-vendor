@@ -207,18 +207,24 @@
                     </div>
                     <div class="col-md-6">
                         <table class="table table-borderless">
-                            <tr>
-                                <td class="fw-bold">المدينة:</td>
-                                <td>{{ $driverOrder->order->userAddress->city }}</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold">الحي:</td>
-                                <td>{{ $driverOrder->order->userAddress->neighborhood }}</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold">العنوان:</td>
-                                <td>{{ $driverOrder->order->userAddress->address }}</td>
-                            </tr>
+                            @if($driverOrder->order->userAddress)
+                                <tr>
+                                    <td class="fw-bold">المدينة:</td>
+                                    <td>{{ $driverOrder->order->userAddress->city ?? 'غير محدد' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">الحي:</td>
+                                    <td>{{ $driverOrder->order->userAddress->neighborhood ?? 'غير محدد' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">العنوان:</td>
+                                    <td>{{ $driverOrder->order->userAddress->address ?? 'غير محدد' }}</td>
+                                </tr>
+                            @else
+                                <tr>
+                                    <td colspan="2" class="text-muted">لا يوجد عنوان متاح</td>
+                                </tr>
+                            @endif
                         </table>
                     </div>
                 </div>
