@@ -40,6 +40,16 @@ class Order extends Model
         return $this->belongsTo(UserAddress::class, 'user_address_id');
     }
 
+    public function returns()
+    {
+        return $this->hasMany(OrderReturn::class);
+    }
+
+    public function driverOrder()
+    {
+        return $this->hasOne(DriverOrder::class);
+    }
+
     public function scopeFilter($q, array $f)
     {
         return $q

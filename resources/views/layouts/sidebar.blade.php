@@ -104,6 +104,12 @@
                    href="{{ route('orders.index', ['status' => 'completed']) }}">مكتملة</a>
                 <a class="collapse-item {{ request()->routeIs('orders.index') && request('status') == 'cancelled' ? 'active' : '' }}"
                    href="{{ route('orders.index', ['status' => 'cancelled']) }}">ملغاة</a>
+                <hr class="dropdown-divider">
+                <a class="collapse-item {{ request()->routeIs('returns.*') ? 'active' : '' }}"
+                   href="{{ route('returns.index') }}">
+                    <i class="fas fa-fw fa-undo text-gray-600"></i>
+                    <span>المرتجعات والاستبدال</span>
+                </a>
             </div>
         </div>
     </li>

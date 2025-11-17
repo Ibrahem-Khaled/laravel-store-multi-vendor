@@ -148,6 +148,17 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::get('/export', [LoyaltyManagementController::class, 'exportReport'])->name('export');
     });
 
+    // إدارة المرتجعات
+    Route::prefix('returns')->name('returns.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\dashboard\ReturnController::class, 'index'])->name('index');
+        Route::get('/{id}', [\App\Http\Controllers\dashboard\ReturnController::class, 'show'])->name('show');
+        Route::post('/{id}/approve', [\App\Http\Controllers\dashboard\ReturnController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [\App\Http\Controllers\dashboard\ReturnController::class, 'reject'])->name('reject');
+        Route::post('/{id}/process', [\App\Http\Controllers\dashboard\ReturnController::class, 'process'])->name('process');
+        Route::post('/{id}/complete', [\App\Http\Controllers\dashboard\ReturnController::class, 'complete'])->name('complete');
+        Route::post('/{id}/cancel', [\App\Http\Controllers\dashboard\ReturnController::class, 'cancel'])->name('cancel');
+    });
+
     // سجل التدقيق
     Route::prefix('audit-logs')->name('audit-logs.')->group(function () {
         Route::get('/', [AuditLogController::class, 'index'])->name('index');

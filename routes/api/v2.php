@@ -263,6 +263,33 @@ Route::middleware('api.auth.active')->group(function () {
     });
 
     // ========================================
+    // ORDER TRACKING & RETURNS
+    // ========================================
+    Route::prefix('orders')->group(function () {
+        // Get user orders
+        Route::get('/', [\App\Http\Controllers\api\OrderController::class, 'index']);
+        
+        // Get order details
+        Route::get('/{id}', [\App\Http\Controllers\api\OrderController::class, 'show']);
+        
+        // Track order
+        Route::get('/{id}/track', [\App\Http\Controllers\api\OrderController::class, 'track']);
+        
+        // Confirm order receipt
+        Route::post('/{id}/confirm-receipt', [\App\Http\Controllers\api\OrderController::class, 'confirmReceipt']);
+    });
+
+    // ========================================
+    // RETURNS & REFUNDS
+    // ========================================
+    Route::prefix('returns')->group(function () {
+        Route::get('/', [ReturnController::class, 'index']);
+        Route::get('/{id}', [ReturnController::class, 'show']);
+        Route::post('/', [ReturnController::class, 'store']);
+        Route::post('/{id}/cancel', [ReturnController::class, 'cancel']);
+    });
+
+    // ========================================
     // ROLE MANAGEMENT & REQUESTS
     // ========================================
     Route::prefix('role')->group(function () {
