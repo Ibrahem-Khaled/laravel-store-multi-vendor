@@ -636,7 +636,8 @@ class DriverManagementController extends Controller
                     ->whereMonth('assigned_at', $month->month)
                     ->whereYear('assigned_at', $month->year)
                     ->where('status', 'delivered')
-                    ->avg('order.driver_rating') ?? 0,
+                    ->join('orders', 'driver_orders.order_id', '=', 'orders.id')
+                    ->avg('orders.driver_rating') ?? 0,
             ];
         }
         return $months;
