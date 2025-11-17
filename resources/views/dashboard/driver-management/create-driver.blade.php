@@ -557,7 +557,7 @@
 @endsection
 
 @push('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbQpG4lOycVS9bIMDtaKciz_mPlBJ33vw&libraries=places,drawing&language=ar"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbQpG4lOycVS9bIMDtaKciz_mPlBJ33vw&libraries=places,drawing&language=ar&callback=initGoogleMaps"></script>
 <script>
     // Service Areas Management with Google Maps
     let serviceAreas = [];
@@ -835,17 +835,37 @@
         updateServiceAreasList();
     }
 
-    // Initialize map when page loads
-    window.addEventListener('load', function() {
-        initMap();
-        updateServiceAreasList();
-    });
+    // Initialize Google Maps callback
+    function initGoogleMaps() {
+        if (document.getElementById('service_areas_map')) {
+            initMap();
+            updateServiceAreasList();
+        }
+    }
+
+    // Initialize map when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof google !== 'undefined' && google.maps) {
+                initGoogleMaps();
+            }
+        });
+    } else {
+        if (typeof google !== 'undefined' && google.maps) {
+            initGoogleMaps();
+        }
+    }
 
     // Allow Enter key in search
-    document.getElementById('service_areas_search').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            searchAndAddArea();
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('service_areas_search');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchAndAddArea();
+                }
+            });
         }
     });
 
