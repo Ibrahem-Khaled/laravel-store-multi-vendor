@@ -11,9 +11,13 @@ class MerchantSeeder extends Seeder
     {
         // أدمن واحد
         $adminData = User::factory()->admin()->make();
+        $adminAttributes = array_intersect_key(
+            $adminData->getAttributes(),
+            array_flip($adminData->getFillable())
+        );
         User::firstOrCreate(
             ['email' => 'admin@example.com'],
-            $adminData->only($adminData->getFillable())
+            $adminAttributes
         );
 
         // 20 تاجر + بروفايل

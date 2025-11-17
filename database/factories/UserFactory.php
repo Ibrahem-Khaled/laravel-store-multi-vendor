@@ -27,6 +27,7 @@ class UserFactory extends Factory
             'password'   => 'password', // Laravel casts => hashed
             'role'       => 'customer',
             'username'   => Str::slug($this->faker->unique()->userName()),
+            'is_verified' => false,
         ];
     }
 
