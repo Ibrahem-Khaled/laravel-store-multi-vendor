@@ -111,10 +111,10 @@ class ReturnController extends Controller
                     'items' => $return->order->items->map(function($item) {
                         return [
                             'id' => $item->id,
-                            'product' => [
+                            'product' => $item->product ? [
                                 'id' => $item->product->id,
                                 'name' => $item->product->name,
-                            ],
+                            ] : null,
                             'quantity' => $item->quantity,
                             'unit_price' => $item->unit_price,
                         ];
@@ -189,13 +189,13 @@ class ReturnController extends Controller
         // التحقق من عدم وجود مرتجع معلق لنفس الطلب/العنصر
         $existingReturnQuery = OrderReturn::where('order_id', $order->id)
             ->whereIn('status', ['pending', 'approved', 'processing']);
-        
+
         if ($request->order_item_id) {
             $existingReturnQuery->where('order_item_id', $request->order_item_id);
         } else {
             $existingReturnQuery->whereNull('order_item_id');
         }
-        
+
         $existingReturn = $existingReturnQuery->first();
 
         if ($existingReturn) {
