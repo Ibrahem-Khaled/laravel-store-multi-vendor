@@ -152,7 +152,7 @@
                                 <span class="text-muted">لا يوجد عنوان</span>
                             @endif
                         </td>
-                        <td>
+                        <td class="text-white">
                             @php
                                 $statusColors = [
                                     'assigned' => 'warning',
@@ -177,7 +177,7 @@
                                 @endif
                             @endif
                         </td>
-                        <td>
+                        <td class="text-white">
                             <span class="badge bg-{{ $order->assignment_type === 'auto' ? 'primary' : 'secondary' }}">
                                 {{ $order->assignment_type === 'auto' ? 'تلقائي' : 'يدوي' }}
                             </span>
@@ -315,28 +315,39 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
-    function confirmDelivery(orderId) {
+    // Define functions globally
+    window.confirmDelivery = function(orderId) {
         const form = document.getElementById('confirmDeliveryForm');
-        form.action = `/admin/driver-orders/${orderId}/confirm`;
+        if (form) {
+            form.action = `/admin/driver-orders/${orderId}/confirm`;
+        }
 
-        const modal = new bootstrap.Modal(document.getElementById('confirmDeliveryModal'));
-        modal.show();
-    }
+        const modalElement = document.getElementById('confirmDeliveryModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    };
 
-    function cancelOrder(orderId) {
+    window.cancelOrder = function(orderId) {
         const form = document.getElementById('cancelOrderForm');
-        form.action = `/admin/driver-orders/${orderId}/cancel`;
+        if (form) {
+            form.action = `/admin/driver-orders/${orderId}/cancel`;
+        }
 
-        const modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
-        modal.show();
-    }
+        const modalElement = document.getElementById('cancelOrderModal');
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+    };
 
-    function exportOrders() {
+    window.exportOrders = function() {
         const params = new URLSearchParams(window.location.search);
         params.set('export', '1');
         window.open(`{{ route('admin.driver.orders') }}?${params.toString()}`, '_blank');
-    }
+    };
 </script>
-@endsection
+@endpush
