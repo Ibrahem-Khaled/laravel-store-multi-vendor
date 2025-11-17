@@ -167,8 +167,18 @@ class DriverManagementController extends Controller
             'longitude' => 'nullable|numeric|between:-180,180',
             'is_supervisor' => 'nullable|boolean',
             'working_hours' => 'nullable|array',
-            'service_areas' => 'nullable|array',
+            'service_areas' => 'nullable|string', // JSON string from hidden input
         ]);
+
+        // Parse service_areas if it's a JSON string
+        if (isset($validated['service_areas']) && is_string($validated['service_areas'])) {
+            $parsed = json_decode($validated['service_areas'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+                $validated['service_areas'] = $parsed;
+            } else {
+                $validated['service_areas'] = [];
+            }
+        }
 
         Driver::create($validated);
 
@@ -206,8 +216,18 @@ class DriverManagementController extends Controller
             'is_available' => 'nullable|boolean',
             'is_supervisor' => 'nullable|boolean',
             'working_hours' => 'nullable|array',
-            'service_areas' => 'nullable|array',
+            'service_areas' => 'nullable|string', // JSON string from hidden input
         ]);
+
+        // Parse service_areas if it's a JSON string
+        if (isset($validated['service_areas']) && is_string($validated['service_areas'])) {
+            $parsed = json_decode($validated['service_areas'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($parsed)) {
+                $validated['service_areas'] = $parsed;
+            } else {
+                $validated['service_areas'] = [];
+            }
+        }
 
         $driver->update($validated);
 

@@ -476,24 +476,30 @@
                         </div>
                         <div>
                             <h5 class="mb-0 font-weight-bold text-gray-800">المناطق المخدومة</h5>
-                            <small class="text-muted">أضف المناطق التي يخدمها السواق</small>
+                            <small class="text-muted">حدد المناطق التي يخدمها السواق على الخريطة</small>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="service_areas_input" class="form-label">إضافة منطقة</label>
+                        <label for="service_areas_map" class="form-label">حدد المناطق على الخريطة</label>
+                        <div id="service_areas_map" style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #d1d3e2;"></div>
+                        <small class="form-text text-muted">انقر على الخريطة لإضافة منطقة جديدة أو استخدم مربع البحث</small>
+                    </div>
+                    <div class="form-group">
                         <div class="input-group">
                             <input type="text" 
                                    class="form-control" 
-                                   id="service_areas_input" 
-                                   placeholder="اكتب اسم المنطقة واضغط Enter">
+                                   id="service_areas_search" 
+                                   placeholder="ابحث عن منطقة أو انقر على الخريطة">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" onclick="addServiceArea()">
-                                    <i class="fas fa-plus"></i> إضافة
+                                <button class="btn btn-primary" type="button" onclick="searchAndAddArea()">
+                                    <i class="fas fa-search"></i> بحث وإضافة
                                 </button>
                             </div>
                         </div>
-                        <small class="form-text text-muted">اضغط Enter أو زر الإضافة لإضافة المنطقة</small>
-                        <div id="service_areas_list" class="mt-3">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">المناطق المضافة:</label>
+                        <div id="service_areas_list" class="mt-2">
                             <!-- Service areas will be added here dynamically -->
                         </div>
                         <input type="hidden" name="service_areas" id="service_areas_hidden">
@@ -551,9 +557,15 @@
 @endsection
 
 @push('scripts')
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAbQpG4lOycVS9bIMDtaKciz_mPlBJ33vw&libraries=places,drawing&language=ar"></script>
 <script>
-    // Service Areas Management
+    // Service Areas Management with Google Maps
     let serviceAreas = [];
+    let map;
+    let markers = [];
+    let autocomplete;
+    let drawingManager;
+    let polygons = [];
 
     // Load existing service areas if editing
     @if(old('service_areas'))
@@ -564,30 +576,206 @@
             } else if (typeof oldAreas === 'string') {
                 serviceAreas = JSON.parse(oldAreas);
             }
-            updateServiceAreasList();
         } catch(e) {
             console.error('Error parsing service areas:', e);
+            serviceAreas = [];
         }
     @endif
 
-    document.getElementById('service_areas_input').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            addServiceArea();
-        }
-    });
-
-    function addServiceArea() {
-        const input = document.getElementById('service_areas_input');
-        const area = input.value.trim();
+    // Initialize Google Map
+    function initMap() {
+        // Default center (Riyadh, Saudi Arabia)
+        const defaultCenter = { lat: 24.7136, lng: 46.6753 };
         
-        if (area && !serviceAreas.includes(area)) {
+        map = new google.maps.Map(document.getElementById('service_areas_map'), {
+            center: defaultCenter,
+            zoom: 11,
+            mapTypeControl: true,
+            streetViewControl: true,
+            fullscreenControl: true
+        });
+
+        // Initialize Places Autocomplete
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('service_areas_search'),
+            {
+                types: ['geocode', 'establishment'],
+                componentRestrictions: { country: 'sa' }, // Saudi Arabia
+                fields: ['geometry', 'name', 'formatted_address']
+            }
+        );
+
+        autocomplete.addListener('place_changed', function() {
+            const place = autocomplete.getPlace();
+            if (place.geometry) {
+                map.setCenter(place.geometry.location);
+                map.setZoom(15);
+                addAreaFromPlace(place);
+            }
+        });
+
+        // Initialize Drawing Manager for polygons
+        drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: null,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                    google.maps.drawing.OverlayType.POLYGON,
+                    google.maps.drawing.OverlayType.CIRCLE
+                ]
+            },
+            polygonOptions: {
+                fillColor: '#4e73df',
+                fillOpacity: 0.3,
+                strokeWeight: 2,
+                strokeColor: '#4e73df',
+                clickable: false,
+                editable: true,
+                zIndex: 1
+            },
+            circleOptions: {
+                fillColor: '#4e73df',
+                fillOpacity: 0.3,
+                strokeWeight: 2,
+                strokeColor: '#4e73df',
+                clickable: false,
+                editable: true,
+                zIndex: 1
+            }
+        });
+
+        drawingManager.setMap(map);
+
+        // Listen for polygon/circle completion
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
+            const overlay = event.overlay;
+            const type = event.type;
+            
+            if (type === google.maps.drawing.OverlayType.POLYGON) {
+                const path = overlay.getPath();
+                const bounds = new google.maps.LatLngBounds();
+                path.forEach(function(latLng) {
+                    bounds.extend(latLng);
+                });
+                const center = bounds.getCenter();
+                addAreaFromCoordinates(center.lat(), center.lng(), overlay, 'polygon');
+            } else if (type === google.maps.drawing.OverlayType.CIRCLE) {
+                const center = overlay.getCenter();
+                addAreaFromCoordinates(center.lat(), center.lng(), overlay, 'circle');
+            }
+            
+            drawingManager.setDrawingMode(null);
+        });
+
+        // Click on map to add marker
+        map.addListener('click', function(event) {
+            addAreaFromCoordinates(event.latLng.lat(), event.latLng.lng(), null, 'point');
+        });
+
+        // Load existing areas on map
+        loadExistingAreas();
+    }
+
+    function addAreaFromPlace(place) {
+        const areaName = place.name || place.formatted_address;
+        if (areaName && !serviceAreas.some(a => a.name === areaName)) {
+            const area = {
+                name: areaName,
+                lat: place.geometry.location.lat(),
+                lng: place.geometry.location.lng(),
+                type: 'point',
+                address: place.formatted_address
+            };
             serviceAreas.push(area);
+            addMarker(area);
             updateServiceAreasList();
-            input.value = '';
-            input.focus();
-        } else if (serviceAreas.includes(area)) {
-            alert('هذه المنطقة موجودة بالفعل');
+        }
+    }
+
+    function addAreaFromCoordinates(lat, lng, overlay, type) {
+        // Use Geocoder to get address
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: { lat, lng } }, function(results, status) {
+            if (status === 'OK' && results[0]) {
+                const areaName = results[0].formatted_address || `منطقة ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                if (!serviceAreas.some(a => a.name === areaName)) {
+                    const area = {
+                        name: areaName,
+                        lat: lat,
+                        lng: lng,
+                        type: type,
+                        address: results[0].formatted_address
+                    };
+                    if (overlay) {
+                        area.overlay = overlay;
+                        polygons.push(overlay);
+                    }
+                    serviceAreas.push(area);
+                    if (!overlay) {
+                        addMarker(area);
+                    }
+                    updateServiceAreasList();
+                }
+            } else {
+                // Fallback if geocoding fails
+                const areaName = `منطقة ${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+                if (!serviceAreas.some(a => a.name === areaName)) {
+                    const area = {
+                        name: areaName,
+                        lat: lat,
+                        lng: lng,
+                        type: type
+                    };
+                    if (overlay) {
+                        area.overlay = overlay;
+                        polygons.push(overlay);
+                    }
+                    serviceAreas.push(area);
+                    if (!overlay) {
+                        addMarker(area);
+                    }
+                    updateServiceAreasList();
+                }
+            }
+        });
+    }
+
+    function addMarker(area) {
+        const marker = new google.maps.Marker({
+            position: { lat: area.lat, lng: area.lng },
+            map: map,
+            title: area.name,
+            icon: {
+                url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+            }
+        });
+        
+        const infoWindow = new google.maps.InfoWindow({
+            content: `<div><strong>${area.name}</strong></div>`
+        });
+        
+        marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+        });
+        
+        markers.push(marker);
+    }
+
+    function loadExistingAreas() {
+        serviceAreas.forEach(function(area) {
+            if (area.type === 'point') {
+                addMarker(area);
+            }
+        });
+    }
+
+    function searchAndAddArea() {
+        const searchInput = document.getElementById('service_areas_search');
+        if (searchInput.value.trim()) {
+            // Trigger autocomplete selection
+            const event = new Event('place_changed');
+            autocomplete.set('query', searchInput.value);
         }
     }
 
@@ -604,20 +792,62 @@
                 const badge = document.createElement('span');
                 badge.className = 'service-area-badge';
                 badge.innerHTML = `
-                    ${area}
+                    ${area.name}
                     <i class="fas fa-times remove-btn" onclick="removeServiceArea(${index})"></i>
                 `;
                 list.appendChild(badge);
             });
         }
 
-        hidden.value = JSON.stringify(serviceAreas);
+        // Store areas as JSON (without overlay references)
+        const areasToStore = serviceAreas.map(area => ({
+            name: area.name,
+            lat: area.lat,
+            lng: area.lng,
+            type: area.type,
+            address: area.address
+        }));
+        hidden.value = JSON.stringify(areasToStore);
     }
 
     function removeServiceArea(index) {
+        const area = serviceAreas[index];
+        
+        // Remove marker if exists
+        if (area.type === 'point') {
+            const marker = markers.find(m => 
+                m.getPosition().lat() === area.lat && 
+                m.getPosition().lng() === area.lng
+            );
+            if (marker) {
+                marker.setMap(null);
+                markers = markers.filter(m => m !== marker);
+            }
+        }
+        
+        // Remove polygon/circle if exists
+        if (area.overlay) {
+            area.overlay.setMap(null);
+            polygons = polygons.filter(p => p !== area.overlay);
+        }
+        
         serviceAreas.splice(index, 1);
         updateServiceAreasList();
     }
+
+    // Initialize map when page loads
+    window.addEventListener('load', function() {
+        initMap();
+        updateServiceAreasList();
+    });
+
+    // Allow Enter key in search
+    document.getElementById('service_areas_search').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchAndAddArea();
+        }
+    });
 
     // Form validation
     document.getElementById('driverForm').addEventListener('submit', function(e) {
