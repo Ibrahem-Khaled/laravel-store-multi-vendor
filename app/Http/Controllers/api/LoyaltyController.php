@@ -19,7 +19,7 @@ class LoyaltyController extends Controller
     public function getLoyaltyPoints(Request $request)
     {
         try {
-            $user = Auth::user();
+            $user = Auth::guard('api')->user();
 
             // إنشاء سجل نقاط الولاء إذا لم يكن موجوداً
             $loyaltyPoints = $user->loyaltyPoints ?? LoyaltyPoints::create([
@@ -61,7 +61,7 @@ class LoyaltyController extends Controller
     public function getLoyaltyTransactions(Request $request)
     {
         try {
-            $user = Auth::user();
+            $user = Auth::guard('api')->user();
 
             $perPage = $request->get('per_page', 15);
             $type = $request->get('type'); // earned, used, expired, refunded
@@ -134,7 +134,7 @@ class LoyaltyController extends Controller
         }
 
         try {
-            $user = Auth::user();
+            $user = Auth::guard('api')->user();
             $points = $request->points;
             $orderId = $request->order_id;
 
@@ -261,7 +261,7 @@ class LoyaltyController extends Controller
         }
 
         try {
-            $admin = Auth::user();
+            $admin = Auth::guard('api')->user();
             $userId = $request->user_id;
             $points = $request->points;
             $platformContribution = $request->platform_contribution;
