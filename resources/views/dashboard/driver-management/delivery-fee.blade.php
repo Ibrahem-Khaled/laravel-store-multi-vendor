@@ -14,7 +14,7 @@
                 </h6>
             </div>
             <div class="card-body">
-                <form action="{{ route('admin.delivery-fee.store') }}" method="POST">
+                <form action="{{ route('admin.driver.delivery-fee.store') }}" method="POST">
                     @csrf
 
                     <!-- الرسوم الأساسية -->
@@ -246,7 +246,7 @@
 
                     <!-- أزرار الحفظ -->
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('admin.driver.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.driver.drivers') }}" class="btn btn-secondary">
                             <i class="fas fa-times me-2"></i>
                             إلغاء
                         </a>
