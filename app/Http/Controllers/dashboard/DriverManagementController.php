@@ -633,9 +633,9 @@ class DriverManagementController extends Controller
                     ->where('status', 'delivered')
                     ->count(),
                 'rating' => $driver->driverOrders()
-                    ->whereMonth('assigned_at', $month->month)
-                    ->whereYear('assigned_at', $month->year)
-                    ->where('status', 'delivered')
+                    ->whereMonth('driver_orders.assigned_at', $month->month)
+                    ->whereYear('driver_orders.assigned_at', $month->year)
+                    ->where('driver_orders.status', 'delivered')
                     ->join('orders', 'driver_orders.order_id', '=', 'orders.id')
                     ->avg('orders.driver_rating') ?? 0,
             ];
