@@ -35,8 +35,11 @@ class CreateOrderFromCart
                 $qty       = $ci->quantity;
                 $unit      = $product->price;
 
-                // نسبة عمولة (ثابت افتراضي أو من Profile التاجر إن وجدت)
-                $commissionRate   = optional($merchant->merchantProfile)->default_commission_rate ?? 0.15;
+                // نسبة عمولة: أولوية للتصنيف، ثم التاجر، ثم الافتراضي
+                $category = $product->subCategory->category ?? null;
+                $commissionRate = $category?->commission_rate 
+                    ?? optional($merchant->merchantProfile)->default_commission_rate 
+                    ?? 0.15;
                 $lineTotal        = round($unit * $qty, 2);
                 $commissionAmount = round($lineTotal * $commissionRate, 2);
                 $payoutAmount     = round($lineTotal - $commissionAmount, 2);

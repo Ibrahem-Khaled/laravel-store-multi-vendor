@@ -62,7 +62,11 @@ class OrderSeeder extends Seeder
                     $lineTotal = round($unit * $qty, 2);
 
                     $merchant  = $product->brand->user;
-                    $rate      = optional($merchant->merchantProfile)->default_commission_rate ?? 0.15;
+                    // نسبة عمولة: أولوية للتصنيف، ثم التاجر، ثم الافتراضي
+                    $category = $product->subCategory->category ?? null;
+                    $rate = $category?->commission_rate 
+                        ?? optional($merchant->merchantProfile)->default_commission_rate 
+                        ?? 0.15;
                     $commission = round($lineTotal * $rate, 2);
                     $payout    = round($lineTotal - $commission, 2);
 

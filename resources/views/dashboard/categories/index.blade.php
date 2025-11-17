@@ -57,6 +57,7 @@
                                 <th>الصورة</th>
                                 <th>الاسم</th>
                                 <th>الوصف</th>
+                                <th>نسبة العمولة</th>
                                 <th>تاريخ الإنشاء</th>
                                 <th>الإجراءات</th>
                             </tr>
@@ -79,6 +80,13 @@
                                     </td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->description ? Str::limit($category->description, 50) : 'لا يوجد وصف' }}
+                                    </td>
+                                    <td>
+                                        @if($category->commission_rate)
+                                            <span class="badge badge-success">{{ number_format($category->commission_rate * 100, 2) }}%</span>
+                                        @else
+                                            <span class="badge badge-secondary">افتراضي</span>
+                                        @endif
                                     </td>
                                     <td>{{ $category->created_at->format('Y-m-d') }}</td>
                                     <td>
@@ -114,7 +122,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">لا توجد تصنيفات</td>
+                                    <td colspan="7" class="text-center">لا توجد تصنيفات</td>
                                 </tr>
                             @endforelse
                         </tbody>

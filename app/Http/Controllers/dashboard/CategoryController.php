@@ -36,9 +36,21 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'commission_rate' => 'nullable|numeric|min:0|max:1',
+        ], [
+            'commission_rate.numeric' => 'نسبة العمولة يجب أن تكون رقماً',
+            'commission_rate.min' => 'نسبة العمولة يجب أن تكون أكبر من أو تساوي صفر',
+            'commission_rate.max' => 'نسبة العمولة يجب أن تكون أقل من أو تساوي 1 (100%)',
         ]);
 
         $categoryData = $request->except('image');
+
+        // تحويل نسبة العمولة من % إلى decimal (5% -> 0.05)
+        if ($request->has('commission_rate') && $request->commission_rate !== null) {
+            $categoryData['commission_rate'] = $request->commission_rate / 100;
+        } else {
+            $categoryData['commission_rate'] = null;
+        }
 
         if ($request->hasFile('image')) {
             $categoryData['image'] = $request->file('image')->store('categories', 'public');
@@ -55,9 +67,21 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'commission_rate' => 'nullable|numeric|min:0|max:1',
+        ], [
+            'commission_rate.numeric' => 'نسبة العمولة يجب أن تكون رقماً',
+            'commission_rate.min' => 'نسبة العمولة يجب أن تكون أكبر من أو تساوي صفر',
+            'commission_rate.max' => 'نسبة العمولة يجب أن تكون أقل من أو تساوي 1 (100%)',
         ]);
 
         $categoryData = $request->except('image');
+
+        // تحويل نسبة العمولة من % إلى decimal (5% -> 0.05)
+        if ($request->has('commission_rate') && $request->commission_rate !== null) {
+            $categoryData['commission_rate'] = $request->commission_rate / 100;
+        } else {
+            $categoryData['commission_rate'] = null;
+        }
 
         if ($request->hasFile('image')) {
             // حذف الصورة القديمة إذا كانت موجودة

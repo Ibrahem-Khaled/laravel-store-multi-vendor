@@ -41,6 +41,33 @@
                         <label for="description">الوصف</label>
                         <textarea class="form-control" id="description" name="description" rows="3">{{ $category->description }}</textarea>
                     </div>
+
+                    <div class="form-group">
+                        <label for="commission_rate">
+                            نسبة العمولة (%)
+                            <small class="text-muted">(اختياري - مثال: 5 = 5%)</small>
+                        </label>
+                        <div class="input-group">
+                            <input type="number" 
+                                   class="form-control @error('commission_rate') is-invalid @enderror" 
+                                   id="commission_rate" 
+                                   name="commission_rate" 
+                                   value="{{ $category->commission_rate ? ($category->commission_rate * 100) : '' }}" 
+                                   step="0.01" 
+                                   min="0" 
+                                   max="100"
+                                   placeholder="اتركه فارغاً لاستخدام عمولة التاجر الافتراضية">
+                            <div class="input-group-append">
+                                <span class="input-group-text">%</span>
+                            </div>
+                        </div>
+                        <small class="form-text text-muted">
+                            إذا تم تحديد نسبة عمولة للتصنيف، ستُستخدم بدلاً من عمولة التاجر الافتراضية
+                        </small>
+                        @error('commission_rate')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">إلغاء</button>
