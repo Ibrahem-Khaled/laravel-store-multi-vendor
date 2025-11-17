@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Order, OrderItem, Product, MerchantLedgerEntry, User};
+use App\Models\{Order, OrderItem, Product, MerchantLedgerEntry, User, Driver, DriverOrder};
 
 class OrderSeeder extends Seeder
 {
@@ -12,11 +12,20 @@ class OrderSeeder extends Seeder
     {
         // 50 عميل
         $customers = User::factory(50)->customer()->create();
+        
+        // الحصول على السواقين المتاحين
+        $drivers = Driver::where('is_active', true)->get();
+        
+        if ($drivers->isEmpty()) {
+            $this->command->warn('لا يوجد سواقين متاحين. يرجى تشغيل DriverSeeder أولاً.');
+            return;
+        }
 
         // 120 طلب
         for ($i = 0; $i < 120; $i++) {
-            DB::transaction(function () use ($customers) {
+            DB::transaction(function () use ($customers, $drivers) {
                 $customer = $customers->random();
+                $driver = $drivers->random();
 
                 // 30% COD والباقي card
                 $pm = fake()->boolean(30) ? 'cash_on_delivery' : 'card';
@@ -83,7 +92,73 @@ class OrderSeeder extends Seeder
                     'subtotal'    => $subtotal,
                     'grand_total' => $subtotal,
                 ]);
+
+                // إنشاء DriverOrder وتعيين سائق للطلب
+                $assignedAt = now()->subDays(fake()->numberBetween(0, 30));
+                $status = fake()->randomElement(['assigned', 'accepted', 'picked_up', 'delivered', 'cancelled']);
+                
+                $driverOrderData = [
+                    'order_id' => $order->id,
+                    'driver_id' => $driver->id,
+                    'assigned_by' => User::where('role', 'admin')->first()?->id,
+                    'status' => $status,
+                    'assignment_type' => fake()->randomElement(['auto', 'manual']),
+                    'assigned_at' => $assignedAt,
+                    'delivery_fee' => fake()->randomFloat(2, 5, 25),
+                ];
+
+                // إضافة التواريخ حسب الحالة
+                if (in_array($status, ['accepted', 'picked_up', 'delivered'])) {
+                    $driverOrderData['accepted_at'] = $assignedAt->copy()->addMinutes(fake()->numberBetween(5, 30));
+                }
+
+                if (in_array($status, ['picked_up', 'delivered'])) {
+                    $driverOrderData['picked_up_at'] = $driverOrderData['accepted_at']->copy()->addMinutes(fake()->numberBetween(15, 60));
+                }
+
+                if ($status === 'delivered') {
+                    $driverOrderData['delivered_at'] = $driverOrderData['picked_up_at']->copy()->addMinutes(fake()->numberBetween(30, 120));
+                    
+                    // إضافة تقييم عشوائي للسائق (من 3 إلى 5)
+                    $order->update([
+                        'driver_rating' => fake()->randomFloat(2, 3.0, 5.0)
+                    ]);
+                }
+
+                if ($status === 'cancelled') {
+                    $driverOrderData['cancelled_at'] = $assignedAt->copy()->addMinutes(fake()->numberBetween(10, 60));
+                    $driverOrderData['cancellation_reason'] = fake()->randomElement([
+                        'السائق غير متاح',
+                        'العميل ألغى الطلب',
+                        'مشكلة في العنوان',
+                        'السائق رفض الطلب'
+                    ]);
+                }
+
+                DriverOrder::create($driverOrderData);
+
+                // تحديث إحصائيات السائق
+                $driver->increment('total_deliveries', $status === 'delivered' ? 1 : 0);
+                $driver->update(['current_orders_count' => $driver->driverOrders()->whereIn('status', ['assigned', 'accepted', 'picked_up'])->count()]);
             });
         }
+
+        // تحديث تقييمات السواقين بناءً على التقييمات الفعلية
+        $drivers->each(function ($driver) {
+            $completedOrders = $driver->driverOrders()
+                ->where('status', 'delivered')
+                ->whereHas('order', function($query) {
+                    $query->whereNotNull('driver_rating');
+                })
+                ->with('order')
+                ->get();
+
+            if ($completedOrders->count() > 0) {
+                $avgRating = $completedOrders->avg(function($driverOrder) {
+                    return $driverOrder->order->driver_rating;
+                });
+                $driver->update(['rating' => round($avgRating, 2)]);
+            }
+        });
     }
 }
