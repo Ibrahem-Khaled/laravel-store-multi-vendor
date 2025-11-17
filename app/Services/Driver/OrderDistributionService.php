@@ -200,11 +200,14 @@ class OrderDistributionService
      */
     private function calculateDeliveryFee(Driver $driver, Order $order)
     {
-        // Base delivery fee
-        $baseFee = 10.00;
+        // Get settings from database
+        $baseFee = (float) \App\Models\Setting::get('delivery_base_fee', 10.00);
+        $distanceFeePerKm = (float) \App\Models\Setting::get('delivery_distance_fee_per_km', 0.5);
+        $minFee = (float) \App\Models\Setting::get('delivery_min_fee', 5.00);
+        $maxFee = (float) \App\Models\Setting::get('delivery_max_fee', 50.00);
 
         // Add distance-based fee (if coordinates available)
-        if ($driver->latitude && $driver->longitude && $order->userAddress->latitude && $order->userAddress->longitude) {
+        if ($driver->latitude && $driver->longitude && $order->userAddress && $order->userAddress->latitude && $order->userAddress->longitude) {
             $distance = $this->calculateDistance(
                 $driver->latitude,
                 $driver->longitude,
@@ -212,18 +215,23 @@ class OrderDistributionService
                 $order->userAddress->longitude
             );
 
-            $baseFee += $distance * 0.5; // 0.5 per km
+            $baseFee += $distance * $distanceFeePerKm;
         }
 
-        // Add vehicle type multiplier
+        // Get vehicle type multiplier from settings
         $vehicleMultiplier = match($driver->vehicle_type) {
-            'car' => 1.0,
-            'motorcycle' => 0.8,
-            'bicycle' => 0.6,
+            'car' => (float) \App\Models\Setting::get('delivery_car_multiplier', 1.0),
+            'motorcycle' => (float) \App\Models\Setting::get('delivery_motorcycle_multiplier', 0.8),
+            'bicycle' => (float) \App\Models\Setting::get('delivery_bicycle_multiplier', 0.6),
             default => 1.0
         };
 
-        return round($baseFee * $vehicleMultiplier, 2);
+        $finalFee = round($baseFee * $vehicleMultiplier, 2);
+
+        // Apply min and max limits
+        $finalFee = max($minFee, min($maxFee, $finalFee));
+
+        return $finalFee;
     }
 
     /**

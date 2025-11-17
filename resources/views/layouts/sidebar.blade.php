@@ -160,6 +160,11 @@
                     <i class="fas fa-fw fa-user-plus text-gray-600"></i>
                     <span>إضافة سواق</span>
                 </a>
+                <a class="collapse-item {{ request()->routeIs('admin.driver.delivery-fee.*') ? 'active' : '' }}"
+                   href="{{ route('admin.driver.delivery-fee.index') }}">
+                    <i class="fas fa-fw fa-dollar-sign text-gray-600"></i>
+                    <span>تسعيرة التوصيل</span>
+                </a>
             </div>
         </div>
     </li>

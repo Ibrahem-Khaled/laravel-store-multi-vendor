@@ -131,6 +131,10 @@ Route::group(['prefix' => 'dashboard', 'middleware' => ['auth']], function () {
         Route::post('/orders/{id}/reassign', [DriverManagementController::class, 'reassignOrder'])->name('order.reassign');
         Route::post('/orders/{id}/confirm', [DriverManagementController::class, 'confirmDelivery'])->name('order.confirm');
         Route::post('/orders/{id}/cancel', [DriverManagementController::class, 'cancelOrder'])->name('order.cancel');
+
+        // تسعيرة التوصيل
+        Route::get('/delivery-fee', [\App\Http\Controllers\dashboard\DeliveryFeeController::class, 'index'])->name('delivery-fee.index');
+        Route::post('/delivery-fee', [\App\Http\Controllers\dashboard\DeliveryFeeController::class, 'store'])->name('delivery-fee.store');
     });
 
     // إدارة نقاط الولاء
