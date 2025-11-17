@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\{Order, OrderItem, Product, MerchantLedgerEntry, User, Driver, DriverOrder};
+use App\Models\{Order, OrderItem, Product, MerchantLedgerEntry, User, Driver, DriverOrder, UserAddress};
 
 class OrderSeeder extends Seeder
 {
@@ -27,12 +27,27 @@ class OrderSeeder extends Seeder
                 $customer = $customers->random();
                 $driver = $drivers->random();
 
+                // إنشاء عنوان للعميل إذا لم يكن لديه واحد
+                $userAddress = $customer->addresses()->first();
+                if (!$userAddress) {
+                    $userAddress = UserAddress::create([
+                        'user_id' => $customer->id,
+                        'type' => 'home',
+                        'address_line_1' => fake()->streetAddress(),
+                        'city' => fake()->randomElement(['الرياض', 'جدة', 'الدمام', 'المدينة المنورة', 'مكة المكرمة']),
+                        'neighborhood' => fake()->randomElement(['الحي الشمالي', 'الحي الجنوبي', 'الحي الشرقي', 'الحي الغربي', 'الحي المركزي']),
+                        'address' => fake()->address(),
+                        'postal_code' => fake()->postcode(),
+                    ]);
+                }
+
                 // 30% COD والباقي card
                 $pm = fake()->boolean(30) ? 'cash_on_delivery' : 'card';
 
                 /** @var Order $order */
                 $order = Order::factory()->create([
                     'user_id'        => $customer->id,
+                    'user_address_id' => $userAddress->id,
                     'payment_method' => $pm,
                     'status'         => $pm === 'card' ? 'paid' : 'pending',
                 ]);

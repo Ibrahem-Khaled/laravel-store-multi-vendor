@@ -141,12 +141,16 @@
                             </div>
                         </td>
                         <td>
-                            <div>
-                                <div class="fw-bold">{{ $order->order->userAddress->city }}</div>
-                                <small class="text-muted">{{ $order->order->userAddress->neighborhood }}</small>
-                                <br>
-                                <small class="text-muted">{{ Str::limit($order->order->userAddress->address, 30) }}</small>
-                            </div>
+                            @if($order->order->userAddress)
+                                <div>
+                                    <div class="fw-bold">{{ $order->order->userAddress->city ?? 'غير محدد' }}</div>
+                                    <small class="text-muted">{{ $order->order->userAddress->neighborhood ?? 'غير محدد' }}</small>
+                                    <br>
+                                    <small class="text-muted">{{ Str::limit($order->order->userAddress->address ?? '', 30) }}</small>
+                                </div>
+                            @else
+                                <span class="text-muted">لا يوجد عنوان</span>
+                            @endif
                         </td>
                         <td>
                             @php
