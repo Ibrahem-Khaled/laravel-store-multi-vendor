@@ -49,7 +49,7 @@ class ReturnController extends Controller
                         'grand_total' => $return->order->grand_total,
                         'status' => $return->order->status,
                     ],
-                    'order_item' => $return->orderItem ? [
+                    'order_item' => $return->orderItem && $return->orderItem->product ? [
                         'id' => $return->orderItem->id,
                         'product' => [
                             'id' => $return->orderItem->product->id,
@@ -120,7 +120,7 @@ class ReturnController extends Controller
                         ];
                     }),
                 ],
-                'order_item' => $return->orderItem ? [
+                'order_item' => $return->orderItem && $return->orderItem->product ? [
                     'id' => $return->orderItem->id,
                     'product' => [
                         'id' => $return->orderItem->product->id,
@@ -187,10 +187,16 @@ class ReturnController extends Controller
         }
 
         // التحقق من عدم وجود مرتجع معلق لنفس الطلب/العنصر
-        $existingReturn = OrderReturn::where('order_id', $order->id)
-            ->where('order_item_id', $request->order_item_id)
-            ->whereIn('status', ['pending', 'approved', 'processing'])
-            ->first();
+        $existingReturnQuery = OrderReturn::where('order_id', $order->id)
+            ->whereIn('status', ['pending', 'approved', 'processing']);
+        
+        if ($request->order_item_id) {
+            $existingReturnQuery->where('order_item_id', $request->order_item_id);
+        } else {
+            $existingReturnQuery->whereNull('order_item_id');
+        }
+        
+        $existingReturn = $existingReturnQuery->first();
 
         if ($existingReturn) {
             return response()->json([
